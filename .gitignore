@@ -22,3 +22,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# legacy
+loginlaravel/
+
+# backups
+docker-compose.bak
+# duplicate init SQL (keep schema.sql only)
+initdb/01-schema.sql
+initdb/10-scheme.sql
