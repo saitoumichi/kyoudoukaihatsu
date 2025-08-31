@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BKC生のためのアプリ – HTML/CSSプロトタイプ</title>
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e5e7eb;
+      --primary: #2563eb;  /* blue */
+      --accent: #a78bfa;   /* violet */
+      --pink: #f472b6;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      line-height: 1.6;
+    }
+
+    /* ---------- App Shell ---------- */
+    header {
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: saturate(1.2) blur(8px);
+      background: rgba(255,255,255,0.85);
+      border-bottom: 1px solid var(--line);
+    }
+    .container { max-width: 1120px; margin: 0 auto; padding: 14px 20px; }
+    .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { font-weight: 800; letter-spacing: .5px; }
+    .brand span { color: var(--primary); }
+
+    /* Tabs (CSS only) */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs label {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+      background: #fff;
+      transition: box-shadow .2s ease, transform .05s ease;
+      user-select: none;
+    }
+    .tabs label:hover { box-shadow: 0 1px 0 #e5e7eb, 0 0 0 4px rgba(37,99,235,.08) inset; }
+    .tabs label[data-color="blue"]{ border-color:#dbeafe; background:#eff6ff; }
+    .tabs label[data-color="violet"]{ border-color:#ede9fe; background:#f5f3ff; }
+    .tabs label[data-color="rose"]{ border-color:#ffe4e6; background:#fff1f2; }
+    .tabs label[data-color="amber"]{ border-color:#ffedd5; background:#fff7ed; }
+    .tabs label[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
+
+    input[type="radio"].tab { display: none; }
+    main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
+    section.view { display: none; }
+    /* show selected section */
+    #tab-home:checked ~ main #home,
+    #tab-drive:checked ~ main #drive,
+    #tab-karaoke:checked ~ main #karaoke,
+    #tab-izakaya:checked ~ main #izakaya,
+    #tab-fleamarket:checked ~ main #fleamarket,
+    #tab-mypage:checked ~ main #mypage { display: block; }
+
+    /* highlight selected tab */
+    #tab-home:checked ~ header label[for="tab-home"],
+    #tab-drive:checked ~ header label[for="tab-drive"],
+    #tab-karaoke:checked ~ header label[for="tab-karaoke"],
+    #tab-izakaya:checked ~ header label[for="tab-izakaya"],
+    #tab-fleamarket:checked ~ header label[for="tab-fleamarket"],
+    #tab-mypage:checked ~ header label[for="tab-mypage"] {
+      outline: 2px solid var(--primary);
+      box-shadow: 0 6px 16px rgba(37,99,235,.15);
+      transform: translateY(-1px);
+    }
+
+    /* ---------- UI atoms ---------- */
+    .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
+    .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .grid { display: grid; gap: 14px; }
+    .grid.cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      padding: 14px; box-shadow: 0 6px 20px rgba(15,23,42,0.04);
+    }
+    .card .title { font-weight: 700; margin: 2px 0 6px; }
+    .meta { color: var(--muted); font-size: 13px; }
+    .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#f1f5f9; border:1px solid var(--line); font-size:12px; }
+    .btn { display:inline-block; padding:10px 14px; border-radius: 12px; border: 1px solid var(--line); background:#fff; text-decoration:none; color:var(--ink); font-weight:700; }
+    .btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
+    .btn.ghost { background: #fff; }
+    .btn.full { width: 100%; text-align: center; }
+    .btn-row { display:flex; gap:10px; flex-wrap: wrap; }
+    .kvs { display:grid; grid-template-columns: auto 1fr; gap:6px 12px; font-size: 14px; }
+    .star { color: #f59e0b; font-size: 16px; }
+
+    .toolbar { display:flex; gap:8px; flex-wrap: wrap; align-items:center; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px; }
+    .toolbar .field { display:flex; align-items:center; gap:6px; padding:6px 10px; background:#f8fafc; border-radius:10px; border:1px solid var(--line); }
+    .toolbar input, .toolbar select { border: none; background: transparent; outline: none; font-size:14px; min-width: 120px; }
+
+    form .field { display:grid; gap:6px; margin-bottom:12px; }
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"],
+    form input[type="url"],
+    form input[type="number"],
+    form input[type="file"],
+    form textarea,
+    form select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+    }
+    form textarea { min-height: 120px; resize: vertical; }
+    .hint { color: var(--muted); font-size: 12px; }
+
+    .cols { display:grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
+    @media (max-width: 960px) { .cols { grid-template-columns: 1fr; } }
+
+    .empty {
+      padding: 24px; border: 2px dashed var(--line); border-radius: 16px; background: #fff;
+      display: grid; gap: 8px; justify-items: start;
+    }
+
+    /* chips */
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { padding:6px 10px; border:1px solid var(--line); background:#fff; border-radius:999px; font-size:12px; cursor:pointer; }
+
+    /* tables (simple) */
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { font-size: 13px; color: var(--muted); font-weight: 700; }
+
+    footer { text-align:center; color:var(--muted); font-size:12px; padding: 28px 16px; }
+  </style>
+</head>
+<body>
+  <!-- NAV RADIO TABS (no JS) -->
+  <input id="tab-home" class="tab" type="radio" name="nav" checked>
+  <input id="tab-drive" class="tab" type="radio" name="nav">
+  <input id="tab-karaoke" class="tab" type="radio" name="nav">
+  <input id="tab-izakaya" class="tab" type="radio" name="nav">
+  <input id="tab-fleamarket" class="tab" type="radio" name="nav">
+  <input id="tab-mypage" class="tab" type="radio" name="nav">
+
+  <header>
+    <div class="container">
+      <div class="row" style="justify-content: space-between;">
+        <div class="row">
+          <div class="brand">BKC<span>アプリ</span></div>
+        </div>
+        <nav class="tabs" aria-label="主要ナビゲーション">
+          <label for="tab-home" data-color="blue">ホーム</label>
+          <label for="tab-drive" data-color="violet">ドライブ</label>
+          <label for="tab-karaoke" data-color="rose">カラオケ</label>
+          <label for="tab-izakaya" data-color="amber">居酒屋</label>
+          <label for="tab-fleamarket" data-color="green">フリマ</label>
+          <label for="tab-mypage">マイページ</label>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HOME ================= -->
+    <section id="home" class="view" aria-labelledby="home-title">
+      <h1 id="home-title" class="h1">ホーム</h1>
+      <p class="sub">ショッピング / 景色 / 息抜き のカテゴリから探せます。</p>
+
+      <div class="grid cards">
+        <article class="card">
+          <div class="pill">ショッピング 🛍️</div>
+          <div class="title">おすすめスポット</div>
+          <p class="meta">大学からの時間やURL、詳細をカードで表示します。</p>
+          <div class="btn-row">
+            <a class="btn primary" href="#">一覧を見る</a>
+            <a class="btn ghost" href="#">URL</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="pill">景色 🌳</div>
+          <div class="title">キャンパス周辺の景色</div>
+          <p class="meta">写真スポットや自然の名所をピックアップ。</p>
+          <div class="btn-row">
+            <a class="btn primary" href="#">一覧を見る</a>
+            <a class="btn ghost" href="#">URL</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="pill">息抜き ☕</div>
+          <div class="title">リフレッシュに</div>
+          <p class="meta">短時間で行けるカフェや公園など。</p>
+          <div class="btn-row">
+            <a class="btn primary" href="#">一覧を見る</a>
+            <a class="btn ghost" href="#">URL</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= DRIVE ================= -->
+    <section id="drive" class="view" aria-labelledby="drive-title">
+      <h2 id="drive-title" class="h1">ドライブ</h2>
+      <p class="sub">おすすめ場所の作成や、リスト表示ができます。</p>
+
+      <div class="cols">
+        <div class="card">
+          <div class="title">おすすめ場所の作成</div>
+          <form>
+            <div class="field">
+              <label>店名 / スポット名</label>
+              <input type="text" placeholder="例）琵琶湖テラス" />
+            </div>
+            <div class="field">
+              <label>写真の掲載</label>
+              <input type="file" accept="image/*" />
+              <div class="hint">JPEG / PNG 推奨。最大 5MB。</div>
+            </div>
+            <div class="field">
+              <label>価格帯</label>
+              <select>
+                <option>無料</option>
+                <option>〜¥1,000</option>
+                <option>¥1,000〜¥3,000</option>
+                <option>¥3,000〜</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>詳細</label>
+              <textarea placeholder="見どころ / 注意点など"></textarea>
+            </div>
+            <div class="field">
+              <label>URL</label>
+              <input type="url" placeholder="https://example.com" />
+            </div>
+            <div class="field">
+              <label>大学からの時間</label>
+              <input type="text" placeholder="例）車で30分" />
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn primary">掲載</button>
+              <button type="reset" class="btn">消去</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <div class="title">掲載一覧</div>
+          <div class="grid">
+            <article class="card" style="border-style: dashed;">
+              <div class="title">○○ 1</div>
+              <div class="meta">大学からの時間：車で20分</div>
+              <div class="btn-row" style="margin-top:8px;">
+                <a class="btn ghost" href="#">URL</a>
+                <a class="btn" href="#">詳細</a>
+              </div>
+            </article>
+            <article class="card" style="border-style: dashed;">
+              <div class="title">○○ 2</div>
+              <div class="meta">大学からの時間：徒歩10分</div>
+              <div class="btn-row" style="margin-top:8px;">
+                <a class="btn ghost" href="#">URL</a>
+                <a class="btn" href="#">詳細</a>
+              </div>
+            </article>
+            <article class="card" style="border-style: dashed;">
+              <div class="title">○○ 3</div>
+              <div class="meta">大学からの時間：バス15分</div>
+              <div class="btn-row" style="margin-top:8px;">
+                <a class="btn ghost" href="#">URL</a>
+                <a class="btn" href="#">詳細</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= KARAOKE ================= -->
+    <section id="karaoke" class="view" aria-labelledby="karaoke-title">
+      <h2 id="karaoke-title" class="h1">カラオケ</h2>
+      <p class="sub">持ち込み可否 / お酒の種類 / 機種（DAM・JOYSOUND）などで比較。</p>
+
+      <div class="toolbar" style="margin-bottom:12px;">
+        <div class="field"><span>並び替え</span>
+          <select>
+            <option>近い順</option>
+            <option>おすすめ順</option>
+            <option>安い順</option>
+          </select>
+        </div>
+        <div class="field"><span>予算</span>
+          <select>
+            <option>〜¥2,000</option>
+            <option>¥2,000〜¥3,000</option>
+            <option>¥3,000〜¥5,000</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid cards">
+        <article class="card">
+          <div class="title">店名 A</div>
+          <div class="meta">大学から○分</div>
+          <div class="kvs" style="margin:10px 0 6px;">
+            <div>持ち込み</div><div>あり</div>
+            <div>お酒の種類</div><div>麦焼酎</div>
+            <div>機種</div><div>DAM・JOYSOUND</div>
+          </div>
+          <div aria-label="評価" class="star">★★★★★</div>
+          <div class="btn-row" style="margin-top:8px;">
+            <a class="btn ghost" href="#">URL</a>
+            <a class="btn" href="#">詳細</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="title">店名 B</div>
+          <div class="meta">大学から○分</div>
+          <div class="kvs" style="margin:10px 0 6px;">
+            <div>持ち込み</div><div>あり</div>
+            <div>お酒の種類</div><div>米焼酎</div>
+            <div>機種</div><div>DAM・JOYSOUND</div>
+          </div>
+          <div aria-label="評価" class="star">★★★★☆</div>
+          <div class="btn-row" style="margin-top:8px;">
+            <a class="btn ghost" href="#">URL</a>
+            <a class="btn" href="#">詳細</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="title">店名 C</div>
+          <div class="meta">大学から○分</div>
+          <div class="kvs" style="margin:10px 0 6px;">
+            <div>持ち込み</div><div>なし</div>
+            <div>お酒の種類</div><div>芋焼酎</div>
+            <div>機種</div><div>JOYSOUND</div>
+          </div>
+          <div aria-label="評価" class="star">★★★☆☆</div>
+          <div class="btn-row" style="margin-top:8px;">
+            <a class="btn ghost" href="#">URL</a>
+            <a class="btn" href="#">詳細</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= IZAKAYA ================= -->
+    <section id="izakaya" class="view" aria-labelledby="izakaya-title">
+      <h2 id="izakaya-title" class="h1">居酒屋</h2>
+      <p class="sub">近い順 / おすすめ順 / 安い順 の3つのリストを想定。</p>
+
+      <div class="toolbar" style="margin-bottom:12px;">
+        <div class="field"><span>並び替え</span>
+          <select>
+            <option>近い順</option>
+            <option>おすすめ順</option>
+            <option>安い順</option>
+          </select>
+        </div>
+        <div class="field"><span>価格帯</span>
+          <select>
+            <option>¥2,000〜¥3,000</option>
+            <option>¥3,000〜¥4,000</option>
+            <option>¥4,000〜¥5,000</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid cards">
+        <article class="card">
+          <div class="pill">近い順</div>
+          <div class="title">1. 店名</div>
+          <div class="meta">大学から○分 / 予算 ¥2,000〜¥3,000</div>
+          <div class="btn-row" style="margin-top:8px;">
+            <a class="btn ghost" href="#">URL</a>
+            <a class="btn" href="#">詳細</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="pill">安い順</div>
+          <div class="title">1. 店名</div>
+          <div class="meta">大学から○分 / 予算 ¥2,000〜¥3,000</div>
+          <div class="btn-row" style="margin-top:8px;">
+            <a class="btn ghost" href="#">URL</a>
+            <a class="btn" href="#">詳細</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="pill">おすすめ順</div>
+          <div class="title">1. 店名</div>
+          <div class="meta">大学から○分 / 予算 ¥4,000〜¥5,000</div>
+          <div class="btn-row" style="margin-top:8px;">
+            <a class="btn ghost" href="#">URL</a>
+            <a class="btn" href="#">詳細</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= FLEA MARKET ================= -->
+    <section id="fleamarket" class="view" aria-labelledby="fleamarket-title">
+      <h2 id="fleamarket-title" class="h1">フリマ（教科書）</h2>
+      <p class="sub">出品 / 買取 の2タブ。著者名・教科書名や科目で検索できます。</p>
+
+      <!-- sub tabs (CSS only) -->
+      <input id="sub-sell" class="tab" type="radio" name="fm" checked>
+      <input id="sub-buy" class="tab" type="radio" name="fm">
+      <div class="tabs" style="margin: 10px 0 14px;">
+        <label for="sub-sell" data-color="green">出品</label>
+        <label for="sub-buy" data-color="amber">買取</label>
+      </div>
+
+      <!-- SELL -->
+      <div id="fm-sell" class="view">
+        <div class="cols">
+          <div class="card">
+            <div class="title">表紙の作成 / 掲載</div>
+            <form>
+              <div class="field">
+                <label>教科書の写真</label>
+                <input type="file" accept="image/*" />
+              </div>
+              <div class="field">
+                <label>教科書名</label>
+                <input type="text" placeholder="例）線形代数入門" />
+              </div>
+              <div class="field">
+                <label>大学からの距離 / 時間</label>
+                <input type="text" placeholder="例）徒歩10分" />
+              </div>
+              <div class="field">
+                <label>金額</label>
+                <input type="number" placeholder="例）1500" />
+              </div>
+              <div class="field">
+                <label>お店 / 参考URL</label>
+                <input type="url" placeholder="https://example.com" />
+              </div>
+              <div class="field">
+                <label>詳細（利用した授業など）</label>
+                <textarea placeholder="例）経済学概論（2024年度）で使用"></textarea>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn primary">掲載</button>
+                <button type="reset" class="btn">消去</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="title">掲載一覧</div>
+            <div class="grid">
+              <article class="card" style="border-style:dashed;">
+                <div class="title">数学入門</div>
+                <div class="meta">¥1,500 / 大学から徒歩5分</div>
+                <div class="btn-row" style="margin-top:8px;">
+                  <a class="btn" href="#">詳細</a>
+                </div>
+              </article>
+              <article class="card" style="border-style:dashed;">
+                <div class="title">経済学の基礎</div>
+                <div class="meta">¥2,000 / 大学から徒歩10分</div>
+                <div class="btn-row" style="margin-top:8px;">
+                  <a class="btn" href="#">詳細</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUY (SEARCH) -->
+      <div id="fm-buy" class="view">
+        <div class="card">
+          <div class="title">検索機能</div>
+          <div class="toolbar" style="margin:8px 0 12px;">
+            <div class="field"><span>著者名</span><input type="text" placeholder="例）山田 太郎"></div>
+            <div class="field"><span>教科書名</span><input type="text" placeholder="例）統計学入門"></div>
+            <div class="field"><span>科目</span>
+              <select>
+                <option>指定なし</option>
+                <option>物理</option>
+                <option>経済</option>
+                <option>数学</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid cards">
+            <article class="card">
+              <div class="title">1. 物理基礎</div>
+              <div class="meta">掲載者：user123 / ¥1,000</div>
+              <div class="kvs" style="margin:10px 0;">
+                <div>受け取り方法</div><div>直接 / 郵送</div>
+              </div>
+              <div class="btn-row">
+                <a class="btn" href="#">納得</a>
+                <a class="btn ghost" href="#">交渉</a>
+              </div>
+            </article>
+            <article class="card">
+              <div class="title">2. 経済学概論</div>
+              <div class="meta">掲載者：bkc_seller / ¥1,800</div>
+              <div class="kvs" style="margin:10px 0;">
+                <div>受け取り方法</div><div>直接</div>
+              </div>
+              <div class="btn-row">
+                <a class="btn" href="#">納得</a>
+                <a class="btn ghost" href="#">交渉</a>
+              </div>
+            </article>
+            <article class="card">
+              <div class="title">3. 線形代数</div>
+              <div class="meta">掲載者：math4life / ¥2,400</div>
+              <div class="kvs" style="margin:10px 0;">
+                <div>受け取り方法</div><div>郵送</div>
+              </div>
+              <div class="btn-row">
+                <a class="btn" href="#">納得</a>
+                <a class="btn ghost" href="#">交渉</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <style>
+        /* sub tab show/hide for fleamarket */
+        #sub-sell:checked ~ #fm-sell { display:block; }
+        #sub-sell:checked ~ #fm-buy { display:none; }
+        #sub-buy:checked  ~ #fm-sell { display:none; }
+        #sub-buy:checked  ~ #fm-buy { display:block; }
+      </style>
+    </section>
+
+    <!-- ================= MY PAGE ================= -->
+    <section id="mypage" class="view" aria-labelledby="mypage-title">
+      <h2 id="mypage-title" class="h1">マイページ</h2>
+      <p class="sub">アカウント作成 / ログイン、あなたの掲載管理。</p>
+
+      <div class="cols">
+        <div class="card">
+          <div class="title">ログイン</div>
+          <form>
+            <div class="field">
+              <label>メールアドレス</label>
+              <input type="email" placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label>パスワード</label>
+              <input type="password" placeholder="••••••••" />
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn primary">ログイン</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="title">アカウントの作成</div>
+          <form>
+            <div class="field">
+              <label>名 / 姓</label>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <input type="text" placeholder="名" />
+                <input type="text" placeholder="姓" />
+              </div>
+            </div>
+            <div class="field">
+              <label>ユーザーネーム</label>
+              <input type="text" placeholder="例）bkc_student" />
+            </div>
+            <div class="field">
+              <label>メールアドレス</label>
+              <input type="email" placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label>パスワード</label>
+              <input type="password" placeholder="8文字以上" />
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn primary">作成</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="title">あなたの掲載</div>
+        <div class="empty">
+          <div class="title" style="margin:0">あなたが掲載した記録はありません</div>
+          <div class="btn-row">
+            <label for="tab-fleamarket" class="btn">フリマで掲載する</label>
+            <label for="tab-drive" class="btn">ドライブを掲載する</label>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © BKCアプリ – HTML/CSSデモ。すべて静的UI（動作はダミー）
+  </footer>
+</body>
+</html>
