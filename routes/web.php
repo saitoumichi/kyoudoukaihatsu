@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PlaceController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Support\Facades\Route;
 
 // トップページ
@@ -24,6 +26,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // 検索
     Route::get('/places/search', [PlaceController::class, 'search'])->name('places.search');
+
+    // カテゴリ管理
+    Route::resource('categories', CategoryController::class);
+    Route::post('/categories/sort', [CategoryController::class, 'updateSort'])->name('categories.sort');
+    Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive'])->name('categories.toggle-active');
+
+    // 画像管理
+    Route::post('/places/{place}/images', [ImageController::class, 'upload'])->name('images.upload');
+    Route::delete('/images/{image}', [ImageController::class, 'destroy'])->name('images.destroy');
+    Route::post('/places/{place}/images/sort', [ImageController::class, 'updateSort'])->name('images.sort');
+    Route::patch('/images/{image}/alt-text', [ImageController::class, 'updateAltText'])->name('images.alt-text');
+    Route::get('/places/{place}/images', [ImageController::class, 'index'])->name('images.index');
 });
 
 // 一般公開（認証不要）

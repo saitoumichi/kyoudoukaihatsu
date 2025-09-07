@@ -13,15 +13,7 @@ return new class extends Migration
     {
         Schema::create('drive_categories', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('drive_categories');
-    }
-};
+            $table->string('name', 60);
+            $table->string('icon', 60)->nullable();
+            $table->unsignedInteger('sort')->default(1);
+            $table->boolean('is_active')->default
