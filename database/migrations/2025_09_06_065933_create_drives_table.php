@@ -13,15 +13,9 @@ return new class extends Migration
     {
         Schema::create('drives', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('place_id');
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
-        });
-    }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('drives');
-    }
-};
+            // 外部キー制約
+            

@@ -13,15 +13,7 @@ return new class extends Migration
     {
         Schema::create('izakayas', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('izakayas');
-    }
-};
+            $table->unsignedBigInteger('place_id');
+            $table->unsignedInteger('price_min')->nullable();
+            $table->unsignedInteger('price_max')->nullable();
+            $t

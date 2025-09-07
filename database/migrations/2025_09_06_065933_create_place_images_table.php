@@ -13,15 +13,7 @@ return new class extends Migration
     {
         Schema::create('place_images', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('place_images');
-    }
-};
+            $table->unsignedBigInteger('place_id');
+            $table->string('path', 255);
+            $table->string('alt_text', 120)->nullable();
+            $table->unsignedInteger('sort_or
