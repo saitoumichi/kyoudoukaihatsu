@@ -76,9 +76,11 @@
                 </div>
             @endauth
 
-            <!-- 場所一覧 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @forelse($places as $place)
+            <!-- おすすめスポット -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">おすすめスポット</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse($places->take(6) as $place)
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <!-- 画像 -->
                         @if($place->images->count() > 0)
@@ -186,17 +188,125 @@
                             </div>
                         </div>
                     </div>
-                @empty
-                    <div class="col-span-full text-center py-12">
-                        <p class="text-gray-500 text-lg">場所が見つかりませんでした。</p>
-                        @auth
-                            <a href="{{ route('places.create') }}" class="text-blue-600 hover:text-blue-800 mt-4 inline-block">
-                                最初の場所を追加する
-                            </a>
-                        @endauth
-                    </div>
-                @endforelse
+                    @empty
+                        <div class="col-span-full text-center py-12">
+                            <p class="text-gray-500 text-lg">おすすめスポットがありません。</p>
+                            @auth
+                                <a href="{{ route('places.create') }}" class="text-blue-600 hover:text-blue-800 mt-4 inline-block">
+                                    最初の場所を追加する
+                                </a>
+                            @endauth
+                        </div>
+                    @endforelse
+                </div>
             </div>
+
+            <!-- 全スポット一覧 -->
+            @if($places->count() > 6)
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">全スポット</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($places->skip(6) as $place)
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <!-- 画像 -->
+                            @if($place->images->count() > 0)
+                                <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                                     class="w-full h-48 object-cover">
+                            @else
+                                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-500">画像なし</span>
+                                </div>
+                            @endif
+
+                            <div class="p-6">
+                                <!-- タイプバッジ -->
+                                <div class="mb-2">
+                                    @switch($place->type)
+                                        @case('drive')
+                                            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                                ドライブ
+                                            </span>
+                                            @if($place->drive && $place->drive->category)
+                                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-1">
+                                                    {{ $place->drive->category->name }}
+                                                </span>
+                                            @endif
+                                            @break
+                                        @case('karaoke')
+                                            <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                                カラオケ
+                                            </span>
+                                            @break
+                                        @case('izakaya')
+                                            <span class="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">
+                                                居酒屋
+                                            </span>
+                                            @break
+                                    @endswitch
+                                </div>
+
+                                <!-- 場所名 -->
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                    <a href="{{ route('places.show', $place) }}" class="hover:text-blue-600">
+                                        {{ $place->name }}
+                                    </a>
+                                </h3>
+
+                                <!-- 評価 -->
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @if($i <= floor($place->rating_avg))
+                                                ★
+                                            @elseif($i - 0.5 <= $place->rating_avg)
+                                                ☆
+                                            @else
+                                                ☆
+                                            @endif
+                                        @endfor
+                                    </div>
+                                    <span class="ml-2 text-sm text-gray-600">
+                                        {{ number_format($place->rating_avg, 1) }} ({{ $place->rating_count }}件)
+                                    </span>
+                                </div>
+
+                                <!-- 説明 -->
+                                @if($place->description)
+                                    <p class="text-gray-600 text-sm mb-2 line-clamp-2">
+                                        {{ Str::limit($place->description, 100) }}
+                                    </p>
+                                @endif
+
+                                <!-- アクション -->
+                                <div class="flex justify-between items-center">
+                                    <a href="{{ route('places.show', $place) }}"
+                                       class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        詳細を見る
+                                    </a>
+
+                                    @auth
+                                        <div class="space-x-2">
+                                            <a href="{{ route('places.edit', $place) }}"
+                                               class="text-green-600 hover:text-green-800 text-sm">
+                                                編集
+                                            </a>
+                                            <form method="POST" action="{{ route('places.destroy', $place) }}"
+                                                  class="inline" onsubmit="return confirm('削除しますか？')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm">
+                                                    削除
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endauth
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             <!-- ページネーション -->
             <div class="mt-6">
