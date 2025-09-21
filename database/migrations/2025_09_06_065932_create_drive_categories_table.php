@@ -16,4 +16,16 @@ return new class extends Migration
             $table->string('name', 60);
             $table->string('icon', 60)->nullable();
             $table->unsignedInteger('sort')->default(1);
-            $table->boolean('is_active')->default
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('drive_categories');
+    }
+};

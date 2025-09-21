@@ -45,11 +45,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/places', [PlaceController::class, 'index'])->name('places.index');
 Route::get('/places/{place}', [PlaceController::class, 'show'])->name('places.show');
 
+// フリマ機能（一覧・詳細は認証不要）
+Route::get('/free', [FreeMarketController::class, 'index'])->name('freemarket.index');
+Route::get('/free/buy', [FreeMarketController::class, 'buy'])->name('freemarket.buy');
+Route::get('/free/{id}', [FreeMarketController::class, 'show'])->name('freemarket.show');
+
 // フリマ機能（認証必須）
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/free', [FreeMarketController::class, 'index'])->name('freemarket.index');
-    Route::get('/free/buy', [FreeMarketController::class, 'buy'])->name('freemarket.buy');
-    Route::get('/free/{id}', [FreeMarketController::class, 'show'])->name('freemarket.show');
     Route::get('/free/dm', [FreeMarketController::class, 'dm'])->name('freemarket.dm');
     Route::get('/free/create', [FreeMarketController::class, 'create'])->name('freemarket.create');
     Route::post('/free', [FreeMarketController::class, 'store'])->name('freemarket.store');

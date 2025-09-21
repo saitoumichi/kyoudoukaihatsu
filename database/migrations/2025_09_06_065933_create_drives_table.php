@@ -18,4 +18,16 @@ return new class extends Migration
             $table->timestamps();
 
             // 外部キー制約
-            
+            $table->foreign('place_id')->references('id')->on('places')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('drive_categories')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('drives');
+    }
+};

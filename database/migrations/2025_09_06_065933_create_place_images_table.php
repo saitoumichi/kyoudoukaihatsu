@@ -16,4 +16,19 @@ return new class extends Migration
             $table->unsignedBigInteger('place_id');
             $table->string('path', 255);
             $table->string('alt_text', 120)->nullable();
-            $table->unsignedInteger('sort_or
+            $table->unsignedInteger('sort_order')->default(1);
+            $table->timestamps();
+
+            // 外部キー制約
+            $table->foreign('place_id')->references('id')->on('places')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('place_images');
+    }
+};

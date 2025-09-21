@@ -238,7 +238,9 @@ class PlaceController extends Controller
                       ->with(['images', 'drive.category', 'karaoke', 'izakaya'])
                       ->paginate(12);
 
-        return view('places.index', compact('places', 'type'));
+        $categories = DriveCategory::active()->orderBy('sort')->get();
+
+        return view('places.index', compact('places', 'type', 'categories'));
     }
 
     /**
@@ -260,7 +262,8 @@ class PlaceController extends Controller
 
         $places = $query->recommended()->paginate(12);
         $searchQuery = $request->q;
+        $categories = DriveCategory::active()->orderBy('sort')->get();
 
-        return view('places.search', compact('places', 'searchQuery'));
+        return view('places.search', compact('places', 'searchQuery', 'categories'));
     }
 }
