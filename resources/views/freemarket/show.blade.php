@@ -52,17 +52,13 @@
                                 @auth
                                     @if($item->user_id === auth()->id())
                                         <div class="flex space-x-4">
-                                            <a href="{{ route('freemarket.edit', $item) }}"
-                                               class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                            <a href="{{ route('freemarket.my.edit', $item->id) }}">
                                                 編集する
                                             </a>
-                                            <form method="POST" action="{{ route('freemarket.destroy', $item) }}"
-                                                  class="inline" onsubmit="return confirm('削除しますか？')">
+                                            <form method="POST" action="{{ route('freemarket.my.destroy', $item->id) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                                    削除する
-                                                </button>
+                                                <button type="submit">削除する</button>
                                             </form>
                                         </div>
                                     @else
