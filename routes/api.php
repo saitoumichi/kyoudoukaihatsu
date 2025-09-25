@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\PlaceController;
+// use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PlaceController as PlaceApiController;
 
 // 認証API（認証不要）
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -18,8 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'user']);
 
     // 場所管理（認証必須）
-    Route::apiResource('places', PlaceController::class);
-    Route::get('/places/type/{type}', [PlaceController::class, 'byType']);
+Route::apiResource('places', PlaceApiController::class)
+     ->names('api.places');     Route::get('/places/type/{type}', [PlaceController::class, 'byType']);
     Route::get('/places/search', [PlaceController::class, 'search']);
 
     // カテゴリ管理（認証必須）
