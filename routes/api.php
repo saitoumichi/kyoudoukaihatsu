@@ -24,7 +24,7 @@ Route::apiResource('places', PlaceApiController::class)
     Route::get('/places/search', [PlaceController::class, 'search']);
 
     // カテゴリ管理（認証必須）
-    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('categories', CategoryController::class)->except(['store']);
     Route::post('/categories/sort', [CategoryController::class, 'updateSort']);
     Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive']);
 
@@ -38,8 +38,10 @@ Route::apiResource('places', PlaceApiController::class)
 });
 
 // 一般公開API（認証不要）
-Route::get('/places', [PlaceController::class, 'index']);
-Route::get('/places/{place}', [PlaceController::class, 'show']);
+Route::get('/places',               [PlaceApiController::class, 'index']);
+Route::get('/places/{place}',       [PlaceApiController::class, 'show']);
+Route::get('/places/type/{type}',   [PlaceApiController::class, 'byType']);
+Route::get('/places/search',        [PlaceApiController::class, 'search']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/active', [CategoryController::class, 'active']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
