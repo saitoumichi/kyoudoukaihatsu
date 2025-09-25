@@ -24,9 +24,9 @@ Route::apiResource('places', PlaceApiController::class)
     Route::get('/places/search', [PlaceController::class, 'search']);
 
     // カテゴリ管理（認証必須）
-    Route::apiResource('categories', CategoryController::class)->except(['store']);
-    Route::post('/categories/sort', [CategoryController::class, 'updateSort']);
-    Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive']);
+    Route::apiResource('categories', CategoryController::class)->except(['store'])->names('api.categories');
+    Route::post('/categories/sort', [CategoryController::class, 'updateSort'])->name('api.categories.sort');
+    Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive'])->name('api.categories.toggle-active');
 
     // 画像管理（認証必須）
     Route::post('/places/{place}/images', [ImageController::class, 'upload']);
@@ -42,6 +42,6 @@ Route::get('/places',               [PlaceApiController::class, 'index']);
 Route::get('/places/{place}',       [PlaceApiController::class, 'show']);
 Route::get('/places/type/{type}',   [PlaceApiController::class, 'byType']);
 Route::get('/places/search',        [PlaceApiController::class, 'search']);
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/active', [CategoryController::class, 'active']);
-Route::get('/categories/{category}', [CategoryController::class, 'show']);
+Route::get('/categories', [CategoryController::class, 'index'])->name('api.categories.index');
+Route::get('/categories/active', [CategoryController::class, 'active'])->name('api.categories.active');
+Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('api.categories.show');
