@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -182,9 +184,14 @@ class FreeMarketController extends Controller
      * 自分の出品物削除
      */
     public function destroy(string $id): RedirectResponse
-{
-    // TODO: 削除処理の実装
-    return redirect()->route('freemarket.my.index')
-                     ->with('success', '削除しました。');
-}
+    {
+        // 自分の出品だけ削除できるようにする（暫定: テーブル名やカラムは実際のスキーマに合わせて）
+        DB::table('free_market_items')
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->delete();
+
+        return redirect()->route('freemarket.my.index')
+                         ->with('success', '削除しました。');
+    }
 }
