@@ -55,7 +55,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/free/dm', [FreeMarketController::class, 'dm'])->name('freemarket.dm');
     Route::get('/free/create', [FreeMarketController::class, 'create'])->name('freemarket.create');
     Route::post('/free', [FreeMarketController::class, 'store'])->name('freemarket.store');
-    Route::resource('free/my', FreeMarketController::class)->only(['show', 'edit', 'update', 'destroy'])->names('freemarket.my')->parameters(['my' => 'id']);
+    Route::resource('free/my', FreeMarketController::class)
+        ->only(['index','show','edit','update','destroy'])
+        ->names('freemarket.my')
+        ->parameters(['my' => 'id']);
 });
 
 // プロフィール管理
