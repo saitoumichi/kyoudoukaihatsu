@@ -21,9 +21,15 @@
             <!-- Settings Dropdown -->
             @auth
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-500 mr-4">
                     {{ Auth::user()->name }}
                 </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="text-left w-full text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        ログアウト
+                    </button>
+                </form>
             </div>
             @else
             <div class="hidden sm:flex sm:items-center sm:ms-6">
