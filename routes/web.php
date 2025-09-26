@@ -58,6 +58,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/free/my', [FreeMarketController::class, 'my'])->name('freemarket.my');
     Route::get('/free/my/{id}', [FreeMarketController::class, 'myShow'])->name('freemarket.my.show');
     Route::resource('free.my', FreeMarketController::class)->only(['edit', 'update', 'destroy']);
+    Route::get('/free/my/{id}/edit', [FreeMarketController::class, 'edit'])->name('freemarket.my.edit');
+    Route::put('/free/my/{id}', [FreeMarketController::class, 'update'])->name('freemarket.my.update');
+    Route::delete('/free/my/{id}', [FreeMarketController::class, 'destroy'])->name('freemarket.my.destroy');
 });
 
 // プロフィール管理
