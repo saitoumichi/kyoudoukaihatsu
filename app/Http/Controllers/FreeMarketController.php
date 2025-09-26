@@ -182,9 +182,9 @@ class FreeMarketController extends Controller
      * 自分の出品物削除
      */
     public function destroy(string $id): RedirectResponse
-    {
-        // TODO: 削除処理の実装
-        return redirect()->route('freemarket.my')
-                        ->with('success', '削除しました。');
-    }
+{
+    // TODO: 削除処理の実装
+    return redirect()->route('freemarket.my.index')
+                     ->with('success', '削除しました。');
+}
 }
