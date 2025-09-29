@@ -59,9 +59,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/free/dm', [FreeMarketController::class, 'dm'])->name('freemarket.dm');
     Route::get('/free/create', [FreeMarketController::class, 'create'])->name('freemarket.create');
     Route::post('/free', [FreeMarketController::class, 'store'])->name('freemarket.store');
+    Route::get('/free/my', [FreeMarketController::class, 'my'])->name('freemarket.my');
+    Route::get('/free/my/{id}', [FreeMarketController::class, 'myShow'])->name('freemarket.my.show');
     Route::resource('free/my', FreeMarketController::class)
         ->names('freemarket.my')
-        ->only(['index','show','edit','update','destroy'])
+        ->only(['edit','update','destroy'])
+
         ->parameters(['my' => 'id']);
 });
 
