@@ -37,7 +37,6 @@ body {
   z-index: 0;
   pointer-events: none;
   opacity: 1;
-
   transition: opacity .25s ease;
   background:
     radial-gradient(1200px 800px at 50% -10%, rgba(147, 197, 253, 0.45), transparent 60%),
@@ -55,7 +54,6 @@ body {
   --ink:#0f172a;
   --card: rgba(255,255,255,.92);
   --line: rgba(15,23,42,.12);
-
   --muted: #64748b;
 }
 
@@ -64,7 +62,6 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-
   background-repeat: no-repeat;
   /* 強めの瞬き：スピードUP & 明るさUP */
   animation: twinkle 6s ease-in-out infinite alternate;
@@ -82,7 +79,6 @@ body {
   /* きらめき感を上げる軽いグロー */
   filter: drop-shadow(0 0 2px rgba(255,255,255,.28));
   opacity: .6;
-
   transition: opacity .25s ease;
 }
 
@@ -93,7 +89,6 @@ body {
   position: absolute;
   inset: 0;
   mix-blend-mode: screen;
-
   filter: saturate(1.03);
   background:
     radial-gradient(260px 200px at 16% 78%, rgba(147, 197, 253, .25), transparent 60%),
@@ -102,7 +97,6 @@ body {
     radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.18), transparent 40%);
   /* 背景の発光を少し抑えて、テキストの視認性UP */
   opacity: .82;
-
   transition: opacity .25s ease;
 }
 
@@ -122,14 +116,12 @@ body {
   --card: rgba(255,255,255,.92);
   --line: rgba(15,23,42,.12);
   --muted: #64748b;
-
 }
 
 /* ---------- App Shell ---------- */
 header {
   position: sticky;
   top: 0;
-
   z-index: 10;
   backdrop-filter: blur(8px) saturate(1.1);
   background: rgba(255,255,255,.86);
@@ -175,7 +167,6 @@ header {
   cursor: pointer;
   border: 1px solid var(--line);
   color: var(--ink);
-
   text-decoration: none;
   background: var(--card);
   transition: box-shadow .2s ease, transform .05s ease;
@@ -223,7 +214,6 @@ main {
 
 section.view {
   display: none;
-
 }
 
 /* show selected section */
@@ -275,7 +265,6 @@ section.view {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 14px;
-
   box-shadow: 0 8px 28px rgba(15,23,42,0.08);
   /* 常時ガラスUI（可読性を保つため白ベースは維持） */
   backdrop-filter: blur(10px) saturate(1.05);
@@ -298,7 +287,6 @@ section.view {
 }
 
 .pill {
-
   display:inline-flex;
   align-items:center;
   gap:6px;
@@ -310,7 +298,6 @@ section.view {
 }
 
 .btn {
-
   display:inline-block;
   padding:10px 14px;
   border-radius: 12px;
@@ -337,14 +324,12 @@ section.view {
 }
 
 .btn-row {
-
   display:flex;
   gap:10px;
   flex-wrap: wrap;
 }
 
 .kvs {
-
   display:grid;
   grid-template-columns: auto 1fr;
   gap:6px 12px;
@@ -357,7 +342,6 @@ section.view {
 }
 
 .toolbar {
-
   display:flex;
   gap:8px;
   flex-wrap: wrap;
@@ -369,7 +353,6 @@ section.view {
 }
 
 .toolbar .field {
-
   display:flex;
   align-items:center;
   gap:6px;
@@ -389,7 +372,6 @@ section.view {
 }
 
 form .field {
-
   display:grid;
   gap:6px;
   margin-bottom:12px;
@@ -422,7 +404,6 @@ form textarea {
 }
 
 .cols {
-
   display:grid;
   gap: 16px;
   grid-template-columns: 1.2fr .8fr;
@@ -445,14 +426,12 @@ form textarea {
 }
 
 .chips {
-
   display:flex;
   flex-wrap:wrap;
   gap:8px;
 }
 
 .chip {
-
   padding:6px 10px;
   border:1px solid var(--line);
   background:#fff;
@@ -479,7 +458,6 @@ th {
 }
 
 footer {
-
   text-align:center;
   color:var(--muted);
   font-size:12px;
@@ -489,7 +467,6 @@ footer {
 /* toggle helpers */
 .toggle {
   display:none;
-
 }
 
 /* Drive section specific styles */
@@ -589,7 +566,6 @@ input.filter:checked + label.chip {
 
 #sell-del-1:checked ~ #sell-md-del-1 {
   display:flex;
-
 }
 
 /* My page styles */
@@ -598,7 +574,6 @@ input.filter:checked + label.chip {
 #mpnew-cat-izakaya:checked ~ .tabs label[for="mpnew-cat-izakaya"] {
   outline: 2px solid var(--primary);
   box-shadow: 0 6px 16px rgba(37,99,235,.15);
-
   transform: translateY(-1px);
 }
 
@@ -628,7 +603,6 @@ input.filter:checked + label.chip {
 #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-drive,
 #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-karaoke {
   display:none;
-
 }
 
 /* ドライブ種類チップのON表現 */
@@ -638,5 +612,4 @@ input.filter:checked + label.chip {
   background:#eef2ff;
   border-color:#c7d2fe;
   box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset;
-
 }

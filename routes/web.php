@@ -64,7 +64,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('free/my', FreeMarketController::class)
         ->names('freemarket.my')
         ->only(['edit','update','destroy'])
-
         ->parameters(['my' => 'id']);
 });
 
