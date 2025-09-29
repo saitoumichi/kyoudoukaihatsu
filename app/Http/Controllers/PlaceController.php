@@ -15,51 +15,8 @@ class PlaceController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Place::with(['images', 'drive.category', 'karaoke', 'izakaya']);
-
-        // タイプ別フィルタ
-        if ($request->has('type') && $request->type) {
-            $query->ofType($request->type);
-        }
-
-        // カテゴリ別フィルタ（ドライブのみ）
-        if ($request->has('category_id') && $request->category_id) {
-            $query->whereHas('drive', function ($q) use ($request) {
-                $q->where('category_id', $request->category_id);
-            });
-        }
-
-        // 検索
-        if ($request->has('search') && $request->search) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('kana', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('tags', 'like', "%{$search}%");
-            });
-        }
-
-        // ソート
-        $sort = $request->get('sort', 'recommended');
-        switch ($sort) {
-            case 'name':
-                $query->orderBy('name');
-                break;
-            case 'rating':
-                $query->orderBy('rating_avg', 'desc');
-                break;
-            case 'campus_time':
-                $query->byCampusTime();
-                break;
-            default:
-                $query->recommended();
-        }
-
-        $places = $query->paginate(12);
-        $categories = DriveCategory::active()->orderBy('sort')->get();
-
-        return view('places.index', compact('places', 'categories'));
+        // page1のホーム画面（ログイン画面）を表示
+        return view('bkc.home');
     }
 
     /**
@@ -232,6 +189,21 @@ class PlaceController extends Controller
      */
     public function byType(string $type): View
     {
+        // page1の画面を表示
+        switch ($type) {
+            case 'drive':
+                return view('bkc.drive');
+            case 'karaoke':
+                return view('bkc.karaoke');
+            case 'izakaya':
+                return view('bkc.izakaya');
+            case 'free':
+                return view('bkc.fleamarket');
+            case 'register':
+                return view('bkc.mypage');
+        }
+        
+        // その他のタイプは従来通り
         $places = Place::ofType($type)
                       ->active()
                       ->recommended()
