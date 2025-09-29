@@ -5,12 +5,16 @@ use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FreeMarketController;
+use App\Http\Controllers\BkcAppController;
 use Illuminate\Support\Facades\Route;
 
 // トップページ
 Route::get('/', function () {
     return redirect()->route('places.index');
 });
+
+// BKCアプリ
+Route::get('/bkc', [BkcAppController::class, 'index'])->name('bkc.index');
 
 // ダッシュボード
 Route::get('/dashboard', function () {
