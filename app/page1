@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – HTML/CSSプロトタイプ</title>
+  <title>BKC生のためのアプリ – 実行プレビュー対応（青系・星空・ガラスUI切替）</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -11,42 +11,109 @@
       --ink: #0f172a;
       --muted: #64748b;
       --line: #e5e7eb;
-      --primary: #2563eb;  /* blue */
-      --accent: #a78bfa;   /* violet */
+      --primary: #2563eb; /* blue */
+      --accent: #a78bfa;  /* violet */
       --pink: #f472b6;
       --green: #10b981;
       --amber: #f59e0b;
       --rose: #f43f5e;
     }
+
     * { box-sizing: border-box; }
     html, body { height: 100%; }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
       color: var(--ink);
       background: linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
       line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== 実行プレビュー切替のための土台 ===== */
+    #bgprev { display: none; }
+    #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 1; transition: opacity .25s ease;
+      background:
+        radial-gradient(1200px 800px at 50% -10%, rgba(147, 197, 253, 0.45), transparent 60%),
+        radial-gradient(900px 600px at 100% 20%, rgba(196, 181, 253, 0.38), transparent 60%),
+        radial-gradient(700px 600px at 0% 80%, rgba(110, 231, 183, 0.28), transparent 60%),
+        radial-gradient(800px 500px at 50% 110%, rgba(59, 130, 246, 0.15), transparent 60%),
+        linear-gradient(180deg, #e0f2fe 0%, #dbeafe 50%, #f5f3ff 100%);
+    }
+    #app { position: relative; z-index: 1; min-height: 100dvh;
+      /* Readability-first variables */
+      --ink:#0f172a; --card: rgba(255,255,255,.92); --line: rgba(15,23,42,.12); --muted: #64748b;
+    }
+
+    /* ★ 青系の層 + 星の瞬き + グロウ（画像なしCSSのみ） */
+    #bg::before {
+      content: ""; position: absolute; inset: 0; background-repeat: no-repeat;
+      /* 強めの瞬き：スピードUP & 明るさUP */
+      animation: twinkle 6s ease-in-out infinite alternate;
+      background-image:
+        radial-gradient(1.4px 1.4px at 7% 12%, rgba(255,255,255,.95) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 18% 34%, rgba(255,255,255,.85) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 29% 72%, rgba(255,255,255,.9) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 41% 22%, rgba(255,255,255,.82) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 53% 68%, rgba(255,255,255,.85) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 66% 18%, rgba(255,255,255,.9) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 73% 56%, rgba(255,255,255,.86) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 82% 84%, rgba(255,255,255,.9) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 91% 28%, rgba(255,255,255,.95) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 12% 88%, rgba(255,255,255,.85) 52%, transparent 53%);
+      /* きらめき感を上げる軽いグロー */
+      filter: drop-shadow(0 0 2px rgba(255,255,255,.28));
+      opacity: .6; transition: opacity .25s ease;
+    }
+    #bgprev:checked ~ #bg::before { opacity: .9; }
+
+    #bg::after { content: ""; position: absolute; inset: 0; mix-blend-mode: screen; filter: saturate(1.03);
+      background:
+        radial-gradient(260px 200px at 16% 78%, rgba(147, 197, 253, .25), transparent 60%),
+        radial-gradient(320px 220px at 78% 18%, rgba(196, 181, 253, .22), transparent 60%),
+        radial-gradient(220px 220px at 80% 86%, rgba(110, 231, 183, .18), transparent 60%),
+        radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.18), transparent 40%);
+      /* 背景の発光を少し抑えて、テキストの視認性UP */
+      opacity: .82; transition: opacity .25s ease;
+    }
+
+    @keyframes twinkle {
+      0%   { opacity:.65; transform: translateY(0) scale(1); }
+      50%  { opacity:1;   transform: translateY(-.25px) scale(1.02); }
+      100% { opacity:.65; transform: translateY(-.5px) scale(1); }
+    }
+@media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
+
+    /* ★ チェック時：色変数を“暗色ガラスUI”に上書き（デモ用） */
+    #bgprev:checked ~ #app { 
+      --ink:#0f172a; 
+      --card: rgba(255,255,255,.92); 
+      --line: rgba(15,23,42,.12); 
+      --muted: #64748b; 
     }
 
     /* ---------- App Shell ---------- */
     header {
-      position: sticky; top: 0; z-index: 20;
-      backdrop-filter: saturate(1.2) blur(8px);
-      background: rgba(255,255,255,0.85);
-      border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(8px) saturate(1.1);
+      background: rgba(255,255,255,.86);
+      border-bottom: 1px solid rgba(15,23,42,.08);
+      transition: background .2s ease, border-color .2s ease;
     }
+
     .container { max-width: 1120px; margin: 0 auto; padding: 14px 20px; }
     .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .brand { font-weight: 800; letter-spacing: .5px; }
     .brand span { color: var(--primary); }
 
-    /* Tabs (CSS only) */
+    /* Tabs */
     .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
     .tabs label {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 12px; border-radius: 999px; cursor: pointer;
       border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-      background: #fff;
+      background: var(--card);
       transition: box-shadow .2s ease, transform .05s ease;
       user-select: none;
     }
@@ -60,15 +127,8 @@
     input[type="radio"].tab { display: none; }
     main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
     section.view { display: none; }
-    /* show selected section */
-    #tab-home:checked ~ main #home,
-    #tab-drive:checked ~ main #drive,
-    #tab-karaoke:checked ~ main #karaoke,
-    #tab-izakaya:checked ~ main #izakaya,
-    #tab-fleamarket:checked ~ main #fleamarket,
-    #tab-mypage:checked ~ main #mypage { display: block; }
 
-    /* highlight selected tab */
+    /* show selected section */
     #tab-home:checked ~ header label[for="tab-home"],
     #tab-drive:checked ~ header label[for="tab-drive"],
     #tab-karaoke:checked ~ header label[for="tab-karaoke"],
@@ -80,23 +140,34 @@
       transform: translateY(-1px);
     }
 
+    #tab-home:checked ~ main #home,
+    #tab-drive:checked ~ main #drive,
+    #tab-karaoke:checked ~ main #karaoke,
+    #tab-izakaya:checked ~ main #izakaya,
+    #tab-fleamarket:checked ~ main #fleamarket,
+    #tab-mypage:checked ~ main #mypage { display: block; }
+
     /* ---------- UI atoms ---------- */
     .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
     .grid { display: grid; gap: 14px; }
     .grid.cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-    .card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-      padding: 14px; box-shadow: 0 6px 20px rgba(15,23,42,0.04);
-    }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
+    /* 常時ガラスUI（可読性を保つため白ベースは維持） */
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  }
+    #bgprev:checked ~ #app .card { box-shadow: 0 6px 30px rgba(0,0,0,.24); backdrop-filter: blur(10px); }
     .card .title { font-weight: 700; margin: 2px 0 6px; }
     .meta { color: var(--muted); font-size: 13px; }
     .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#f1f5f9; border:1px solid var(--line); font-size:12px; }
-    .btn { display:inline-block; padding:10px 14px; border-radius: 12px; border: 1px solid var(--line); background:#fff; text-decoration:none; color:var(--ink); font-weight:700; }
+
+    .btn { display:inline-block; padding:10px 14px; border-radius: 12px; border: 1px solid var(--line); background: #fff; text-decoration:none; color:var(--ink); font-weight:700; }
     .btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
     .btn.ghost { background: #fff; }
     .btn.full { width: 100%; text-align: center; }
     .btn-row { display:flex; gap:10px; flex-wrap: wrap; }
+
     .kvs { display:grid; grid-template-columns: auto 1fr; gap:6px 12px; font-size: 14px; }
     .star { color: #f59e0b; font-size: 16px; }
 
@@ -126,489 +197,499 @@
     .cols { display:grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
     @media (max-width: 960px) { .cols { grid-template-columns: 1fr; } }
 
-    .empty {
-      padding: 24px; border: 2px dashed var(--line); border-radius: 16px; background: #fff;
-      display: grid; gap: 8px; justify-items: start;
-    }
+    .empty { padding: 24px; border: 2px dashed var(--line); border-radius: 16px; background: #fff; display: grid; gap: 8px; justify-items: start; }
 
-    /* chips */
     .chips { display:flex; flex-wrap:wrap; gap:8px; }
     .chip { padding:6px 10px; border:1px solid var(--line); background:#fff; border-radius:999px; font-size:12px; cursor:pointer; }
 
-    /* tables (simple) */
     table { width:100%; border-collapse: collapse; }
     th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--line); }
     th { font-size: 13px; color: var(--muted); font-weight: 700; }
 
     footer { text-align:center; color:var(--muted); font-size:12px; padding: 28px 16px; }
+
+    /* toggle helpers */
+    .toggle { display:none; }
   </style>
 </head>
 <body>
-  <!-- NAV RADIO TABS (no JS) -->
-  <input id="tab-home" class="tab" type="radio" name="nav" checked>
-  <input id="tab-drive" class="tab" type="radio" name="nav">
-  <input id="tab-karaoke" class="tab" type="radio" name="nav">
-  <input id="tab-izakaya" class="tab" type="radio" name="nav">
-  <input id="tab-fleamarket" class="tab" type="radio" name="nav">
-  <input id="tab-mypage" class="tab" type="radio" name="nav">
+  <!-- 実行プレビュー：背景切替トグル（チェックで有効） -->
+  <div id="bg" aria-hidden="true"></div>
 
-  <header>
-    <div class="container">
-      <div class="row" style="justify-content: space-between;">
-        <div class="row">
-          <div class="brand">BKC<span>アプリ</span></div>
+  <!-- ======= APP WRAPPER ======= -->
+  <div id="app">
+    <!-- NAV RADIO TABS (no JS) must be before header/main for CSS ~ selectors -->
+    <input id="tab-home" class="tab" type="radio" name="nav" checked>
+    <input id="tab-drive" class="tab" type="radio" name="nav">
+    <input id="tab-karaoke" class="tab" type="radio" name="nav">
+    <input id="tab-izakaya" class="tab" type="radio" name="nav">
+    <input id="tab-fleamarket" class="tab" type="radio" name="nav">
+    <input id="tab-mypage" class="tab" type="radio" name="nav">
+
+    <header>
+      <div class="container">
+        <div class="row" style="justify-content: space-between;">
+          <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
+          <nav class="tabs" aria-label="主要ナビゲーション">
+            <label for="tab-home" data-color="blue">ホーム</label>
+            <label for="tab-drive" data-color="violet">ドライブ</label>
+            <label for="tab-karaoke" data-color="rose">カラオケ</label>
+            <label for="tab-izakaya" data-color="amber">居酒屋</label>
+            <label for="tab-fleamarket" data-color="green">フリマ</label>
+            <label for="tab-mypage">マイページ</label>
+          </nav>
         </div>
-        <nav class="tabs" aria-label="主要ナビゲーション">
-          <label for="tab-home" data-color="blue">ホーム</label>
-          <label for="tab-drive" data-color="violet">ドライブ</label>
-          <label for="tab-karaoke" data-color="rose">カラオケ</label>
-          <label for="tab-izakaya" data-color="amber">居酒屋</label>
-          <label for="tab-fleamarket" data-color="green">フリマ</label>
-          <label for="tab-mypage">マイページ</label>
-        </nav>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main>
-    <!-- ================= HOME ================= -->
-    <section id="home" class="view" aria-labelledby="home-title">
-      <h1 id="home-title" class="h1">ホーム</h1>
-      <p class="sub">ショッピング / 景色 / 息抜き のカテゴリから探せます。</p>
-
-      <div class="grid cards">
-        <article class="card">
-          <div class="pill">ショッピング 🛍️</div>
-          <div class="title">おすすめスポット</div>
-          <p class="meta">大学からの時間やURL、詳細をカードで表示します。</p>
-          <div class="btn-row">
-            <a class="btn primary" href="#">一覧を見る</a>
-            <a class="btn ghost" href="#">URL</a>
-          </div>
-        </article>
-        <article class="card">
-          <div class="pill">景色 🌳</div>
-          <div class="title">キャンパス周辺の景色</div>
-          <p class="meta">写真スポットや自然の名所をピックアップ。</p>
-          <div class="btn-row">
-            <a class="btn primary" href="#">一覧を見る</a>
-            <a class="btn ghost" href="#">URL</a>
-          </div>
-        </article>
-        <article class="card">
-          <div class="pill">息抜き ☕</div>
-          <div class="title">リフレッシュに</div>
-          <p class="meta">短時間で行けるカフェや公園など。</p>
-          <div class="btn-row">
-            <a class="btn primary" href="#">一覧を見る</a>
-            <a class="btn ghost" href="#">URL</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ================= DRIVE ================= -->
-    <section id="drive" class="view" aria-labelledby="drive-title">
-      <h2 id="drive-title" class="h1">ドライブ</h2>
-      <p class="sub">おすすめ場所の作成や、リスト表示ができます。</p>
-
-      <div class="cols">
-        <div class="card">
-          <div class="title">おすすめ場所の作成</div>
+    <main>
+      <!-- ================= HOME ================= -->
+      <section id="home" class="view" aria-labelledby="home-title">
+        <h1 id="home-title" class="h1">ログイン</h1>
+        <p class="sub">BKCアプリへようこそ。メールアドレス・ユーザーネーム・パスワードを入力してログインしてください。アカウント未作成の方は下のボタンから新規作成へ。</p>
+        <div class="card" style="max-width:520px; margin: 0 auto;">
           <form>
-            <div class="field">
-              <label>店名 / スポット名</label>
-              <input type="text" placeholder="例）琵琶湖テラス" />
-            </div>
-            <div class="field">
-              <label>写真の掲載</label>
-              <input type="file" accept="image/*" />
-              <div class="hint">JPEG / PNG 推奨。最大 5MB。</div>
-            </div>
-            <div class="field">
-              <label>価格帯</label>
-              <select>
-                <option>無料</option>
-                <option>〜¥1,000</option>
-                <option>¥1,000〜¥3,000</option>
-                <option>¥3,000〜</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>詳細</label>
-              <textarea placeholder="見どころ / 注意点など"></textarea>
-            </div>
-            <div class="field">
-              <label>URL</label>
-              <input type="url" placeholder="https://example.com" />
-            </div>
-            <div class="field">
-              <label>大学からの時間</label>
-              <input type="text" placeholder="例）車で30分" />
-            </div>
-            <div class="btn-row">
-              <button type="button" class="btn primary">掲載</button>
-              <button type="reset" class="btn">消去</button>
-            </div>
-          </form>
-        </div>
-        <div class="card">
-          <div class="title">掲載一覧</div>
-          <div class="grid">
-            <article class="card" style="border-style: dashed;">
-              <div class="title">○○ 1</div>
-              <div class="meta">大学からの時間：車で20分</div>
-              <div class="btn-row" style="margin-top:8px;">
-                <a class="btn ghost" href="#">URL</a>
-                <a class="btn" href="#">詳細</a>
-              </div>
-            </article>
-            <article class="card" style="border-style: dashed;">
-              <div class="title">○○ 2</div>
-              <div class="meta">大学からの時間：徒歩10分</div>
-              <div class="btn-row" style="margin-top:8px;">
-                <a class="btn ghost" href="#">URL</a>
-                <a class="btn" href="#">詳細</a>
-              </div>
-            </article>
-            <article class="card" style="border-style: dashed;">
-              <div class="title">○○ 3</div>
-              <div class="meta">大学からの時間：バス15分</div>
-              <div class="btn-row" style="margin-top:8px;">
-                <a class="btn ghost" href="#">URL</a>
-                <a class="btn" href="#">詳細</a>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= KARAOKE ================= -->
-    <section id="karaoke" class="view" aria-labelledby="karaoke-title">
-      <h2 id="karaoke-title" class="h1">カラオケ</h2>
-      <p class="sub">持ち込み可否 / お酒の種類 / 機種（DAM・JOYSOUND）などで比較。</p>
-
-      <div class="toolbar" style="margin-bottom:12px;">
-        <div class="field"><span>並び替え</span>
-          <select>
-            <option>近い順</option>
-            <option>おすすめ順</option>
-            <option>安い順</option>
-          </select>
-        </div>
-        <div class="field"><span>予算</span>
-          <select>
-            <option>〜¥2,000</option>
-            <option>¥2,000〜¥3,000</option>
-            <option>¥3,000〜¥5,000</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid cards">
-        <article class="card">
-          <div class="title">店名 A</div>
-          <div class="meta">大学から○分</div>
-          <div class="kvs" style="margin:10px 0 6px;">
-            <div>持ち込み</div><div>あり</div>
-            <div>お酒の種類</div><div>麦焼酎</div>
-            <div>機種</div><div>DAM・JOYSOUND</div>
-          </div>
-          <div aria-label="評価" class="star">★★★★★</div>
-          <div class="btn-row" style="margin-top:8px;">
-            <a class="btn ghost" href="#">URL</a>
-            <a class="btn" href="#">詳細</a>
-          </div>
-        </article>
-        <article class="card">
-          <div class="title">店名 B</div>
-          <div class="meta">大学から○分</div>
-          <div class="kvs" style="margin:10px 0 6px;">
-            <div>持ち込み</div><div>あり</div>
-            <div>お酒の種類</div><div>米焼酎</div>
-            <div>機種</div><div>DAM・JOYSOUND</div>
-          </div>
-          <div aria-label="評価" class="star">★★★★☆</div>
-          <div class="btn-row" style="margin-top:8px;">
-            <a class="btn ghost" href="#">URL</a>
-            <a class="btn" href="#">詳細</a>
-          </div>
-        </article>
-        <article class="card">
-          <div class="title">店名 C</div>
-          <div class="meta">大学から○分</div>
-          <div class="kvs" style="margin:10px 0 6px;">
-            <div>持ち込み</div><div>なし</div>
-            <div>お酒の種類</div><div>芋焼酎</div>
-            <div>機種</div><div>JOYSOUND</div>
-          </div>
-          <div aria-label="評価" class="star">★★★☆☆</div>
-          <div class="btn-row" style="margin-top:8px;">
-            <a class="btn ghost" href="#">URL</a>
-            <a class="btn" href="#">詳細</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ================= IZAKAYA ================= -->
-    <section id="izakaya" class="view" aria-labelledby="izakaya-title">
-      <h2 id="izakaya-title" class="h1">居酒屋</h2>
-      <p class="sub">近い順 / おすすめ順 / 安い順 の3つのリストを想定。</p>
-
-      <div class="toolbar" style="margin-bottom:12px;">
-        <div class="field"><span>並び替え</span>
-          <select>
-            <option>近い順</option>
-            <option>おすすめ順</option>
-            <option>安い順</option>
-          </select>
-        </div>
-        <div class="field"><span>価格帯</span>
-          <select>
-            <option>¥2,000〜¥3,000</option>
-            <option>¥3,000〜¥4,000</option>
-            <option>¥4,000〜¥5,000</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid cards">
-        <article class="card">
-          <div class="pill">近い順</div>
-          <div class="title">1. 店名</div>
-          <div class="meta">大学から○分 / 予算 ¥2,000〜¥3,000</div>
-          <div class="btn-row" style="margin-top:8px;">
-            <a class="btn ghost" href="#">URL</a>
-            <a class="btn" href="#">詳細</a>
-          </div>
-        </article>
-        <article class="card">
-          <div class="pill">安い順</div>
-          <div class="title">1. 店名</div>
-          <div class="meta">大学から○分 / 予算 ¥2,000〜¥3,000</div>
-          <div class="btn-row" style="margin-top:8px;">
-            <a class="btn ghost" href="#">URL</a>
-            <a class="btn" href="#">詳細</a>
-          </div>
-        </article>
-        <article class="card">
-          <div class="pill">おすすめ順</div>
-          <div class="title">1. 店名</div>
-          <div class="meta">大学から○分 / 予算 ¥4,000〜¥5,000</div>
-          <div class="btn-row" style="margin-top:8px;">
-            <a class="btn ghost" href="#">URL</a>
-            <a class="btn" href="#">詳細</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- ================= FLEA MARKET ================= -->
-    <section id="fleamarket" class="view" aria-labelledby="fleamarket-title">
-      <h2 id="fleamarket-title" class="h1">フリマ（教科書）</h2>
-      <p class="sub">出品 / 買取 の2タブ。著者名・教科書名や科目で検索できます。</p>
-
-      <!-- sub tabs (CSS only) -->
-      <input id="sub-sell" class="tab" type="radio" name="fm" checked>
-      <input id="sub-buy" class="tab" type="radio" name="fm">
-      <div class="tabs" style="margin: 10px 0 14px;">
-        <label for="sub-sell" data-color="green">出品</label>
-        <label for="sub-buy" data-color="amber">買取</label>
-      </div>
-
-      <!-- SELL -->
-      <div id="fm-sell" class="view">
-        <div class="cols">
-          <div class="card">
-            <div class="title">表紙の作成 / 掲載</div>
-            <form>
-              <div class="field">
-                <label>教科書の写真</label>
-                <input type="file" accept="image/*" />
-              </div>
-              <div class="field">
-                <label>教科書名</label>
-                <input type="text" placeholder="例）線形代数入門" />
-              </div>
-              <div class="field">
-                <label>大学からの距離 / 時間</label>
-                <input type="text" placeholder="例）徒歩10分" />
-              </div>
-              <div class="field">
-                <label>金額</label>
-                <input type="number" placeholder="例）1500" />
-              </div>
-              <div class="field">
-                <label>お店 / 参考URL</label>
-                <input type="url" placeholder="https://example.com" />
-              </div>
-              <div class="field">
-                <label>詳細（利用した授業など）</label>
-                <textarea placeholder="例）経済学概論（2024年度）で使用"></textarea>
-              </div>
-
-              <div class="btn-row">
-                <button type="button" class="btn primary">掲載</button>
-                <button type="reset" class="btn">消去</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="card">
-            <div class="title">掲載一覧</div>
-            <div class="grid">
-              <article class="card" style="border-style:dashed;">
-                <div class="title">数学入門</div>
-                <div class="meta">¥1,500 / 大学から徒歩5分</div>
-                <div class="btn-row" style="margin-top:8px;">
-                  <a class="btn" href="#">詳細</a>
-                </div>
-              </article>
-              <article class="card" style="border-style:dashed;">
-                <div class="title">経済学の基礎</div>
-                <div class="meta">¥2,000 / 大学から徒歩10分</div>
-                <div class="btn-row" style="margin-top:8px;">
-                  <a class="btn" href="#">詳細</a>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BUY (SEARCH) -->
-      <div id="fm-buy" class="view">
-        <div class="card">
-          <div class="title">検索機能</div>
-          <div class="toolbar" style="margin:8px 0 12px;">
-            <div class="field"><span>著者名</span><input type="text" placeholder="例）山田 太郎"></div>
-            <div class="field"><span>教科書名</span><input type="text" placeholder="例）統計学入門"></div>
-            <div class="field"><span>科目</span>
-              <select>
-                <option>指定なし</option>
-                <option>物理</option>
-                <option>経済</option>
-                <option>数学</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid cards">
-            <article class="card">
-              <div class="title">1. 物理基礎</div>
-              <div class="meta">掲載者：user123 / ¥1,000</div>
-              <div class="kvs" style="margin:10px 0;">
-                <div>受け取り方法</div><div>直接 / 郵送</div>
-              </div>
-              <div class="btn-row">
-                <a class="btn" href="#">納得</a>
-                <a class="btn ghost" href="#">交渉</a>
-              </div>
-            </article>
-            <article class="card">
-              <div class="title">2. 経済学概論</div>
-              <div class="meta">掲載者：bkc_seller / ¥1,800</div>
-              <div class="kvs" style="margin:10px 0;">
-                <div>受け取り方法</div><div>直接</div>
-              </div>
-              <div class="btn-row">
-                <a class="btn" href="#">納得</a>
-                <a class="btn ghost" href="#">交渉</a>
-              </div>
-            </article>
-            <article class="card">
-              <div class="title">3. 線形代数</div>
-              <div class="meta">掲載者：math4life / ¥2,400</div>
-              <div class="kvs" style="margin:10px 0;">
-                <div>受け取り方法</div><div>郵送</div>
-              </div>
-              <div class="btn-row">
-                <a class="btn" href="#">納得</a>
-                <a class="btn ghost" href="#">交渉</a>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-
-      <style>
-        /* sub tab show/hide for fleamarket */
-        #sub-sell:checked ~ #fm-sell { display:block; }
-        #sub-sell:checked ~ #fm-buy { display:none; }
-        #sub-buy:checked  ~ #fm-sell { display:none; }
-        #sub-buy:checked  ~ #fm-buy { display:block; }
-      </style>
-    </section>
-
-    <!-- ================= MY PAGE ================= -->
-    <section id="mypage" class="view" aria-labelledby="mypage-title">
-      <h2 id="mypage-title" class="h1">マイページ</h2>
-      <p class="sub">アカウント作成 / ログイン、あなたの掲載管理。</p>
-
-      <div class="cols">
-        <div class="card">
-          <div class="title">ログイン</div>
-          <form>
-            <div class="field">
-              <label>メールアドレス</label>
-              <input type="email" placeholder="you@example.com" />
-            </div>
-            <div class="field">
-              <label>パスワード</label>
-              <input type="password" placeholder="••••••••" />
-            </div>
+            <div class="field"><label>メールアドレス</label><input type="email" placeholder="you@example.com" /></div>
+            <div class="field"><label>ユーザーネーム</label><input type="text" placeholder="例）bkc_student" /></div>
+            <div class="field"><label>パスワード</label><input type="password" placeholder="••••••••" /></div>
             <div class="btn-row">
               <button type="button" class="btn primary">ログイン</button>
+              <label for="tab-mypage" class="btn">新規作成へ</label>
             </div>
+            <div class="hint">アカウントをお持ちでない方は「新規作成へ」を押してください。</div>
           </form>
         </div>
+      </section>
 
-        <div class="card">
-          <div class="title">アカウントの作成</div>
-          <form>
-            <div class="field">
-              <label>名 / 姓</label>
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="text" placeholder="名" />
-                <input type="text" placeholder="姓" />
+      <!-- ================= DRIVE ================= -->
+      <section id="drive" class="view" aria-labelledby="drive-title">
+        <h2 id="drive-title" class="h1">ドライブ</h2>
+        <p class="sub">上のタブで <strong>ショッピング / 景色 / 息抜き</strong> を切替。各スポットは「場所名・住所・大学からの時間・URL・詳細」を表示します。</p>
+        <input id="drive-shopping" class="tab" type="radio" name="drivecat" checked>
+        <input id="drive-scenery"  class="tab" type="radio" name="drivecat">
+        <input id="drive-break"    class="tab" type="radio" name="drivecat">
+        <div class="tabs" style="margin:8px 0 14px;">
+          <label for="drive-shopping" data-color="blue">ショッピング</label>
+          <label for="drive-scenery"  data-color="green">景色</label>
+          <label for="drive-break"    data-color="amber">息抜き</label>
+        </div>
+        <div class="drive-views">
+          <div id="drv-shopping-list" class="grid cards view">
+            <article class="card"><div class="title">三井アウトレットパーク 滋賀竜王</div>
+              <div class="kvs" style="margin:8px 0;">
+                <div>住所</div><div>滋賀県蒲生郡竜王町大字薬師字砂山1178-694</div>
+                <div>大学からの時間</div><div>車で30分</div>
+                <div>URL</div><div><a href="https://mitsui-shopping-park.com/mop/shiga/" target="_blank" rel="noopener">公式サイト</a></div>
+                <div>詳細</div><div>近畿最大級・約230ブランド。無料駐車場、館内Wi‑Fi・EV充電あり。</div>
               </div>
-            </div>
-            <div class="field">
-              <label>ユーザーネーム</label>
-              <input type="text" placeholder="例）bkc_student" />
-            </div>
-            <div class="field">
-              <label>メールアドレス</label>
-              <input type="email" placeholder="you@example.com" />
-            </div>
-            <div class="field">
-              <label>パスワード</label>
-              <input type="password" placeholder="8文字以上" />
-            </div>
-            <div class="btn-row">
-              <button type="button" class="btn primary">作成</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:16px;">
-        <div class="title">あなたの掲載</div>
-        <div class="empty">
-          <div class="title" style="margin:0">あなたが掲載した記録はありません</div>
-          <div class="btn-row">
-            <label for="tab-fleamarket" class="btn">フリマで掲載する</label>
-            <label for="tab-drive" class="btn">ドライブを掲載する</label>
+            </article>
+            <article class="card"><div class="title">エイスクエア（A‑SQUARE）</div>
+              <div class="kvs" style="margin:8px 0;">
+                <div>住所</div><div>滋賀県草津市西渋川1丁目23-1</div>
+                <div>大学からの時間</div><div>車で15分</div>
+                <div>URL</div><div><a href="https://asquare.ayaha.co.jp/" target="_blank" rel="noopener">公式サイト</a></div>
+                <div>詳細</div><div>駅前モール。駐車場3000台・2時間無料（購入で延長）。</div>
+              </div>
+            </article>
+          </div>
+          <div id="drv-scenery-list" class="grid cards view">
+            <article class="card"><div class="title">メタセコイア並木</div>
+              <div class="kvs" style="margin:8px 0;">
+                <div>住所</div><div>滋賀県高島市</div>
+                <div>大学からの時間</div><div>車で1時間45分</div>
+                <div>URL</div><div><a href="https://takashima-kanko.jp/spot/metasequoia.html" target="_blank" rel="noopener">公式案内</a></div>
+                <div>詳細</div><div>約2.4kmに約500本が続く並木道。路上駐停車NG。</div>
+              </div>
+            </article>
+          </div>
+          <div id="drv-break-list" class="grid cards view">
+            <article class="card"><div class="title">滋賀県立琵琶湖博物館</div>
+              <div class="kvs" style="margin:8px 0;">
+                <div>住所</div><div>滋賀県草津市下物町1091</div>
+                <div>大学からの時間</div><div>車で25分</div>
+                <div>URL</div><div><a href="https://www.biwahaku.jp/" target="_blank" rel="noopener">公式サイト</a></div>
+                <div>詳細</div><div>展示やトンネル水槽が見どころ。月曜休、9:30–17:00。</div>
+              </div>
+            </article>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+        <style>
+          #drive-shopping:checked ~ .tabs label[for="drive-shopping"],
+          #drive-scenery:checked   ~ .tabs label[for="drive-scenery"],
+          #drive-break:checked     ~ .tabs label[for="drive-break"] {
+            outline: 2px solid var(--primary); box-shadow: 0 6px 16px rgba(37,99,235,.15); transform: translateY(-1px);
+          }
+          #drive-shopping:checked ~ .drive-views #drv-shopping-list { display: grid; }
+          #drive-shopping:checked ~ .drive-views #drv-scenery-list,
+          #drive-shopping:checked ~ .drive-views #drv-break-list { display: none; }
+          #drive-scenery:checked ~ .drive-views #drv-scenery-list { display: grid; }
+          #drive-scenery:checked ~ .drive-views #drv-shopping-list,
+          #drive-scenery:checked ~ .drive-views #drv-break-list { display: none; }
+          #drive-break:checked ~ .drive-views #drv-break-list { display: grid; }
+          #drive-break:checked ~ .drive-views #drv-shopping-list,
+          #drive-break:checked ~ .drive-views #drv-scenery-list { display: none; }
+        </style>
+      </section>
 
-  <footer>
-    © BKCアプリ – HTML/CSSデモ。すべて静的UI（動作はダミー）
-  </footer>
-</body>
-</html>
+      <!-- ================= KARAOKE ================= -->
+      <section id="karaoke" class="view" aria-labelledby="karaoke-title">
+        <h2 id="karaoke-title" class="h1">カラオケ</h2>
+        <p class="sub">持ち込み可否 / 機種 / 営業時間 / 設備で比較できます（並び替えUIは削除）。</p>
+        <div class="grid cards">
+          <article class="card">
+            <div class="title">JOYJOY 南草津店</div>
+            <div class="meta">大学からの時間：車で10分</div>
+            <div class="kvs" style="margin:10px 0 6px;">
+              <div>住所</div><div>滋賀県草津市矢倉2丁目7-18</div>
+              <div>持ち込み</div><div>自由（夜はアルコール飲み放題）</div>
+              <div>機種</div><div>JOYSOUND / DAM（部屋ごとに選択）</div>
+              <div>営業時間</div><div>平日 10:00–翌5:00、金夜〜日朝は通し営業・土は24時間</div>
+              <div>設備</div><div>無料Wi‑Fi、ダーツ・ビリヤード併設</div>
+            </div>
+            <div aria-label="評価" class="star">★★★★☆</div>
+            <div class="btn-row" style="margin-top:8px;">
+              <a class="btn" href="#">URL</a>
+              <a class="btn ghost" href="#">詳細</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="title">ジャンカラ 草津駅東口店</div>
+            <div class="meta">大学からの時間：車で15分</div>
+            <div class="kvs" style="margin:10px 0 6px;">
+              <div>住所</div><div>滋賀県草津市大路1丁目11-9</div>
+              <div>持ち込み</div><div>自由</div>
+              <div>機種</div><div>JOYSOUND / DAM（部屋ごとに選択）</div>
+              <div>営業時間</div><div>24時間営業</div>
+              <div>設備</div><div>店内Wi‑Fi、HDMI貸出など</div>
+            </div>
+            <div aria-label="評価" class="star">★★★☆☆</div>
+            <div class="btn-row" style="margin-top:8px;">
+              <a class="btn" href="#">URL</a>
+              <a class="btn ghost" href="#">詳細</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ================= IZAKAYA ================= -->
+      <section id="izakaya" class="view" aria-labelledby="izakaya-title">
+        <h2 id="izakaya-title" class="h1">居酒屋</h2>
+        <p class="sub">絞り込み：<strong>安い / 近い / 飲み放題あり</strong>（UIのみ、デモ表示）。</p>
+        <div class="chips" style="margin-bottom:12px;">
+          <input id="f-cheap" type="checkbox" class="filter" hidden>
+          <label for="f-cheap" class="chip">安い</label>
+          <input id="f-near" type="checkbox" class="filter" hidden>
+          <label for="f-near" class="chip">近い</label>
+          <input id="f-nomihodai" type="checkbox" class="filter" hidden>
+          <label for="f-nomihodai" class="chip">飲み放題あり</label>
+        </div>
+        <style> input.filter:checked + label.chip { background: #eef2ff; border-color:#c7d2fe; box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset; } </style>
+        <div class="grid cards">
+          <article class="card"><div class="pill">例</div><div class="title">1. 店名</div><div class="meta">大学から○分 / 予算 ¥2,000〜¥3,000 / 飲み放題あり</div>
+            <div class="btn-row" style="margin-top:8px;"><a class="btn ghost" href="#">URL</a><a class="btn" href="#">詳細</a></div></article>
+          <article class="card"><div class="pill">例</div><div class="title">2. 店名</div><div class="meta">大学から○分 / 予算 ¥3,000〜¥4,000</div>
+            <div class="btn-row" style="margin-top:8px;"><a class="btn ghost" href="#">URL</a><a class="btn" href="#">詳細</a></div></article>
+          <article class="card"><div class="pill">例</div><div class="title">3. 店名</div><div class="meta">大学から○分 / 予算 ¥4,000〜¥5,000 / 飲み放題あり</div>
+            <div class="btn-row" style="margin-top:8px;"><a class="btn ghost" href="#">URL</a><a class="btn" href="#">詳細</a></div></article>
+        </div>
+      </section>
+
+      <!-- ================= FLEA MARKET ================= -->
+      <section id="fleamarket" class="view" aria-labelledby="fleamarket-title">
+        <h2 id="fleamarket-title" class="h1">フリマ（教科書）</h2>
+        <p class="sub">出品 / 買取 の2タブ。<strong>買取はキーワード1つで検索</strong>し、結果からDMできます。詳細は常に表示されます。</p>
+        <input id="sub-sell" class="tab" type="radio" name="fm" checked>
+        <input id="sub-buy" class="tab" type="radio" name="fm">
+        <div class="tabs" style="margin: 10px 0 14px;">
+          <label for="sub-sell" data-color="green">出品</label>
+          <label for="sub-buy" data-color="amber">買取</label>
+        </div>
+        <div id="fm-sell" class="view">
+          <div class="cols">
+            <div class="card">
+              <div class="title">表紙の作成 / 掲載</div>
+              <form>
+                <div class="field"><label>教科書の写真</label><input type="file" accept="image/*" /></div>
+                <div class="field"><label>教科書名</label><input type="text" placeholder="例）線形代数入門" /></div>
+                <div class="field"><label>大学からの距離 / 時間</label><input type="text" placeholder="例）徒歩10分" /></div>
+                <div class="field"><label>金額</label><input type="number" placeholder="例）1500" /></div>
+                <div class="field"><label>お店 / 参考URL</label><input type="url" placeholder="https://example.com" /></div>
+                <div class="field"><label>詳細（利用した授業など）</label><textarea placeholder="例）経済学概論（2024年度）で使用"></textarea></div>
+                <div class="btn-row"><button type="button" class="btn primary">掲載</button><button type="reset" class="btn">消去</button></div>
+              </form>
+            </div>
+            <div class="card">
+              <div class="title">あなたの掲載一覧（編集・削除）</div>
+              <div class="grid">
+                <article class="card" style="border-style:dashed;">
+                  <div class="title">数学入門</div>
+                  <div class="meta">¥1,500 / 大学から徒歩5分</div>
+                  <div class="btn-row" style="margin-top:8px;"><label for="sell-edit-1" class="btn">編集</label><label for="sell-del-1" class="btn ghost">削除</label></div>
+                  <input id="sell-edit-1" class="toggle" type="checkbox">
+                  <div class="edit-panel">
+                    <form>
+                      <div class="field"><label>教科書名</label><input type="text" value="数学入門" /></div>
+                      <div class="field"><label>金額</label><input type="number" value="1500" /></div>
+                      <div class="field"><label>距離/時間</label><input type="text" value="大学から徒歩5分" /></div>
+                      <div class="field"><label>URL</label><input type="url" placeholder="https://" /></div>
+                      <div class="field"><label>詳細</label><textarea>状態良好。書き込みなし。</textarea></div>
+                      <div class="btn-row"><label for="sell-edit-1" class="btn primary">保存</label><label for="sell-edit-1" class="btn">閉じる</label></div>
+                    </form>
+                  </div>
+                  <input id="sell-del-1" class="toggle" type="checkbox">
+                  <div id="sell-md-del-1" class="modal">
+                    <div class="modal-card">
+                      <div class="title">削除しますか？</div>
+                      <p class="meta">「数学入門」を削除すると元に戻せません。</p>
+                      <div class="btn-row" style="margin-top:10px;"><label for="sell-del-1" class="btn primary">削除する</label><label for="sell-del-1" class="btn">キャンセル</label></div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+          <style>
+            .edit-panel { display:none; margin-top:10px; border:1px dashed var(--line); border-radius:12px; padding:12px; background:#fff; }
+            #sell-edit-1:checked ~ .edit-panel { display:block; }
+            .modal { display:none; position: fixed; inset: 0; z-index: 60; background: rgba(15,23,42,.45); align-items: center; justify-content: center; padding: 20px; }
+            .modal-card { width: min(520px, 92vw); background: #fff; border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow: 0 20px 60px rgba(15,23,42,.25); }
+            #sell-del-1:checked ~ #sell-md-del-1 { display:flex; }
+          </style>
+        </div>
+
+        <div id="fm-buy" class="view">
+          <div class="card">
+            <div class="title">検索（キーワード1つ）</div>
+            <form role="search" class="toolbar" style="margin:8px 0 12px;">
+              <div class="field" style="flex:1 1 260px;"><input type="text" placeholder="例）統計 / 線形代数 / 山田太郎 / 経済学" aria-label="検索キーワード"/></div>
+              <button type="button" class="btn primary">検索</button>
+            </form>
+            <div class="grid cards">
+              <article class="card"><div class="title">1. 統計学入門</div><div class="meta">掲載者：bkc_stats / ¥1,800</div>
+                <div class="kvs" style="margin:10px 0;"><div>著者</div><div>東京太郎 ほか</div><div>科目</div><div>統計学（基礎）</div><div>状態</div><div>書き込み少しあり</div><div>詳細</div><div>第3版。</div></div>
+                <div class="btn-row" style="margin-top:6px;"><a class="btn" href="#">DM</a></div></article>
+            </div>
+          </div>
+        </div>
+        <style>
+          #sub-sell:checked ~ #fm-sell { display:block; }
+          #sub-sell:checked ~ #fm-buy { display:none; }
+          #sub-buy:checked  ~ #fm-sell { display:none; }
+          #sub-buy:checked  ~ #fm-buy { display:block; }
+        </style>
+      </section>
+
+      <!-- ================= MY PAGE ================= -->
+      <section id="mypage" class="view" aria-labelledby="mypage-title">
+        <h2 id="mypage-title" class="h1">マイページ</h2>
+        <p class="sub">ここでは <strong>ログアウト</strong>・<strong>パスワード変更</strong>・<strong>各カテゴリの掲載管理（作成 / 編集 / 削除）</strong> ができます。（デモUI）</p>
+
+        <!-- アカウント行 -->
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div><div class="title" style="margin-bottom:4px;">アカウント</div><div class="meta">ログイン中：<strong>bkc_student</strong>（例）</div></div>
+          <div class="btn-row"><label for="tab-home" class="btn">ログアウト</label></div>
+        </div>
+
+        <!-- パスワード変更 -->
+        <div class="card" style="margin-top:14px; max-width:720px;">
+          <div class="title">パスワード変更</div>
+          <form>
+            <div class="field"><label>現在のパスワード</label><input type="password" placeholder="現在のパスワード" /></div>
+            <div class="field"><label>新しいパスワード</label><input type="password" placeholder="8文字以上" /></div>
+            <div class="field"><label>新しいパスワード（確認）</label><input type="password" placeholder="もう一度入力" /></div>
+            <div class="btn-row"><button type="button" class="btn primary">更新する</button></div>
+          </form>
+        </div>
+
+        <!-- 掲載管理：新規作成 & 一覧/編集/削除 -->
+        <div class="cols" style="margin-top:14px;">
+          <!-- 新規作成 -->
+          <div class="card">
+            <div class="title">新しく掲載を作成</div>
+
+            <!-- 作成カテゴリ切替タブ -->
+            <input id="mpnew-cat-drive" class="tab" type="radio" name="mpnewcat" checked>
+            <input id="mpnew-cat-karaoke" class="tab" type="radio" name="mpnewcat">
+            <input id="mpnew-cat-izakaya" class="tab" type="radio" name="mpnewcat">
+            <div class="tabs" style="margin:10px 0 12px;">
+              <label for="mpnew-cat-drive" data-color="violet">ドライブ</label>
+              <label for="mpnew-cat-karaoke" data-color="rose">カラオケ</label>
+              <label for="mpnew-cat-izakaya" data-color="amber">居酒屋</label>
+            </div>
+
+            <div class="mpnew-forms">
+              <!-- ドライブ新規作成フォーム -->
+              <form id="mpnew-form-drive" class="view">
+                <div class="field"><label>名称</label><input type="text" placeholder="例）メタセコイア並木 / 三井アウトレット滋賀竜王" /></div>
+                <div class="field"><label>住所</label><input type="text" placeholder="例）滋賀県高島市… / 滋賀県蒲生郡竜王町…" /></div>
+                <div class="field"><label>大学からの時間</label><input type="text" placeholder="例）車で30分 / 1時間45分" /></div>
+                <div class="field"><label>URL</label><input type="url" placeholder="https://example.com" /></div>
+                <div class="field"><label>種類（ドライブ）</label>
+                  <div class="chips">
+                    <input id="mpnew-drive-type-shopping" type="radio" name="mpnew-drive-type" class="toggle" checked>
+                    <label for="mpnew-drive-type-shopping" class="chip">ショッピング</label>
+                    <input id="mpnew-drive-type-scenery" type="radio" name="mpnew-drive-type" class="toggle">
+                    <label for="mpnew-drive-type-scenery" class="chip">景色</label>
+                    <input id="mpnew-drive-type-break" type="radio" name="mpnew-drive-type" class="toggle">
+                    <label for="mpnew-drive-type-break" class="chip">息抜き</label>
+                  </div>
+                  <div class="hint">※ ドライブは「ショッピング / 景色 / 息抜き」から1つ選択</div>
+                </div>
+                <div class="field"><label>詳細</label><textarea placeholder="例）見どころ・設備・注意事項など"></textarea></div>
+                <div class="btn-row"><button type="button" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
+              </form>
+
+              <!-- カラオケ新規作成フォーム -->
+              <form id="mpnew-form-karaoke" class="view">
+                <div class="field"><label>店名</label><input type="text" placeholder="例）JOYJOY 南草津店" /></div>
+                <div class="field"><label>住所</label><input type="text" placeholder="例）滋賀県草津市…" /></div>
+                <div class="field"><label>持ち込み</label><input type="text" placeholder="例）自由（夜はアルコール飲み放題）" /></div>
+                <div class="field"><label>機種</label><input type="text" placeholder="例）JOYSOUND / DAM" /></div>
+                <div class="field"><label>営業時間</label><input type="text" placeholder="例）24時間 / 平日10:00–翌5:00" /></div>
+                <div class="field"><label>設備</label><input type="text" placeholder="例）店内Wi‑Fi、HDMI貸出、ダーツ等" /></div>
+                <div class="field"><label>URL</label><input type="url" placeholder="https://example.com" /></div>
+                <div class="field"><label>詳細</label><textarea placeholder="例）予約可否、注意事項など"></textarea></div>
+                <div class="btn-row"><button type="button" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
+              </form>
+
+              <!-- 居酒屋新規作成フォーム -->
+              <form id="mpnew-form-izakaya" class="view">
+                <div class="field"><label>店名</label><input type="text" placeholder="例）○○酒場" /></div>
+                <div class="field"><label>距離/時間</label><input type="text" placeholder="例）大学から徒歩8分" /></div>
+                <div class="field"><label>予算</label><input type="text" placeholder="例）¥2,500〜¥3,500" /></div>
+                <div class="field"><label>特徴</label><input type="text" placeholder="例）飲み放題あり / 個室 / 喫煙可" /></div>
+                <div class="field"><label>URL</label><input type="url" placeholder="https://example.com" /></div>
+                <div class="field"><label>詳細</label><textarea placeholder="例）席数、予約、注意事項など"></textarea></div>
+                <div class="btn-row"><button type="button" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
+              </form>
+            </div>
+
+            <style>
+              /* 作成タブの強調 */
+              #mpnew-cat-drive:checked ~ .tabs label[for="mpnew-cat-drive"],
+              #mpnew-cat-karaoke:checked ~ .tabs label[for="mpnew-cat-karaoke"],
+              #mpnew-cat-izakaya:checked ~ .tabs label[for="mpnew-cat-izakaya"] {
+                outline: 2px solid var(--primary); box-shadow: 0 6px 16px rgba(37,99,235,.15); transform: translateY(-1px);
+              }
+              /* フォーム表示切替 */
+              #mpnew-cat-drive:checked ~ .mpnew-forms #mpnew-form-drive { display:block; }
+              #mpnew-cat-drive:checked ~ .mpnew-forms #mpnew-form-karaoke,
+              #mpnew-cat-drive:checked ~ .mpnew-forms #mpnew-form-izakaya { display:none; }
+              #mpnew-cat-karaoke:checked ~ .mpnew-forms #mpnew-form-karaoke { display:block; }
+              #mpnew-cat-karaoke:checked ~ .mpnew-forms #mpnew-form-drive,
+              #mpnew-cat-karaoke:checked ~ .mpnew-forms #mpnew-form-izakaya { display:none; }
+              #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-izakaya { display:block; }
+              #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-drive,
+              #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-karaoke { display:none; }
+              /* ドライブ種類チップのON表現 */
+              #mpnew-drive-type-shopping:checked + label.chip,
+              #mpnew-drive-type-scenery:checked + label.chip,
+              #mpnew-drive-type-break:checked + label.chip { background:#eef2ff; border-color:#c7d2fe; box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset; }
+            </style>
+          </div>
+
+          <!-- 一覧 / 編集 / 削除 -->
+          <div class="card">
+            <div class="title">あなたの掲載一覧（カテゴリ別）</div>
+
+            <!-- カテゴリ切替タブ -->
+            <input id="mp-cat-drive" class="tab" type="radio" name="mpcat" checked>
+            <input id="mp-cat-karaoke" class="tab" type="radio" name="mpcat">
+            <input id="mp-cat-izakaya" class="tab" type="radio" name="mpcat">
+            <div class="tabs" style="margin:10px 0 12px;">
+              <label for="mp-cat-drive" data-color="violet">ドライブ</label>
+              <label for="mp-cat-karaoke" data-color="rose">カラオケ</label>
+              <label for="mp-cat-izakaya" data-color="amber">居酒屋</label>
+            </div>
+
+            <div class="mp-lists">
+              <!-- ドライブ一覧 -->
+              <div id="mp-list-drive" class="grid cards view">
+                <article class="card" style="border-style:dashed;">
+                  <div class="title">（例）三井アウトレットパーク 滋賀竜王</div>
+                  <div class="meta">車で30分 / <a href="https://mitsui-shopping-park.com/mop/shiga/" target="_blank" rel="noopener">公式サイト</a></div>
+                  <div class="btn-row" style="margin-top:8px;">
+                    <label for="mp-edit-drive-1" class="btn">編集</label>
+                    <label for="mp-del-drive-1" class="btn ghost">削除</label>
+                  </div>
+                  <input id="mp-edit-drive-1" class="toggle" type="checkbox">
+                  <div class="edit-panel">
+                    <form>
+                      <div class="field"><label>名称</label><input type="text" value="三井アウトレットパーク 滋賀竜王" /></div>
+                      <div class="field"><label>住所</label><input type="text" value="滋賀県蒲生郡竜王町大字薬師字砂山1178-694" /></div>
+                      <div class="field"><label>大学からの時間</label><input type="text" value="車で30分" /></div>
+                      <div class="field"><label>URL</label><input type="url" value="https://mitsui-shopping-park.com/mop/shiga/" /></div>
+                      <div class="field"><label>詳細</label><textarea>近畿最大級・約230ブランド。無料駐車場、館内Wi‑Fi・EV充電あり。</textarea></div>
+                      <div class="btn-row"><label for="mp-edit-drive-1" class="btn primary">保存</label><label for="mp-edit-drive-1" class="btn">閉じる</label></div>
+                    </form>
+                  </div>
+                  <input id="mp-del-drive-1" class="toggle" type="checkbox">
+                  <div id="mp-md-del-drive-1" class="modal">
+                    <div class="modal-card">
+                      <div class="title">削除しますか？</div>
+                      <p class="meta">この掲載を削除すると元に戻せません。</p>
+                      <div class="btn-row" style="margin-top:10px;"><label for="mp-del-drive-1" class="btn primary">削除する</label><label for="mp-del-drive-1" class="btn">キャンセル</label></div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <!-- カラオケ一覧 -->
+              <div id="mp-list-karaoke" class="grid cards view">
+                <article class="card" style="border-style:dashed;">
+                  <div class="title">（例）JOYJOY 南草津店</div>
+                  <div class="meta">持ち込み：自由 / 機種：JOYSOUND・DAM / 営業時間：平日10:00–翌5:00</div>
+                  <div class="btn-row" style="margin-top:8px;">
+                    <label for="mp-edit-karaoke-1" class="btn">編集</label>
+                    <label for="mp-del-karaoke-1" class="btn ghost">削除</label>
+                  </div>
+                  <input id="mp-edit-karaoke-1" class="toggle" type="checkbox">
+                  <div class="edit-panel">
+                    <form>
+                      <div class="field"><label>店名</label><input type="text" value="JOYJOY 南草津店" /></div>
+                      <div class="field"><label>住所</label><input type="text" value="滋賀県草津市矢倉2丁目7-18" /></div>
+                      <div class="field"><label>持ち込み</label><input type="text" value="自由（夜はアルコール飲み放題）" /></div>
+                      <div class="field"><label>機種</label><input type="text" value="JOYSOUND / DAM" /></div>
+                      <div class="field"><label>営業時間</label><input type="text" value="平日 10:00–翌5:00、金夜〜日朝は通し・土24h" /></div>
+                      <div class="field"><label>設備</label><input type="text" value="無料Wi‑Fi、ダーツ・ビリヤード併設" /></div>
+                      <div class="btn-row"><label for="mp-edit-karaoke-1" class="btn primary">保存</label><label for="mp-edit-karaoke-1" class="btn">閉じる</label></div>
+                    </form>
+                  </div>
+                  <input id="mp-del-karaoke-1" class="toggle" type="checkbox">
+                  <div id="mp-md-del-karaoke-1" class="modal">
+                    <div class="modal-card">
+                      <div class="title">削除しますか？</div>
+                      <p class="meta">この掲載を削除すると元に戻せません。</p>
+                      <div class="btn-row" style="margin-top:10px;"><label for="mp-del-karaoke-1" class="btn primary">削除する</label><label for="mp-del-karaoke-1" class="btn">キャンセル</label></div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <!-- 居酒屋一覧 -->
+              <div id="mp-list-izakaya" class="grid cards view">
+                <article class="card" style="border-style:dashed;">
+                  <div class="title">（例）○○酒場</div>
+                  <div class="meta">大学から徒歩8分 / 予算 ¥2,500〜¥3,500 / 飲み放題あり</div>
+                  <div class="btn-row" style="margin-top:8px;">
+                    <label for="mp-edit-izakaya-1" class="btn">編集</label>
+                    <label for="mp-del-izakaya-1" class="btn ghost">削除</label>
+                  </div>
+                  <input id="mp-edit-izakaya-1" class="toggle" type="checkbox">
+                  <div class="edit-panel">
+                    <form>
+                      <div class="field"><label>店名</label><input type="text" value="○○酒場" /></div>
+                      <div class="field"><label>距離/時間</label><input type="text" value="大学から徒歩8分" /></div>
+                      <div class="field"><label>予算</label><input type="text" value="¥2,500〜¥3,500" /></div>
+                      <div class="field"><label>特徴</label><input type="text" value="飲み放題あり" /></div>
+                      <div class="field"><label>URL</label><input type="url" placeholder="https://" /></div>
+                      <div class="field"><label>詳細</label><textarea>席数や予約可否などを記入</textarea></div>
+                      <div class="btn-row"><label for="mp-edit-izakaya-1" class="btn primary">保存</label><label for="mp-edit-izakaya-1" class="btn">閉じる</label></div>
+                    </form>
+                  </div>
+                  <input id="mp-del-izakaya-1" class="toggle" type="checkbox">
+                  <div id="mp-md-del-izakaya-1" class="modal">
+                    <div class="modal-card">
+                      <div class="title">削除しますか？</div>
+                      <p class="meta">この掲載を削除すると元に戻せません。</p>
+                      <div class="btn-row" style="margin-top:10px;"><label for="mp-del-izakaya-1" class="
