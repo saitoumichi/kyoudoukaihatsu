@@ -5,12 +5,16 @@ use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FreeMarketController;
+use App\Http\Controllers\BkcAppController;
 use Illuminate\Support\Facades\Route;
 
 // トップページ
 Route::get('/', function () {
     return redirect()->route('places.index');
 });
+
+// BKCアプリ
+Route::get('/bkc', [BkcAppController::class, 'index'])->name('bkc.index');
 
 // ダッシュボード
 Route::get('/dashboard', function () {
@@ -57,7 +61,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/free', [FreeMarketController::class, 'store'])->name('freemarket.store');
     Route::get('/free/my', [FreeMarketController::class, 'my'])->name('freemarket.my');
     Route::get('/free/my/{id}', [FreeMarketController::class, 'myShow'])->name('freemarket.my.show');
-    Route::resource('free.my', FreeMarketController::class)->only(['edit', 'update', 'destroy']);
+    Route::resource('free/my', FreeMarketController::class)
+        ->names('freemarket.my')
+        ->only(['edit','update','destroy'])
+        ->parameters(['my' => 'id']);
 });
 
 // プロフィール管理

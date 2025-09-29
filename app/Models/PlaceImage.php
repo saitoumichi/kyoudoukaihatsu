@@ -34,4 +34,4 @@ class PlaceImage extends Model
         return $query->orderBy('sort_order')->orderBy('id');
     }
 
- 
+}
