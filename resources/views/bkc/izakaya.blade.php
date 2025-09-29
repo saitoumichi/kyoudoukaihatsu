@@ -263,12 +263,36 @@
         </div>
         <style> input.filter:checked + label.chip { background: #eef2ff; border-color:#c7d2fe; box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset; } </style>
         <div class="grid cards">
-          <article class="card"><div class="pill">例</div><div class="title">1. 店名</div><div class="meta">大学から○分 / 予算 ¥2,000〜¥3,000 / 飲み放題あり</div>
-            <div class="btn-row" style="margin-top:8px;"><a class="btn ghost" href="#">URL</a><a class="btn" href="#">詳細</a></div></article>
-          <article class="card"><div class="pill">例</div><div class="title">2. 店名</div><div class="meta">大学から○分 / 予算 ¥3,000〜¥4,000</div>
-            <div class="btn-row" style="margin-top:8px;"><a class="btn ghost" href="#">URL</a><a class="btn" href="#">詳細</a></div></article>
-          <article class="card"><div class="pill">例</div><div class="title">3. 店名</div><div class="meta">大学から○分 / 予算 ¥4,000〜¥5,000 / 飲み放題あり</div>
-            <div class="btn-row" style="margin-top:8px;"><a class="btn ghost" href="#">URL</a><a class="btn" href="#">詳細</a></div></article>
+          <article class="card">
+            <div class="title">串カツ田中（草津/南草津）</div>
+            <div class="meta">BKCから徒歩約20分</div>
+            <div class="kvs" style="margin:10px 0 6px;">
+              <div>飲み放題</div><div>あり（約60種、120分／単品1,782円 税込。学生・女子会向け90分1,001円・120分1,408円などの設定あり）</div>
+              <div>価格帯目安</div><div>飲み放題付きコース4,000円〜（例：16品・120分飲み放題付）</div>
+              <div>メモ</div><div>店舗により内容・条件が異なるので予約ページで要確認。</div>
+            </div>
+            <div aria-label="評価" class="star">★★★★☆</div>
+          </article>
+          <article class="card">
+            <div class="title">ミライザカ（南草津駅前店）</div>
+            <div class="meta">BKCから徒歩約40分</div>
+            <div class="kvs" style="margin:10px 0 6px;">
+              <div>飲み放題</div><div>あり（単品120分1,980円 税込。コースは120〜150分飲み放題付が多い）</div>
+              <div>価格帯目安</div><div>飲み放題付きコース3,300〜6,000円程度（例：120分3,300円／150分4,000〜6,000円）</div>
+              <div>メモ</div><div>クーポンで割引・延長あり。ラストオーダーは30分前が基本。</div>
+            </div>
+            <div aria-label="評価" class="star">★★★☆☆</div>
+          </article>
+          <article class="card">
+            <div class="title">あ・うん</div>
+            <div class="meta">草津市野路東6-1-15 エミナール南草津2F（南草津駅から徒歩15分程度）</div>
+            <div class="kvs" style="margin:10px 0 6px;">
+              <div>営業時間</div><div>17:00～翌3:00（L.O.2:00、ドリンクL.O.2:30）</div>
+              <div>総席数</div><div>約50席。掘りごたつ席・座敷席あり。貸切可能人数 40名～。</div>
+              <div>予算目安</div><div>通常平均 1,500円程度、宴会時平均 3,000円前後。</div>
+            </div>
+            <div aria-label="評価" class="star">★★★☆☆</div>
+          </article>
         </div>
       </section>
     </main>
