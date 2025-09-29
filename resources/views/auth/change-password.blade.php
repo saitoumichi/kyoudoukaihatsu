@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – プロフィール</title>
+  <title>BKC生のためのアプリ – パスワード変更</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -139,10 +139,6 @@
     main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
 
     footer { text-align:center; color:var(--muted); font-size:12px; padding: 28px 16px; }
-
-    /* エラーメッセージ */
-    .error { color: var(--rose); font-size: 12px; margin-top: 4px; }
-    .success { color: var(--green); font-size: 12px; margin-top: 4px; padding: 8px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -158,78 +154,39 @@
           <nav style="display:flex; gap:8px;">
             <a href="/places/type/register" class="btn">マイページに戻る</a>
           </nav>
-                </div>
-            </div>
+        </div>
+      </div>
     </header>
 
     <main>
-      <h1 class="h1">プロフィール</h1>
-      <p class="sub">パスワードの変更とアカウント管理ができます。</p>
+      <h1 class="h1">パスワード変更</h1>
+      <p class="sub">現在のパスワードを入力し、新しいパスワードに変更してください。</p>
 
-      <!-- パスワード変更 -->
-      <div class="card" style="margin-bottom: 20px;">
+      <div class="card" style="margin-top:14px; max-width:720px;">
         <div class="title">パスワード変更</div>
-        <form method="post" action="{{ route('password.update') }}">
-          @csrf
-          @method('put')
-          
+        <form id="form-password">
           <div class="field">
             <label for="pw-current">現在のパスワード</label>
             <input id="pw-current" type="password" placeholder="現在のパスワード"
-                   name="current_password" autocomplete="current-password" required />
-            @if($errors->updatePassword->get('current_password'))
-              <div class="error">{{ $errors->updatePassword->first('current_password') }}</div>
-            @endif
+                   name="currentPassword" autocomplete="current-password" required />
           </div>
           <div class="field">
             <label for="pw-new">新しいパスワード</label>
             <input id="pw-new" type="password" placeholder="8文字以上"
-                   name="password" minlength="8" autocomplete="new-password" required />
+                   name="newPassword" minlength="8" autocomplete="new-password" required />
             <div class="hint">英数字・記号を混ぜると安全性が上がります。</div>
-            @if($errors->updatePassword->get('password'))
-              <div class="error">{{ $errors->updatePassword->first('password') }}</div>
-            @endif
           </div>
           <div class="field">
             <label for="pw-new-confirm">新しいパスワード（確認）</label>
             <input id="pw-new-confirm" type="password" placeholder="もう一度入力"
-                   name="password_confirmation" minlength="8" autocomplete="new-password" required />
-            @if($errors->updatePassword->get('password_confirmation'))
-              <div class="error">{{ $errors->updatePassword->first('password_confirmation') }}</div>
-            @endif
-                </div>
+                   name="newPasswordConfirm" minlength="8" autocomplete="new-password" required />
+          </div>
           <div class="btn-row">
-            <button type="submit" class="btn primary">パスワードを更新</button>
-            </div>
-
-          @if (session('status') === 'password-updated')
-            <div class="success">パスワードが更新されました。</div>
-          @endif
+            <button type="button" class="btn primary">更新する</button>
+          </div>
         </form>
       </div>
-
-      <!-- アカウント削除 -->
-      <div class="card">
-        <div class="title">アカウント削除</div>
-        <p class="meta" style="margin-bottom: 12px;">アカウントを削除すると、すべてのデータが永久に削除されます。この操作は元に戻せません。</p>
-        <form method="post" action="{{ route('profile.destroy') }}">
-          @csrf
-          @method('delete')
-          
-          <div class="field">
-            <label for="password">パスワード</label>
-            <input id="password" type="password" name="password" placeholder="削除を確認するためにパスワードを入力" required />
-            @if($errors->get('password'))
-              <div class="error">{{ $errors->first('password') }}</div>
-            @endif
-                </div>
-          
-          <div class="btn-row">
-            <button type="submit" class="btn" style="background: var(--rose); color: white; border-color: var(--rose);">アカウントを削除</button>
-            </div>
-        </form>
-        </div>
     </main>
-    </div>
+  </div>
 </body>
 </html>

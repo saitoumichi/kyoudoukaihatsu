@@ -1,257 +1,289 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('新しい場所を追加') }}
-        </h2>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BKC生のためのアプリ – 新しく掲載を作成</title>
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e5e7eb;
+      --primary: #2563eb; /* blue */
+      --accent: #a78bfa;  /* violet */
+      --pink: #f472b6;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+    }
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form method="POST" action="{{ route('places.store') }}" class="space-y-6">
-                        @csrf
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
 
-                        <!-- 基本情報 -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">基本情報</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <x-input-label for="name" :value="__('場所名')" />
-                                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
-                                                  :value="old('name')" required autofocus />
-                                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                                </div>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-                                <div>
-                                    <x-input-label for="kana" :value="__('読み方（任意）')" />
-                                    <x-text-input id="kana" class="block mt-1 w-full" type="text" name="kana"
-                                                  :value="old('kana')" />
-                                    <x-input-error :messages="$errors->get('kana')" class="mt-2" />
-                                </div>
+    /* ===== 実行プレビュー切替のための土台 ===== */
+    #bgprev { display: none; }
+    #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 1; transition: opacity .25s ease;
+      background:
+        radial-gradient(1200px 800px at 50% -10%, rgba(147, 197, 253, 0.45), transparent 60%),
+        radial-gradient(900px 600px at 100% 20%, rgba(196, 181, 253, 0.38), transparent 60%),
+        radial-gradient(700px 600px at 0% 80%, rgba(110, 231, 183, 0.28), transparent 60%),
+        radial-gradient(800px 500px at 50% 110%, rgba(59, 130, 246, 0.15), transparent 60%),
+        linear-gradient(180deg, #e0f2fe 0%, #dbeafe 50%, #f5f3ff 100%);
+    }
+    #app { position: relative; z-index: 1; min-height: 100dvh;
+      /* Readability-first variables */
+      --ink:#0f172a; --card: rgba(255,255,255,.92); --line: rgba(15,23,42,.12); --muted: #64748b;
+    }
 
-                                <div>
-                                    <x-input-label for="tel" :value="__('電話番号（任意）')" />
-                                    <x-text-input id="tel" class="block mt-1 w-full" type="tel" name="tel"
-                                                  :value="old('tel')" />
-                                    <x-input-error :messages="$errors->get('tel')" class="mt-2" />
-                                </div>
+    /* ★ 青系の層 + 星の瞬き + グロウ（画像なしCSSのみ） */
+    #bg::before {
+      content: ""; position: absolute; inset: 0; background-repeat: no-repeat;
+      /* 強めの瞬き：スピードUP & 明るさUP */
+      animation: twinkle 6s ease-in-out infinite alternate;
+      background-image:
+        radial-gradient(1.4px 1.4px at 7% 12%, rgba(255,255,255,.95) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 18% 34%, rgba(255,255,255,.85) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 29% 72%, rgba(255,255,255,.9) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 41% 22%, rgba(255,255,255,.82) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 53% 68%, rgba(255,255,255,.85) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 66% 18%, rgba(255,255,255,.9) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 73% 56%, rgba(255,255,255,.86) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 82% 84%, rgba(255,255,255,.9) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 91% 28%, rgba(255,255,255,.95) 52%, transparent 53%),
+        radial-gradient(1.2px 1.2px at 12% 88%, rgba(255,255,255,.85) 52%, transparent 53%);
+      /* きらめき感を上げる軽いグロー */
+      filter: drop-shadow(0 0 2px rgba(255,255,255,.28));
+      opacity: .6; transition: opacity .25s ease;
+    }
+    #bgprev:checked ~ #bg::before { opacity: .9; }
 
-                                <div>
-                                    <x-input-label for="address" :value="__('住所（任意）')" />
-                                    <x-text-input id="address" class="block mt-1 w-full" type="text" name="address"
-                                                  :value="old('address')" />
-                                    <x-input-error :messages="$errors->get('address')" class="mt-2" />
-                                </div>
+    #bg::after { content: ""; position: absolute; inset: 0; mix-blend-mode: screen; filter: saturate(1.03);
+      background:
+        radial-gradient(260px 200px at 16% 78%, rgba(147, 197, 253, .25), transparent 60%),
+        radial-gradient(320px 220px at 78% 18%, rgba(196, 181, 253, .22), transparent 60%),
+        radial-gradient(220px 220px at 80% 86%, rgba(110, 231, 183, .18), transparent 60%),
+        radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.18), transparent 40%);
+      /* 背景の発光を少し抑えて、テキストの視認性UP */
+      opacity: .82; transition: opacity .25s ease;
+    }
 
-                                <div>
-                                    <x-input-label for="url" :value="__('URL（任意）')" />
-                                    <x-text-input id="url" class="block mt-1 w-full" type="url" name="url"
-                                                  :value="old('url')" />
-                                    <x-input-error :messages="$errors->get('url')" class="mt-2" />
-                                </div>
+    @keyframes twinkle {
+      0%   { opacity:.65; transform: translateY(0) scale(1); }
+      50%  { opacity:1;   transform: translateY(-.25px) scale(1.02); }
+      100% { opacity:.65; transform: translateY(-.5px) scale(1); }
+    }
+@media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
 
-                                <div>
-                                    <x-input-label for="campus_time_min" :value="__('大学からの時間（分）')" />
-                                    <x-text-input id="campus_time_min" class="block mt-1 w-full" type="number"
-                                                  name="campus_time_min" :value="old('campus_time_min')" min="0" />
-                                    <x-input-error :messages="$errors->get('campus_time_min')" class="mt-2" />
-                                </div>
+    /* ---------- App Shell ---------- */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(8px) saturate(1.1);
+      background: rgba(255,255,255,.86);
+      border-bottom: 1px solid rgba(15,23,42,.08);
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 14px 20px; }
+    .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { font-weight: 800; letter-spacing: .5px; }
+    .brand span { color: var(--primary); }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs label,
+    .tabs .tabs-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+      background: var(--card);
+      transition: box-shadow .2s ease, transform .05s ease;
+      user-select: none;
+    }
+    .tabs label:hover,
+    .tabs .tabs-link:hover { box-shadow: 0 1px 0 #e5e7eb, 0 0 0 4px rgba(37,99,235,.08) inset; }
+    .tabs label[data-color="blue"],
+    .tabs .tabs-link[data-color="blue"]{ border-color:#dbeafe; background:#eff6ff; }
+    .tabs label[data-color="violet"],
+    .tabs .tabs-link[data-color="violet"]{ border-color:#ede9fe; background:#f5f3ff; }
+    .tabs label[data-color="rose"],
+    .tabs .tabs-link[data-color="rose"]{ border-color:#ffe4e6; background:#fff1f2; }
+    .tabs label[data-color="amber"],
+    .tabs .tabs-link[data-color="amber"]{ border-color:#ffedd5; background:#fff7ed; }
+    .tabs label[data-color="green"],
+    .tabs .tabs-link[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
+
+    input[type="radio"].tab { display: none; }
+    main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
+    section.view { display: none; }
+
+    /* ---------- UI atoms ---------- */
+    .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
+    .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
+    /* 常時ガラスUI（可読性を保つため白ベースは維持） */
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  }
+    #bgprev:checked ~ #app .card { box-shadow: 0 6px 30px rgba(0,0,0,.24); backdrop-filter: blur(10px); }
+    .card .title { font-weight: 700; margin: 2px 0 6px; }
+    .meta { color: var(--muted); font-size: 13px; }
+
+    .btn { display:inline-block; padding:10px 14px; border-radius: 12px; border: 1px solid var(--line); background: #fff; text-decoration:none; color:var(--ink); font-weight:700; }
+    .btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
+    .btn.ghost { background: #fff; }
+    .btn.full { width: 100%; text-align: center; }
+    .btn-row { display:flex; gap:10px; flex-wrap: wrap; }
+
+    form .field { display:grid; gap:6px; margin-bottom:12px; }
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"],
+    form input[type="url"],
+    form input[type="number"],
+    form input[type="file"],
+    form textarea,
+    form select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+    }
+    form textarea { min-height: 120px; resize: vertical; }
+    .hint { color: var(--muted); font-size: 12px; }
+
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { padding:6px 10px; border:1px solid var(--line); background:#fff; border-radius:999px; cursor:pointer; }
+
+    /* toggle helpers */
+    .toggle { display:none; }
+
+    /* カテゴリ切替タブの強調 */
+    #mpnew-cat-drive:checked ~ .tabs label[for="mpnew-cat-drive"],
+    #mpnew-cat-karaoke:checked ~ .tabs label[for="mpnew-cat-karaoke"],
+    #mpnew-cat-izakaya:checked ~ .tabs label[for="mpnew-cat-izakaya"] {
+      outline: 2px solid var(--primary); box-shadow: 0 6px 16px rgba(37,99,235,.15); transform: translateY(-1px);
+    }
+    /* フォーム表示切替 */
+    #mpnew-cat-drive:checked ~ .mpnew-forms #mpnew-form-drive { display:block; }
+    #mpnew-cat-drive:checked ~ .mpnew-forms #mpnew-form-karaoke,
+    #mpnew-cat-drive:checked ~ .mpnew-forms #mpnew-form-izakaya { display:none; }
+    #mpnew-cat-karaoke:checked ~ .mpnew-forms #mpnew-form-karaoke { display:block; }
+    #mpnew-cat-karaoke:checked ~ .mpnew-forms #mpnew-form-drive,
+    #mpnew-cat-karaoke:checked ~ .mpnew-forms #mpnew-form-izakaya { display:none; }
+    #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-izakaya { display:block; }
+    #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-drive,
+    #mpnew-cat-izakaya:checked ~ .mpnew-forms #mpnew-form-karaoke { display:none; }
+    /* ドライブ種類チップのON表現 */
+    #mpnew-drive-type-shopping:checked + label.chip,
+    #mpnew-drive-type-scenery:checked + label.chip,
+    #mpnew-drive-type-break:checked + label.chip { background:#eef2ff; border-color:#c7d2fe; box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset; }
+  </style>
+</head>
+<body>
+  <!-- 実行プレビュー：背景切替トグル（チェックで有効） -->
+  <div id="bg" aria-hidden="true"></div>
+
+  <!-- ======= APP WRAPPER ======= -->
+  <div id="app">
+    <header>
+      <div class="container">
+        <div class="row" style="justify-content: space-between;">
+          <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
+          <nav style="display:flex; gap:8px;">
+            <a href="/places/type/register" class="btn">マイページに戻る</a>
+          </nav>
                             </div>
                         </div>
+    </header>
 
-                        <!-- タイプ選択 -->
-                        <div>
-                            <x-input-label for="type" :value="__('タイプ')" />
-                            <select id="type" name="type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                    onchange="toggleTypeFields()" required>
-                                <option value="">選択してください</option>
-                                <option value="drive" {{ old('type') === 'drive' ? 'selected' : '' }}>ドライブ</option>
-                                <option value="karaoke" {{ old('type') === 'karaoke' ? 'selected' : '' }}>カラオケ</option>
-                                <option value="izakaya" {{ old('type') === 'izakaya' ? 'selected' : '' }}>居酒屋</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('type')" class="mt-2" />
-                        </div>
+    <main>
+      <h1 class="h1">新しく掲載を作成</h1>
+      <p class="sub">新しい掲載を作成して、他のBKC生と情報を共有しましょう。</p>
 
-                        <!-- ドライブ固有フィールド -->
-                        <div id="drive-fields" class="hidden">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">ドライブ詳細</h3>
-                            <div>
-                                <x-input-label for="category_id" :value="__('カテゴリ')" />
-                                <select id="category_id" name="category_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="">選択してください</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
+      <!-- 掲載管理：新規作成 & 一覧/編集/削除 -->
+      <div class="card">
+        <div class="title">新しく掲載を作成</div>
+
+        <!-- 作成カテゴリ切替タブ -->
+        <input id="mpnew-cat-drive" class="tab" type="radio" name="mpnewcat" checked>
+        <input id="mpnew-cat-karaoke" class="tab" type="radio" name="mpnewcat">
+        <input id="mpnew-cat-izakaya" class="tab" type="radio" name="mpnewcat">
+        <div class="tabs" style="margin:10px 0 12px;">
+          <label for="mpnew-cat-drive" data-color="violet">ドライブ</label>
+          <label for="mpnew-cat-karaoke" data-color="rose">カラオケ</label>
+          <label for="mpnew-cat-izakaya" data-color="amber">居酒屋</label>
+                                </div>
+
+        <div class="mpnew-forms">
+          <!-- ドライブ新規作成フォーム -->
+          <form id="mpnew-form-drive" class="view" method="POST" action="{{ route('places.store') }}">
+            @csrf
+            <input type="hidden" name="type" value="drive">
+            
+            <div class="field"><label>名称</label><input type="text" name="name" placeholder="例）メタセコイア並木 / 三井アウトレット滋賀竜王" required /></div>
+            <div class="field"><label>住所</label><input type="text" name="address" placeholder="例）滋賀県高島市… / 滋賀県蒲生郡竜王町…" /></div>
+            <div class="field"><label>大学からの時間（分）</label><input type="number" name="campus_time_min" placeholder="例）30 / 105" min="0" /></div>
+            <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
+            <div class="field"><label>種類（ドライブ）</label>
+              <div class="chips">
+                <input id="mpnew-drive-type-shopping" type="radio" name="category_id" value="1" class="toggle" checked>
+                <label for="mpnew-drive-type-shopping" class="chip">ショッピング</label>
+                <input id="mpnew-drive-type-scenery" type="radio" name="category_id" value="2" class="toggle">
+                <label for="mpnew-drive-type-scenery" class="chip">景色</label>
+                <input id="mpnew-drive-type-break" type="radio" name="category_id" value="3" class="toggle">
+                <label for="mpnew-drive-type-break" class="chip">息抜き</label>
+                                </div>
+              <div class="hint">※ ドライブは「ショッピング / 景色 / 息抜き」から1つ選択</div>
                             </div>
-                        </div>
+            <div class="field"><label>詳細</label><textarea name="description" placeholder="例）見どころ・設備・注意事項など"></textarea></div>
+            <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
+          </form>
 
-                        <!-- カラオケ・居酒屋共通フィールド -->
-                        <div id="common-fields" class="hidden">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">料金・詳細情報</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <x-input-label for="price_min" :value="__('最低料金（円）')" />
-                                    <x-text-input id="price_min" class="block mt-1 w-full" type="number"
-                                                  name="price_min" :value="old('price_min')" min="0" />
-                                    <x-input-error :messages="$errors->get('price_min')" class="mt-2" />
-                                </div>
+          <!-- カラオケ新規作成フォーム -->
+          <form id="mpnew-form-karaoke" class="view" method="POST" action="{{ route('places.store') }}">
+            @csrf
+            <input type="hidden" name="type" value="karaoke">
+            
+            <div class="field"><label>店名</label><input type="text" name="name" placeholder="例）JOYJOY 南草津店" required /></div>
+            <div class="field"><label>住所</label><input type="text" name="address" placeholder="例）滋賀県草津市…" /></div>
+            <div class="field"><label>持ち込み</label><input type="text" name="byo_allowed" placeholder="例）自由（夜はアルコール飲み放題）" /></div>
+            <div class="field"><label>機種</label><input type="text" name="machine_types" placeholder="例）JOYSOUND / DAM" /></div>
+            <div class="field"><label>営業時間</label><input type="text" name="business_hours" placeholder="例）24時間 / 平日10:00–翌5:00" /></div>
+            <div class="field"><label>設備</label><input type="text" name="facilities" placeholder="例）店内Wi‑Fi、HDMI貸出、ダーツ等" /></div>
+            <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
+            <div class="field"><label>詳細</label><textarea name="description" placeholder="例）予約可否、注意事項など"></textarea></div>
+            <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
+          </form>
 
-                                <div>
-                                    <x-input-label for="price_max" :value="__('最高料金（円）')" />
-                                    <x-text-input id="price_max" class="block mt-1 w-full" type="number"
-                                                  name="price_max" :value="old('price_max')" min="0" />
-                                    <x-input-error :messages="$errors->get('price_max')" class="mt-2" />
-                                </div>
-
-                                <div class="flex items-center">
-                                    <input id="has_all_you_can_drink" type="checkbox" name="has_all_you_can_drink" value="1"
-                                           {{ old('has_all_you_can_drink') ? 'checked' : '' }}
-                                           class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <label for="has_all_you_can_drink" class="ml-2 text-sm text-gray-600">
-                                        飲み放題あり
-                                    </label>
-                                </div>
-
-                                <div class="flex items-center">
-                                    <input id="byo_allowed" type="checkbox" name="byo_allowed" value="1"
-                                           {{ old('byo_allowed') ? 'checked' : '' }}
-                                           class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <label for="byo_allowed" class="ml-2 text-sm text-gray-600">
-                                        BYO可
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- カラオケ固有フィールド -->
-                        <div id="karaoke-fields" class="hidden">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">カラオケ詳細</h3>
-                            <div>
-                                <x-input-label for="machine_types" :value="__('機種（複数選択可）')" />
-                                <div class="mt-2 space-y-2">
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="machine_types[]" value="JOYSOUND"
-                                               {{ in_array('JOYSOUND', old('machine_types', [])) ? 'checked' : '' }}
-                                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                        <span class="ml-2 text-sm text-gray-600">JOYSOUND</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="machine_types[]" value="DAM"
-                                               {{ in_array('DAM', old('machine_types', [])) ? 'checked' : '' }}
-                                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                        <span class="ml-2 text-sm text-gray-600">DAM</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox" name="machine_types[]" value="UGA"
-                                               {{ in_array('UGA', old('machine_types', [])) ? 'checked' : '' }}
-                                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                        <span class="ml-2 text-sm text-gray-600">UGA</span>
-                                    </label>
-                                </div>
-                                <x-input-error :messages="$errors->get('machine_types')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <!-- 居酒屋固有フィールド -->
-                        <div id="izakaya-fields" class="hidden">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">居酒屋詳細</h3>
-                            <div>
-                                <x-input-label for="alcohol_types" :value="__('酒類（任意）')" />
-                                <x-text-input id="alcohol_types" class="block mt-1 w-full" type="text"
-                                              name="alcohol_types" :value="old('alcohol_types')"
-                                              placeholder="例：ビール、日本酒、ワイン" />
-                                <x-input-error :messages="$errors->get('alcohol_types')" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <!-- 説明・タグ -->
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">その他情報</h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <x-input-label for="description" :value="__('説明（任意）')" />
-                                    <textarea id="description" name="description" rows="4"
-                                              class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('description') }}</textarea>
-                                    <x-input-error :messages="$errors->get('description')" class="mt-2" />
-                                </div>
-
-                                <div>
-                                    <x-input-label for="tags" :value="__('タグ（カンマ区切り、任意）')" />
-                                    <x-text-input id="tags" class="block mt-1 w-full" type="text"
-                                                  name="tags" :value="old('tags')"
-                                                  placeholder="例：安い,学生向け,個室あり" />
-                                    <x-input-error :messages="$errors->get('tags')" class="mt-2" />
-                                </div>
-
-                                <div>
-                                    <x-input-label for="reason" :value="__('おすすめ理由（任意）')" />
-                                    <x-text-input id="reason" class="block mt-1 w-full" type="text"
-                                                  name="reason" :value="old('reason')" />
-                                    <x-input-error :messages="$errors->get('reason')" class="mt-2" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- アクティブ状態 -->
-                        <div class="flex items-center">
-                            <input id="is_active" type="checkbox" name="is_active" value="1"
-                                   {{ old('is_active', true) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            <label for="is_active" class="ml-2 text-sm text-gray-600">
-                                公開する
-                            </label>
-                        </div>
-
-                        <!-- 送信ボタン -->
-                        <div class="flex justify-end space-x-4">
-                            <a href="{{ route('places.index') }}"
-                               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                キャンセル
-                            </a>
-                            <x-primary-button>
-                                {{ __('作成') }}
-                            </x-primary-button>
-                        </div>
+          <!-- 居酒屋新規作成フォーム -->
+          <form id="mpnew-form-izakaya" class="view" method="POST" action="{{ route('places.store') }}">
+            @csrf
+            <input type="hidden" name="type" value="izakaya">
+            
+            <div class="field"><label>店名</label><input type="text" name="name" placeholder="例）○○酒場" required /></div>
+            <div class="field"><label>距離/時間</label><input type="text" name="distance" placeholder="例）大学から徒歩8分" /></div>
+            <div class="field"><label>予算</label><input type="text" name="budget" placeholder="例）¥2,500〜¥3,500" /></div>
+            <div class="field"><label>特徴</label><input type="text" name="features" placeholder="例）飲み放題あり / 個室 / 喫煙可" /></div>
+            <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
+            <div class="field"><label>詳細</label><textarea name="description" placeholder="例）席数、予約、注意事項など"></textarea></div>
+            <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
                     </form>
                 </div>
             </div>
+    </main>
         </div>
-    </div>
-
-    <script>
-        function toggleTypeFields() {
-            const type = document.getElementById('type').value;
-            const driveFields = document.getElementById('drive-fields');
-            const commonFields = document.getElementById('common-fields');
-            const karaokeFields = document.getElementById('karaoke-fields');
-            const izakayaFields = document.getElementById('izakaya-fields');
-
-            // 全てのフィールドを非表示
-            driveFields.classList.add('hidden');
-            commonFields.classList.add('hidden');
-            karaokeFields.classList.add('hidden');
-            izakayaFields.classList.add('hidden');
-
-            // 選択されたタイプに応じてフィールドを表示
-            if (type === 'drive') {
-                driveFields.classList.remove('hidden');
-            } else if (type === 'karaoke') {
-                commonFields.classList.remove('hidden');
-                karaokeFields.classList.remove('hidden');
-            } else if (type === 'izakaya') {
-                commonFields.classList.remove('hidden');
-                izakayaFields.classList.remove('hidden');
-            }
-        }
-
-        // ページ読み込み時に初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleTypeFields();
-        });
-    </script>
-</x-app-layout>
+</body>
+</html>

@@ -15,6 +15,11 @@ class PlaceController extends Controller
      */
     public function index(Request $request): View
     {
+        // /places/edit の場合は編集ページを表示
+        if ($request->is('places/edit')) {
+            return view('places.edit');
+        }
+        
         // page1のホーム画面（ログイン画面）を表示
         return view('bkc.home');
     }
@@ -94,10 +99,17 @@ class PlaceController extends Controller
     /**
      * 詳細表示
      */
-    public function show(Place $place): View
+    public function show($place): View
     {
-        $place->load(['images', 'drive.category', 'karaoke', 'izakaya']);
-        return view('places.show', compact('place'));
+        // /places/edit の場合は編集ページを表示
+        if ($place === 'edit') {
+            return view('places.edit');
+        }
+        
+        // 通常の場所詳細表示
+        $placeModel = Place::findOrFail($place);
+        $placeModel->load(['images', 'drive.category', 'karaoke', 'izakaya']);
+        return view('places.show', ['place' => $placeModel]);
     }
 
     /**
@@ -201,6 +213,8 @@ class PlaceController extends Controller
                 return view('bkc.fleamarket');
             case 'register':
                 return view('bkc.mypage');
+            case 'edit':
+                return view('places.edit');
         }
         
         // その他のタイプは従来通り
