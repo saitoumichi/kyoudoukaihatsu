@@ -265,10 +265,6 @@
               <div>設備</div><div>無料Wi‑Fi、ダーツ・ビリヤード併設</div>
             </div>
             <div aria-label="評価" class="star">★★★★☆</div>
-            <div class="btn-row" style="margin-top:8px;">
-              <a class="btn" href="#">URL</a>
-              <a class="btn ghost" href="#">詳細</a>
-            </div>
           </article>
           <article class="card">
             <div class="title">ジャンカラ 草津駅東口店</div>
@@ -281,10 +277,18 @@
               <div>設備</div><div>店内Wi‑Fi、HDMI貸出など</div>
             </div>
             <div aria-label="評価" class="star">★★★☆☆</div>
-            <div class="btn-row" style="margin-top:8px;">
-              <a class="btn" href="#">URL</a>
-              <a class="btn ghost" href="#">詳細</a>
+          </article>
+          <article class="card">
+            <div class="title">カラオケStyle 南草津店</div>
+            <div class="meta">大学からの時間：車で5分</div>
+            <div class="kvs" style="margin:10px 0 6px;">
+              <div>住所</div><div>滋賀県草津市野路5丁目18-5 ビーバーワールド 1-3F</div>
+              <div>持ち込み</div><div>自由(アルコール持ち込み不可)</div>
+              <div>機種</div><div>JOYSOUNDとDAMを部屋ごとに選べる</div>
+              <div>営業時間</div><div>24時間営業</div>
+              <div>設備</div><div>プロジェクター付き大部屋やダーツ、コミック読み放題</div>
             </div>
+            <div aria-label="評価" class="star">★★★☆☆</div>
           </article>
         </div>
       </section>

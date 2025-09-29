@@ -60,7 +60,7 @@
             </div>
 
             <!-- クイックアクション -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- 場所管理 -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
@@ -86,6 +86,24 @@
                             </a>
                             <a href="{{ route('freemarket.my') }}" class="block w-full bg-gray-500 text-white text-center py-2 px-4 rounded-md hover:bg-gray-600 transition duration-150">
                                 自分の出品を見る
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- アカウント管理 -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">アカウント管理</h3>
+                        <div class="space-y-3">
+                            <a href="/profile" class="block w-full bg-red-500 text-white text-center py-2 px-4 rounded-md hover:bg-red-600 transition duration-150">
+                                パスワード変更
+                            </a>
+                            <a href="http://localhost:8000/places/create" class="block w-full bg-purple-500 text-white text-center py-2 px-4 rounded-md hover:bg-purple-600 transition duration-150">
+                                新しく掲載を作成
+                            </a>
+                            <a href="/places/edit" class="block w-full bg-orange-500 text-white text-center py-2 px-4 rounded-md hover:bg-orange-600 transition duration-150">
+                                あなたの掲載一覧
                             </a>
                         </div>
                     </div>
