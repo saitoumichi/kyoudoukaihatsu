@@ -86,11 +86,11 @@
 @media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
 
     /* ★ チェック時：色変数を"暗色ガラスUI"に上書き（デモ用） */
-    #bgprev:checked ~ #app { 
-      --ink:#0f172a; 
-      --card: rgba(255,255,255,.92); 
-      --line: rgba(15,23,42,.12); 
-      --muted: #64748b; 
+    #bgprev:checked ~ #app {
+      --ink:#0f172a;
+      --card: rgba(255,255,255,.92);
+      --line: rgba(15,23,42,.12);
+      --muted: #64748b;
     }
 
     /* ---------- App Shell ---------- */
@@ -244,7 +244,7 @@
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
-            <a href="/places/type/free" class="tabs-link" data-color="green">フリマ</a>
+            <a href="/free" class="tabs-link" data-color="green">フリマ</a>
           </nav>
         </div>
       </div>

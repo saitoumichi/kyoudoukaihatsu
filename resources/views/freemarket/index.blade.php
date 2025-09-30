@@ -150,7 +150,7 @@
                                 @else
                                     <a href="{{ route('freemarket.dm', $item->id) }}"
                                        class="bg-blue-500 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded">
-                                        DMする
+                                        詳細
                                     </a>
                                 @endif
                             @endauth

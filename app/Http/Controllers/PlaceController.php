@@ -210,13 +210,14 @@ class PlaceController extends Controller
             case 'izakaya':
                 return view('bkc.izakaya');
             case 'free':
-                return view('bkc.fleamarket');
+                // フリマの場合は新しいURLにリダイレクト
+                return redirect()->route('freemarket.index');
             case 'register':
                 return view('bkc.mypage');
             case 'edit':
                 return view('places.edit');
         }
-        
+
         // その他のタイプは従来通り
         $places = Place::ofType($type)
                       ->active()

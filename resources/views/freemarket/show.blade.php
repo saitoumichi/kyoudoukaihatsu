@@ -64,7 +64,7 @@
                                     @else
                                         <a href="{{ route('freemarket.dm', $item) }}"
                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded text-lg">
-                                            DMで連絡する
+                                            詳細
                                         </a>
                                     @endif
                                 @else
