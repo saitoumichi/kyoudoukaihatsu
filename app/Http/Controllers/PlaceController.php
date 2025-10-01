@@ -106,6 +106,11 @@ class PlaceController extends Controller
             return view('places.edit');
         }
         
+        // /places/login の場合はホーム画面を表示
+        if ($place === 'login') {
+            return view('bkc.home');
+        }
+        
         // 通常の場所詳細表示
         $placeModel = Place::findOrFail($place);
         $placeModel->load(['images', 'drive.category', 'karaoke', 'izakaya']);
