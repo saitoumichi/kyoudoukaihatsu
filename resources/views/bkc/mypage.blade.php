@@ -217,6 +217,112 @@
 
     /* toggle helpers */
     .toggle { display:none; }
+
+    /* Sakuraテーマ（ダークガラス + 桜色グロー） */
+    #app[data-skin="sakura"]{
+      /* ベース色も暗色系に上書き（重要） */
+      --ink:#eaf1ff;
+      --muted:#9fb0c6;
+      --line:rgba(255,255,255,.10);
+      --card:rgba(8,12,20,.52);
+      --card-strong:rgba(8,12,20,.66);
+      --blur:12px;
+
+      /* テーマ色 */
+      --theme-0:#ff6aa9;
+      --theme-1:#ffc1dc;
+      --theme-2:#ffe4ef;
+      --primary:var(--theme-0);
+      color:var(--ink);
+    }
+
+    /* #bg が #app の前にあっても効くように :has で背景を更新 */
+    body:has(#app[data-skin="sakura"]) #bg{
+      background:
+        radial-gradient(1200px 800px at 50% -20%, rgba(255,106,169,.18), transparent 60%),
+        radial-gradient(900px 600px at 0% 30%,   rgba(255,193,220,.18), transparent 60%),
+        radial-gradient(900px 600px at 100% 70%, rgba(255,142,187,.14), transparent 60%),
+        linear-gradient(180deg, #0b0f18 0%, #0a1420 50%, #08121c 100%) !important;
+    }
+    body:has(#app[data-skin="sakura"]) #bg::after{
+      background:
+        radial-gradient(420px 320px at 18% 78%, rgba(255,106,169,.22), transparent 60%),
+        radial-gradient(380px 260px at 80% 22%, rgba(255,193,220,.20), transparent 60%),
+        radial-gradient(280px 240px at 78% 86%, rgba(255,142,187,.16), transparent 60%),
+        radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.10), transparent 45%);
+      opacity:.9;
+    }
+
+    /* コンポーネントのダークガラス上書き */
+    #app[data-skin="sakura"] header{
+      background:var(--card-strong);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(var(--blur)) saturate(1.1);
+      -webkit-backdrop-filter:blur(var(--blur)) saturate(1.1);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), 0 4px 18px rgba(0,0,0,.35);
+    }
+    #app[data-skin="sakura"] .brand span{ color:var(--primary); }
+
+    #app[data-skin="sakura"] .card{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.06);
+      color:var(--ink);
+      backdrop-filter:blur(var(--blur)) saturate(1.05);
+      -webkit-backdrop-filter:blur(var(--blur)) saturate(1.05);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 1px 0 rgba(255,255,255,.05),
+        0 8px 30px rgba(0,0,0,.45),
+        0 0 0 1.5px rgba(255,122,150,.08),
+        0 0 22px 2px rgba(255,122,150,.10);
+    }
+
+    #app[data-skin="sakura"] .tabs label,
+    #app[data-skin="sakura"] .chip{
+      border-color: rgba(255,255,255,.08);
+      background: rgba(12,18,30,.56);
+      color: #ffffff;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 2px rgba(255,152,177,.08);
+    }
+    #app[data-skin="sakura"] .tabs label:hover{
+      box-shadow:
+        inset 0 0 0 2px rgba(255,152,177,.16),
+        0 6px 18px rgba(0,0,0,.35);
+    }
+
+    #app[data-skin="sakura"] .btn{
+      background: rgba(12,18,30,.6);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--ink);
+    }
+    #app[data-skin="sakura"] .btn.primary{
+      background: var(--primary);
+      border-color: transparent;
+      color: #0b0f18;
+      box-shadow: 0 8px 26px color-mix(in oklab, var(--primary) 35%, black);
+    }
+
+    #app[data-skin="sakura"] form input,
+    #app[data-skin="sakura"] form textarea,
+    #app[data-skin="sakura"] form select{
+      background: rgba(10,16,26,.66);
+      color: var(--ink);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    #app[data-skin="sakura"] .meta{ color: var(--muted); }
+
+    /* 選択中タブのアウトラインをテーマ色に */
+    #app[data-skin="sakura"] #tab-home:checked ~ header label[for="tab-home"],
+    #app[data-skin="sakura"] #tab-drive:checked ~ header label[for="tab-drive"],
+    #app[data-skin="sakura"] #tab-karaoke:checked ~ header label[for="tab-karaoke"],
+    #app[data-skin="sakura"] #tab-izakaya:checked ~ header label[for="tab-izakaya"],
+    #app[data-skin="sakura"] #tab-fleamarket:checked ~ header label[for="tab-fleamarket"],
+    #app[data-skin="sakura"] #tab-mypage:checked ~ header label[for="tab-mypage"]{
+      outline: 2px solid var(--primary);
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--primary) 35%, black);
+    }
   </style>
 </head>
 <body>
@@ -224,7 +330,7 @@
   <div id="bg" aria-hidden="true"></div>
 
   <!-- ======= APP WRAPPER ======= -->
-  <div id="app">
+  <div id="app" data-skin="sakura">
     <!-- NAV RADIO TABS (no JS) must be before header/main for CSS ~ selectors -->
     <input id="tab-home" class="tab" type="radio" name="nav">
     <input id="tab-drive" class="tab" type="radio" name="nav">
@@ -252,7 +358,6 @@
       <!-- ================= MY PAGE ================= -->
       <section id="mypage" class="view" aria-labelledby="mypage-title">
         <h2 id="mypage-title" class="h1">マイページ</h2>
-        <p class="sub">ここでは <strong>ログアウト</strong>・<strong>パスワード変更</strong>・<strong>各カテゴリの掲載管理（作成 / 編集 / 削除）</strong> ができます。（デモUI）</p>
 
         <!-- アカウント行 -->
         <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
@@ -263,7 +368,6 @@
         <!-- パスワード変更 -->
         <div class="card" style="margin-top:14px; max-width:720px;">
           <div class="title">パスワード変更</div>
-          <p class="meta" style="margin-bottom:12px;">パスワードを変更する場合は、専用ページで行ってください。</p>
           <div class="btn-row">
             <a href="/profile" class="btn primary">パスワード変更ページへ</a>
           </div>
@@ -274,18 +378,16 @@
           <!-- 新規作成 -->
           <div class="card">
             <div class="title">新しく掲載を作成</div>
-            <p class="meta" style="margin-bottom:12px;">新しい掲載を作成する場合は、専用ページで行ってください。</p>
             <div class="btn-row">
-              <a href="http://localhost:8000/places/create" class="btn primary">新しく掲載を作成ページへ</a>
+              <a href="http://localhost:8000/places/create" class="btn primary">掲載作成ページへ</a>
             </div>
           </div>
 
           <!-- 一覧 / 編集 / 削除 -->
           <div class="card">
             <div class="title">あなたの掲載一覧</div>
-            <p class="meta" style="margin-bottom:12px;">掲載の一覧表示と編集を行う場合は、専用ページで行ってください。</p>
             <div class="btn-row">
-              <a href="/places/edit" class="btn primary">あなたの掲載一覧ページへ</a>
+              <a href="/places/edit" class="btn primary">掲載一覧ページへ</a>
             </div>
           </div>
         </div>
