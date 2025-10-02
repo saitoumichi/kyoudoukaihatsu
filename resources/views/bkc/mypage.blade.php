@@ -382,7 +382,7 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">ホーム</a>
+            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
@@ -395,38 +395,26 @@
     <main>
       <!-- ================= MY PAGE ================= -->
       <section id="mypage" class="view" aria-labelledby="mypage-title">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
         <h2 id="mypage-title" class="h1">マイページ</h2>
-
-        <!-- アカウント行 -->
-        <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-          <div><div class="title" style="margin-bottom:4px;">アカウント</div><div class="meta">ログイン中：<strong>bkc_student</strong>（例）</div></div>
-          <div class="btn-row"><a href="/places" class="btn">ログアウト</a></div>
+          <a href="/places" class="btn" style="background: var(--rose); color: white; border-color: var(--rose);">ログアウト</a>
         </div>
 
-        <!-- パスワード変更 -->
-        <div class="card" style="margin-top:14px; max-width:720px;">
-          <div class="title">パスワード変更</div>
+        <!-- 場所管理 -->
+        <div class="card" style="margin-top:14px;">
+          <div class="title">場所管理</div>
           <div class="btn-row">
-            <a href="/profile" class="btn primary">パスワード変更ページへ</a>
+            <a href="http://localhost:8000/places/create" class="btn primary">新しい場所を追加</a>
+            <a href="http://localhost:8000/places/edit" class="btn primary">場所一覧を見る</a>
           </div>
-        </div>
-
-        <!-- 掲載管理：新規作成 & 一覧/編集/削除 -->
-        <div class="cols" style="margin-top:14px;">
-          <!-- 新規作成 -->
-          <div class="card">
-            <div class="title">新しく掲載を作成</div>
-            <div class="btn-row">
-              <a href="http://localhost:8000/places/create" class="btn primary">掲載作成ページへ</a>
             </div>
-          </div>
 
-          <!-- 一覧 / 編集 / 削除 -->
-          <div class="card">
-            <div class="title">あなたの掲載一覧</div>
-            <div class="btn-row">
-              <a href="/places/edit" class="btn primary">掲載一覧ページへ</a>
-            </div>
+        <!-- フリマ管理 -->
+        <div class="card" style="margin-top:14px;">
+          <div class="title">フリマ管理</div>
+          <div class="btn-row">
+            <a href="#" class="btn primary">新しく出品する</a>
+            <a href="#" class="btn primary">自分の出品を見る</a>
           </div>
         </div>
       </section>

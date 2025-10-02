@@ -382,7 +382,7 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">ホーム</a>
+            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
@@ -396,7 +396,7 @@
       <!-- ================= IZAKAYA ================= -->
       <section id="izakaya" class="view" aria-labelledby="izakaya-title">
         <h2 id="izakaya-title" class="h1">居酒屋</h2>
-        <p class="sub">絞り込み：<strong>安い / 近い / 飲み放題あり</strong>（UIのみ、デモ表示）。</p>
+        <p class="sub"></p>
         <div class="chips" style="margin-bottom:12px;">
           <input id="f-cheap" type="checkbox" class="filter" hidden>
           <label for="f-cheap" class="chip">安い</label>
@@ -405,39 +405,272 @@
           <input id="f-nomihodai" type="checkbox" class="filter" hidden>
           <label for="f-nomihodai" class="chip">飲み放題あり</label>
         </div>
-        <style> input.filter:checked + label.chip { background: #eef2ff; border-color:#c7d2fe; box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset; } </style>
-        <div class="grid cards">
-          <article class="card">
+        <style> 
+          input.filter:checked + label.chip { 
+            background: var(--rose); 
+            border-color: var(--rose); 
+            color: white;
+            box-shadow: 0 0 0 2px rgba(244,63,94,.12) inset; 
+            transform: scale(1.05);
+            font-weight: 700;
+          } 
+          input#f-cheap:checked + label.chip {
+            background: rgba(16,185,129,.2);
+            border-color: rgba(16,185,129,.3);
+            color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16,185,129,.12) inset;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+          }
+          input#f-near:checked + label.chip {
+            background: rgba(245,158,11,.2);
+            border-color: rgba(245,158,11,.3);
+            color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245,158,11,.12) inset;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+          }
+          input#f-nomihodai:checked + label.chip {
+            background: rgba(244,63,94,.2);
+            border-color: rgba(244,63,94,.3);
+            color: #f43f5e;
+            box-shadow: 0 0 0 2px rgba(244,63,94,.12) inset;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+          }
+          .card.hidden { display: none; }
+          .category-tags {
+            display: flex;
+            gap: 6px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+          }
+          .category-tag {
+            background: rgba(255,255,255,.15);
+            color: var(--ink);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+          }
+          .category-tag.cheap { 
+            background: rgba(16,185,129,.2);
+            border-color: rgba(16,185,129,.3);
+            color: #10b981;
+          }
+          .category-tag.near { 
+            background: rgba(245,158,11,.2);
+            border-color: rgba(245,158,11,.3);
+            color: #f59e0b;
+          }
+          .category-tag.nomihodai { 
+            background: rgba(244,63,94,.2);
+            border-color: rgba(244,63,94,.3);
+            color: #f43f5e;
+          }
+          
+          /* 詳細表示モーダル */
+          .detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(15,23,42,.45);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+          }
+          .detail-modal.is-open {
+            display: flex;
+          }
+          .detail-modal-card {
+            width: min(800px, 92vw);
+            max-height: 80vh;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(15,23,42,.25);
+            overflow-y: auto;
+            backdrop-filter: blur(var(--blur)) saturate(1.05);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(1.05);
+          }
+          .detail-modal .title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--ink);
+          }
+          .detail-modal .kvs {
+            line-height: 1.6;
+          }
+          .detail-modal .kvs div:nth-child(odd) {
+            font-weight: 600;
+            color: var(--ink);
+            margin-top: 12px;
+          }
+          .detail-modal .kvs div:nth-child(even) {
+            color: var(--muted);
+            margin-bottom: 8px;
+          }
+          .detail-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+          }
+          .detail-btn:hover {
+            background: color-mix(in oklab, var(--primary) 80%, black);
+          }
+          .close-btn {
+            background: var(--muted);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 16px;
+          }
+          .close-btn:hover {
+            background: color-mix(in oklab, var(--muted) 80%, black);
+          }
+        </style>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const filters = document.querySelectorAll('.filter');
+            const cards = document.querySelectorAll('#izakaya-cards .card');
+            
+            filters.forEach(filter => {
+              filter.addEventListener('change', function() {
+                const checkedFilters = Array.from(filters).filter(f => f.checked).map(f => f.id.replace('f-', ''));
+                
+                cards.forEach(card => {
+                  const cardCategories = card.getAttribute('data-categories').split(',');
+                  
+                  if (checkedFilters.length === 0) {
+                    // すべてのボタンが押されていない場合はすべて表示
+                    card.classList.remove('hidden');
+                  } else {
+                    // 選択されたフィルターのいずれかに該当する場合は表示
+                    const hasMatch = checkedFilters.some(filter => cardCategories.includes(filter));
+                    if (hasMatch) {
+                      card.classList.remove('hidden');
+                    } else {
+                      card.classList.add('hidden');
+                    }
+                  }
+                });
+              });
+            });
+          });
+        </script>
+        <div class="grid cards" id="izakaya-cards">
+          <article class="card" data-categories="cheap,near">
             <div class="title">串カツ田中（草津/南草津）</div>
             <div class="meta">BKCから徒歩約20分</div>
+            <div class="category-tags">
+              <span class="category-tag cheap">安い</span>
+              <span class="category-tag near">近い</span>
+            </div>
             <div class="kvs" style="margin:10px 0 6px;">
               <div>飲み放題</div><div>あり（約60種、120分／単品1,782円 税込。学生・女子会向け90分1,001円・120分1,408円などの設定あり）</div>
               <div>価格帯目安</div><div>飲み放題付きコース4,000円〜（例：16品・120分飲み放題付）</div>
               <div>メモ</div><div>店舗により内容・条件が異なるので予約ページで要確認。</div>
             </div>
             <div aria-label="評価" class="star">★★★★☆</div>
+            <button class="detail-btn" onclick="openDetailModal('izakaya-1')">詳細を表示する</button>
           </article>
-          <article class="card">
+          <article class="card" data-categories="cheap,nomihodai">
             <div class="title">ミライザカ（南草津駅前店）</div>
             <div class="meta">BKCから徒歩約40分</div>
+            <div class="category-tags">
+              <span class="category-tag cheap">安い</span>
+              <span class="category-tag nomihodai">飲み放題あり</span>
+            </div>
             <div class="kvs" style="margin:10px 0 6px;">
               <div>飲み放題</div><div>あり（単品120分1,980円 税込。コースは120〜150分飲み放題付が多い）</div>
               <div>価格帯目安</div><div>飲み放題付きコース3,300〜6,000円程度（例：120分3,300円／150分4,000〜6,000円）</div>
               <div>メモ</div><div>クーポンで割引・延長あり。ラストオーダーは30分前が基本。</div>
             </div>
             <div aria-label="評価" class="star">★★★☆☆</div>
+            <button class="detail-btn" onclick="openDetailModal('izakaya-2')">詳細を表示する</button>
           </article>
-          <article class="card">
+          <article class="card" data-categories="near,nomihodai">
             <div class="title">あ・うん</div>
             <div class="meta">草津市野路東6-1-15 エミナール南草津2F（南草津駅から徒歩15分程度）</div>
+            <div class="category-tags">
+              <span class="category-tag near">近い</span>
+              <span class="category-tag nomihodai">飲み放題あり</span>
+            </div>
             <div class="kvs" style="margin:10px 0 6px;">
               <div>営業時間</div><div>17:00～翌3:00（L.O.2:00、ドリンクL.O.2:30）</div>
               <div>総席数</div><div>約50席。掘りごたつ席・座敷席あり。貸切可能人数 40名～。</div>
               <div>予算目安</div><div>通常平均 1,500円程度、宴会時平均 3,000円前後。</div>
             </div>
             <div aria-label="評価" class="star">★★★☆☆</div>
+            <button class="detail-btn" onclick="openDetailModal('izakaya-3')">詳細を表示する</button>
           </article>
         </div>
+        
+        <!-- 詳細表示モーダル -->
+        <div id="detail-modal" class="detail-modal">
+          <div class="detail-modal-card">
+            <div class="title" id="modal-title"></div>
+            <div class="kvs" id="modal-content"></div>
+            <button class="close-btn" onclick="closeDetailModal()">閉じる</button>
+          </div>
+        </div>
+        
+        <script>
+          const detailData = {
+            'izakaya-1': {
+              title: '串カツ田中（草津/南草津）',
+              content: `
+                <div>詳細</div><div>串カツの老舗チェーン店。学生向けの安いプランがあり、コスパが良い。飲み放題の種類も豊富で、学生の飲み会に人気。店舗により内容・条件が異なるので予約ページで要確認。個室もあり、グループでの利用にも適している。</div>
+              `
+            },
+            'izakaya-2': {
+              title: 'ミライザカ（南草津駅前店）',
+              content: `
+                <div>詳細</div><div>南草津駅前の好立地にある居酒屋。飲み放題プランが充実しており、学生の飲み会に最適。クーポンで割引・延長あり。ラストオーダーは30分前が基本。個室もあり、落ち着いた雰囲気で楽しめる。</div>
+              `
+            },
+            'izakaya-3': {
+              title: 'あ・うん',
+              content: `
+                <div>詳細</div><div>南草津駅から徒歩圏内の居酒屋。掘りごたつ席や座敷席があり、和風の雰囲気で落ち着いて楽しめる。貸切も可能で、グループでの利用に適している。飲み放題プランもあり、学生の飲み会に人気。</div>
+              `
+            }
+          };
+          
+          function openDetailModal(id) {
+            const data = detailData[id];
+            if (data) {
+              document.getElementById('modal-title').textContent = data.title;
+              document.getElementById('modal-content').innerHTML = data.content;
+              document.getElementById('detail-modal').classList.add('is-open');
+            }
+          }
+          
+          function closeDetailModal() {
+            document.getElementById('detail-modal').classList.remove('is-open');
+          }
+          
+          // モーダル外をクリックで閉じる
+          document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeDetailModal();
+            }
+          });
+        </script>
       </section>
     </main>
   </div>
