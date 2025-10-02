@@ -190,6 +190,119 @@
     #mpnew-drive-type-shopping:checked + label.chip,
     #mpnew-drive-type-scenery:checked + label.chip,
     #mpnew-drive-type-break:checked + label.chip { background:#eef2ff; border-color:#c7d2fe; box-shadow: 0 0 0 2px rgba(37,99,235,.12) inset; }
+
+    /* Sakuraテーマ（ダークガラス + 桜色グロー） */
+    #app[data-skin="sakura"]{
+      /* ベース色も暗色系に上書き（重要） */
+      --ink:#eaf1ff;
+      --muted:#9fb0c6;
+      --line:rgba(255,255,255,.10);
+      --card:rgba(8,12,20,.52);
+      --card-strong:rgba(8,12,20,.66);
+      --blur:12px;
+
+      /* テーマ色 */
+      --theme-0:#ff6aa9;
+      --theme-1:#ffc1dc;
+      --theme-2:#ffe4ef;
+      --primary:var(--theme-0);
+      color:var(--ink);
+    }
+
+    /* #bg が #app の前にあっても効くように :has で背景を更新 */
+    body:has(#app[data-skin="sakura"]) #bg{
+      background:
+        radial-gradient(1200px 800px at 50% -20%, rgba(255,106,169,.18), transparent 60%),
+        radial-gradient(900px 600px at 0% 30%,   rgba(255,193,220,.18), transparent 60%),
+        radial-gradient(900px 600px at 100% 70%, rgba(255,142,187,.14), transparent 60%),
+        linear-gradient(180deg, #0b0f18 0%, #0a1420 50%, #08121c 100%) !important;
+    }
+    body:has(#app[data-skin="sakura"]) #bg::after{
+      background:
+        radial-gradient(420px 320px at 18% 78%, rgba(255,106,169,.22), transparent 60%),
+        radial-gradient(380px 260px at 80% 22%, rgba(255,193,220,.20), transparent 60%),
+        radial-gradient(280px 240px at 78% 86%, rgba(255,142,187,.16), transparent 60%),
+        radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.10), transparent 45%);
+      opacity:.9;
+    }
+
+    /* コンポーネントのダークガラス上書き */
+    #app[data-skin="sakura"] header{
+      background:var(--card-strong);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(var(--blur)) saturate(1.1);
+      -webkit-backdrop-filter:blur(var(--blur)) saturate(1.1);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), 0 4px 18px rgba(0,0,0,.35);
+    }
+    #app[data-skin="sakura"] .brand span{ color:var(--primary); }
+
+    #app[data-skin="sakura"] .card{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.06);
+      color:var(--ink);
+      backdrop-filter:blur(var(--blur)) saturate(1.05);
+      -webkit-backdrop-filter:blur(var(--blur)) saturate(1.05);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 1px 0 rgba(255,255,255,.05),
+        0 8px 30px rgba(0,0,0,.45),
+        0 0 0 1.5px rgba(255,122,150,.08),
+        0 0 22px 2px rgba(255,122,150,.10);
+    }
+
+    #app[data-skin="sakura"] .tabs label,
+    #app[data-skin="sakura"] .chip{
+      border-color: rgba(255,255,255,.08);
+      background: rgba(12,18,30,.56);
+      color: #ffffff;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 2px rgba(255,152,177,.08);
+    }
+    #app[data-skin="sakura"] .tabs label:hover{
+      box-shadow:
+        inset 0 0 0 2px rgba(255,152,177,.16),
+        0 6px 18px rgba(0,0,0,.35);
+    }
+
+    #app[data-skin="sakura"] .btn{
+      background: rgba(12,18,30,.6);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--ink);
+    }
+    #app[data-skin="sakura"] .btn.primary{
+      background: var(--primary);
+      border-color: transparent;
+      color: #0b0f18;
+      box-shadow: 0 8px 26px color-mix(in oklab, var(--primary) 35%, black);
+    }
+
+    #app[data-skin="sakura"] form input,
+    #app[data-skin="sakura"] form textarea,
+    #app[data-skin="sakura"] form select{
+      background: rgba(10,16,26,.66);
+      color: var(--ink);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    #app[data-skin="sakura"] .meta{ color: var(--muted); }
+
+    /* 選択中タブのアウトラインをテーマ色に */
+    #app[data-skin="sakura"] #mpnew-cat-drive:checked ~ .tabs label[for="mpnew-cat-drive"],
+    #app[data-skin="sakura"] #mpnew-cat-karaoke:checked ~ .tabs label[for="mpnew-cat-karaoke"],
+    #app[data-skin="sakura"] #mpnew-cat-izakaya:checked ~ .tabs label[for="mpnew-cat-izakaya"]{
+      outline: 2px solid var(--primary);
+      box-shadow: 0 6px 16px color-mix(in oklab, var(--primary) 35%, black);
+    }
+
+    /* ドライブ種類チップのON表現（Sakuraテーマ） */
+    #app[data-skin="sakura"] #mpnew-drive-type-shopping:checked + label.chip,
+    #app[data-skin="sakura"] #mpnew-drive-type-scenery:checked + label.chip,
+    #app[data-skin="sakura"] #mpnew-drive-type-break:checked + label.chip { 
+      background: rgba(255,106,169,.2); 
+      border-color: rgba(255,106,169,.3); 
+      color: #ffc1dc; 
+      box-shadow: 0 0 0 2px rgba(255,106,169,.12) inset; 
+    }
   </style>
 </head>
 <body>
@@ -197,7 +310,7 @@
   <div id="bg" aria-hidden="true"></div>
 
   <!-- ======= APP WRAPPER ======= -->
-  <div id="app">
+  <div id="app" data-skin="sakura">
     <header>
       <div class="container">
         <div class="row" style="justify-content: space-between;">
@@ -277,6 +390,20 @@
             <div class="field"><label>距離/時間</label><input type="text" name="distance" placeholder="例）大学から徒歩8分" /></div>
             <div class="field"><label>予算</label><input type="text" name="budget" placeholder="例）¥2,500〜¥3,500" /></div>
             <div class="field"><label>特徴</label><input type="text" name="features" placeholder="例）飲み放題あり / 個室 / 喫煙可" /></div>
+            
+            <!-- 絞り込み分類 -->
+            <div class="field"><label>分類</label>
+              <div class="chips">
+                <input id="mpnew-izakaya-cheap" type="checkbox" name="categories[]" value="cheap" class="toggle">
+                <label for="mpnew-izakaya-cheap" class="chip">安い</label>
+                <input id="mpnew-izakaya-near" type="checkbox" name="categories[]" value="near" class="toggle">
+                <label for="mpnew-izakaya-near" class="chip">近い</label>
+                <input id="mpnew-izakaya-nomihodai" type="checkbox" name="categories[]" value="nomihodai" class="toggle">
+                <label for="mpnew-izakaya-nomihodai" class="chip">飲み放題あり</label>
+                        </div>
+              <div class="hint">※ 複数選択可能。絞り込み表示に使用されます。</div>
+                        </div>
+
             <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
             <div class="field"><label>詳細</label><textarea name="description" placeholder="例）席数、予約、注意事項など"></textarea></div>
             <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>

@@ -382,7 +382,7 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">ホーム</a>
+            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
@@ -399,13 +399,14 @@
         <div class="card" style="max-width:520px; margin: 0 auto;">
           <form>
             <div class="field"><label>メールアドレス</label><input type="email" placeholder="you@example.com" /></div>
-            <div class="field"><label>ユーザーネーム</label><input type="text" placeholder="例）bkc_student" /></div>
+            <div class="field"><label>ニックネーム</label><input type="text" placeholder="例）bkc_student" /></div>
             <div class="field"><label>パスワード</label><input type="password" placeholder="••••••••" /></div>
             <div class="btn-row">
               <a href="/places/type/register" class="btn primary">ログイン</a>
               <a href="/places/type/register" class="btn">新規作成へ</a>
             </div>
             <div class="hint">アカウントをお持ちでない方は「新規作成へ」を押してください。</div>
+            <div class="hint" style="margin-top: 8px;"><a href="#" style="color: var(--primary); text-decoration: underline;">パスワードを忘れた人はこちら</a></div>
           </form>
         </div>
       </section>

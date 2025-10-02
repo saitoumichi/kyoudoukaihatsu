@@ -382,7 +382,7 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">ホーム</a>
+            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
@@ -396,86 +396,159 @@
       <!-- ================= FLEA MARKET ================= -->
       <section id="fleamarket" class="view" aria-labelledby="fleamarket-title">
         <h2 id="fleamarket-title" class="h1">フリマ（教科書）</h2>
-        <p class="sub">出品 / 買取 の2タブ。<strong>買取はキーワード1つで検索</strong>し、結果からDMできます。詳細は常に表示されます。</p>
-        <input id="sub-sell" class="tab" type="radio" name="fm" checked>
-        <input id="sub-buy" class="tab" type="radio" name="fm">
-        <div class="tabs" style="margin: 10px 0 14px;">
-          <label for="sub-sell" data-color="green">出品</label>
-          <label for="sub-buy" data-color="amber">買取</label>
-        </div>
-        <div id="fm-sell" class="view">
-          <div class="cols">
-            <div class="card">
-              <div class="title">表紙の作成 / 掲載</div>
-              <form>
-                <div class="field"><label>教科書の写真</label><input type="file" accept="image/*" /></div>
-                <div class="field"><label>教科書名</label><input type="text" placeholder="例）線形代数入門" /></div>
-                <div class="field"><label>大学からの距離 / 時間</label><input type="text" placeholder="例）徒歩10分" /></div>
-                <div class="field"><label>金額</label><input type="number" placeholder="例）1500" /></div>
-                <div class="field"><label>お店 / 参考URL</label><input type="url" placeholder="https://example.com" /></div>
-                <div class="field"><label>詳細（利用した授業など）</label><textarea placeholder="例）経済学概論（2024年度）で使用"></textarea></div>
-                <div class="btn-row"><button type="button" class="btn primary">掲載</button><button type="reset" class="btn">消去</button></div>
-              </form>
+        <p class="sub"></p>
+        
+        <div class="grid cards">
+          <article class="card">
+            <div class="title">線形代数入門</div>
+            <div class="meta">¥1,500</div>
+            <div class="kvs" style="margin:10px 0;">
+              <div>著者</div><div>山田太郎</div>
+              <div>科目</div><div>線形代数（基礎）</div>
+              <div>状態</div><div>書き込み少しあり</div>
+              <div>詳細</div><div class="detail-preview">第2版。状態良好で、重要な部分にマーカーが少し入っています。経済学概論（2024年度）で使用しました。</div>
             </div>
-            <div class="card">
-              <div class="title">あなたの掲載一覧（編集・削除）</div>
-              <div class="grid">
-                <article class="card" style="border-style:dashed;">
-                  <div class="title">数学入門</div>
-                  <div class="meta">¥1,500 / 大学から徒歩5分</div>
-                  <div class="btn-row" style="margin-top:8px;"><label for="sell-edit-1" class="btn">編集</label><label for="sell-del-1" class="btn ghost">削除</label></div>
-                  <input id="sell-edit-1" class="toggle" type="checkbox">
-                  <div class="edit-panel">
-                    <form>
-                      <div class="field"><label>教科書名</label><input type="text" value="数学入門" /></div>
-                      <div class="field"><label>金額</label><input type="number" value="1500" /></div>
-                      <div class="field"><label>距離/時間</label><input type="text" value="大学から徒歩5分" /></div>
-                      <div class="field"><label>URL</label><input type="url" placeholder="https://" /></div>
-                      <div class="field"><label>詳細</label><textarea>状態良好。書き込みなし。</textarea></div>
-                      <div class="btn-row"><label for="sell-edit-1" class="btn primary">保存</label><label for="sell-edit-1" class="btn">閉じる</label></div>
-                    </form>
-                  </div>
-                  <input id="sell-del-1" class="toggle" type="checkbox">
-                  <div id="sell-md-del-1" class="modal">
-                    <div class="modal-card">
-                      <div class="title">削除しますか？</div>
-                      <p class="meta">「数学入門」を削除すると元に戻せません。</p>
-                      <div class="btn-row" style="margin-top:10px;"><label for="sell-del-1" class="btn primary">削除する</label><label for="sell-del-1" class="btn">キャンセル</label></div>
-                    </div>
-                  </div>
-                </article>
-              </div>
+            <div class="btn-row" style="margin-top:8px;">
+              <button type="button" class="btn primary" onclick="openDetailModal('linear-algebra')">詳細を見る</button>
             </div>
-          </div>
-          <style>
-            .edit-panel { display:none; margin-top:10px; border:1px dashed var(--line); border-radius:12px; padding:12px; background:#fff; }
-            #sell-edit-1:checked ~ .edit-panel { display:block; }
-            .modal { display:none; position: fixed; inset: 0; z-index: 60; background: rgba(15,23,42,.45); align-items: center; justify-content: center; padding: 20px; }
-            .modal-card { width: min(520px, 92vw); background: #fff; border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow: 0 20px 60px rgba(15,23,42,.25); }
-            #sell-del-1:checked ~ #sell-md-del-1 { display:flex; }
-          </style>
+          </article>
+          
+          <article class="card">
+            <div class="title">統計学入門</div>
+            <div class="meta">¥1,800</div>
+            <div class="kvs" style="margin:10px 0;">
+              <div>著者</div><div>佐藤花子</div>
+              <div>科目</div><div>統計学（基礎）</div>
+              <div>状態</div><div>書き込みなし</div>
+              <div>詳細</div><div class="detail-preview">第3版。ほぼ新品の状態です。統計学概論（2024年度）で使用し、試験も無事に合格できました。</div>
+            </div>
+            <div class="btn-row" style="margin-top:8px;">
+              <button type="button" class="btn primary" onclick="openDetailModal('statistics')">詳細を見る</button>
+            </div>
+          </article>
+          
+          <article class="card">
+            <div class="title">微分積分学</div>
+            <div class="meta">¥2,000</div>
+            <div class="kvs" style="margin:10px 0;">
+              <div>著者</div><div>田中一郎</div>
+              <div>科目</div><div>微分積分（基礎）</div>
+              <div>状態</div><div>書き込みあり</div>
+              <div>詳細</div><div class="detail-preview">第1版。練習問題に解答が書き込まれていますが、学習に役立ちます。数学基礎（2024年度）で使用しました。</div>
+            </div>
+            <div class="btn-row" style="margin-top:8px;">
+              <button type="button" class="btn primary" onclick="openDetailModal('calculus')">詳細を見る</button>
+            </div>
+          </article>
+          
+          <article class="card">
+            <div class="title">経済学概論</div>
+            <div class="meta">¥1,200</div>
+            <div class="kvs" style="margin:10px 0;">
+              <div>著者</div><div>鈴木次郎</div>
+              <div>科目</div><div>経済学（基礎）</div>
+              <div>状態</div><div>書き込み少しあり</div>
+              <div>詳細</div><div class="detail-preview">第4版。重要なポイントにマーカーが入っています。経済学入門（2024年度）で使用し、単位も取得できました。</div>
+            </div>
+            <div class="btn-row" style="margin-top:8px;">
+              <button type="button" class="btn primary" onclick="openDetailModal('economics')">詳細を見る</button>
+            </div>
+          </article>
         </div>
-
-        <div id="fm-buy" class="view">
-          <div class="card">
-            <div class="title">検索（キーワード1つ）</div>
-            <form role="search" class="toolbar" style="margin:8px 0 12px;">
-              <div class="field" style="flex:1 1 260px;"><input type="text" placeholder="例）統計 / 線形代数 / 山田太郎 / 経済学" aria-label="検索キーワード"/></div>
-              <button type="button" class="btn primary">検索</button>
-            </form>
-            <div class="grid cards">
-              <article class="card"><div class="title">1. 統計学入門</div><div class="meta">掲載者：bkc_stats / ¥1,800</div>
-                <div class="kvs" style="margin:10px 0;"><div>著者</div><div>東京太郎 ほか</div><div>科目</div><div>統計学（基礎）</div><div>状態</div><div>書き込み少しあり</div><div>詳細</div><div>第3版。</div></div>
-                <div class="btn-row" style="margin-top:6px;"><a class="btn" href="#">DM</a></div></article>
+        
+        <!-- 詳細モーダル -->
+        <div id="detail-modal" class="modal" style="display: none;">
+          <div class="modal-card">
+            <div class="title" id="modal-title"></div>
+            <div id="modal-content"></div>
+            <div class="btn-row" style="margin-top:16px;">
+              <button type="button" class="btn" onclick="closeDetailModal()">閉じる</button>
             </div>
           </div>
         </div>
+        
         <style>
-          #sub-sell:checked ~ #fm-sell { display:block; }
-          #sub-sell:checked ~ #fm-buy { display:none; }
-          #sub-buy:checked  ~ #fm-sell { display:none; }
-          #sub-buy:checked  ~ #fm-buy { display:block; }
+          .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            z-index: 60; 
+            background: rgba(15,23,42,.45); 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+          }
+          .modal-card { 
+            width: min(520px, 92vw); 
+            background: #fff; 
+            border:1px solid var(--line); 
+            border-radius:16px; 
+            padding:18px; 
+            box-shadow: 0 20px 60px rgba(15,23,42,.25); 
+          }
+          #app[data-skin="sakura"] .modal-card {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,.06);
+            color: var(--ink);
+          }
+          
+          .detail-preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+          }
         </style>
+        
+        <script>
+          const detailData = {
+            'linear-algebra': {
+              title: '線形代数入門',
+              content: `
+                <div>詳細</div><div>第2版。状態良好で、重要な部分にマーカーが少し入っています。経済学概論（2024年度）で使用しました。線形変換や固有値・固有ベクトルの部分が特に詳しく説明されており、理解しやすい構成になっています。練習問題も豊富で、基礎から応用まで段階的に学習できるようになっています。</div>
+              `
+            },
+            'statistics': {
+              title: '統計学入門',
+              content: `
+                <div>詳細</div><div>第3版。ほぼ新品の状態です。統計学概論（2024年度）で使用し、試験も無事に合格できました。確率分布から仮説検定まで、基礎から応用まで幅広くカバーしています。図表も豊富で、統計学の概念を視覚的に理解しやすくなっています。練習問題の解答も詳しく載っているので、独学でも十分に学習できます。</div>
+              `
+            },
+            'calculus': {
+              title: '微分積分学',
+              content: `
+                <div>詳細</div><div>第1版。練習問題に解答が書き込まれていますが、学習に役立ちます。数学基礎（2024年度）で使用しました。極限から偏微分まで、大学レベルの微積分を丁寧に解説しています。定理の証明も丁寧で、数学的な思考力を養うのに適しています。書き込みは練習問題の解答のみで、本文には一切書き込みがありません。</div>
+              `
+            },
+            'economics': {
+              title: '経済学概論',
+              content: `
+                <div>詳細</div><div>第4版。重要なポイントにマーカーが入っています。経済学入門（2024年度）で使用し、単位も取得できました。ミクロ経済学とマクロ経済学の基礎を分かりやすく説明しています。現実の経済現象と理論を結びつけた例も豊富で、経済学の理解が深まります。マーカーは重要な定義や公式の部分のみで、読みやすさを損なっていません。</div>
+              `
+            }
+          };
+          
+          function openDetailModal(id) {
+            const data = detailData[id];
+            if (data) {
+              document.getElementById('modal-title').textContent = data.title;
+              document.getElementById('modal-content').innerHTML = data.content;
+              document.getElementById('detail-modal').style.display = 'flex';
+            }
+          }
+          
+          function closeDetailModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+          }
+          
+          // モーダル外をクリックしたら閉じる
+          document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeDetailModal();
+            }
+          });
+        </script>
       </section>
     </main>
   </div>

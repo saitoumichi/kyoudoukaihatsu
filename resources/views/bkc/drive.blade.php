@@ -159,6 +159,86 @@
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
     .grid { display: grid; gap: 14px; }
     .grid.cards { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+    
+    /* 詳細表示モーダル */
+    .detail-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(15,23,42,.45);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .detail-modal.is-open {
+      display: flex;
+    }
+    .detail-modal-card {
+      width: min(800px, 92vw);
+      max-height: 80vh;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 60px rgba(15,23,42,.25);
+      overflow-y: auto;
+      backdrop-filter: blur(var(--blur)) saturate(1.05);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(1.05);
+    }
+    .detail-modal .title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    .detail-modal .kvs {
+      line-height: 1.6;
+    }
+    .detail-modal .kvs div:nth-child(odd) {
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 12px;
+    }
+    .detail-modal .kvs div:nth-child(even) {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .detail-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .detail-btn:hover {
+      background: color-mix(in oklab, var(--primary) 80%, black);
+    }
+    .close-btn {
+      background: var(--muted);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    .close-btn:hover {
+      background: color-mix(in oklab, var(--muted) 80%, black);
+    }
+    
+    /* 詳細表示の制限 */
+    .detail-preview {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.4;
+    }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
     /* 常時ガラスUI（可読性を保つため白ベースは維持） */
     backdrop-filter: blur(10px) saturate(1.05);
@@ -384,7 +464,7 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">ホーム</a>
+            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
@@ -398,7 +478,7 @@
       <!-- ================= DRIVE ================= -->
       <section id="drive" class="view" aria-labelledby="drive-title">
         <h2 id="drive-title" class="h1">ドライブ</h2>
-        <p class="sub">上のタブで <strong>ショッピング / 景色 / 息抜き</strong> を切替。各スポットは「場所名・住所・大学からの時間・URL・詳細」を表示します。</p>
+        <p class="sub"></p>
         <input id="drive-shopping" class="tab" type="radio" name="drivecat" checked>
         <input id="drive-scenery"  class="tab" type="radio" name="drivecat">
         <input id="drive-break"    class="tab" type="radio" name="drivecat">
@@ -409,81 +489,99 @@
         </div>
         <div class="drive-views">
           <div id="drv-shopping-list" class="grid cards view">
-            <article class="card"><div class="title">三井アウトレットパーク滋賀竜王</div>
+            <article class="card">
+              <div class="title">三井アウトレットパーク滋賀竜王</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県蒲生郡竜王町大字薬師字砂山1178-694</div>
                 <div>大学からの時間</div><div>30分</div>
                 <div>URL</div><div><a href="https://mitsui-shopping-park.com/mop/shiga/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>近畿最大級で約230ブランドが集まる大型アウトレット。駐車場無料、館内Wi-Fi・EV充電あり。営業時間はショップ10:00–20:00、授業後でも十分回れます。スポーツ・カジュアルからTUMIなどの小物、近江牛グルメまで幅広く楽しめるのが魅力。混みそうな日は夕方からの来場がおすすめです。</div>
+                <div>詳細</div><div class="detail-preview">近畿最大級で約230ブランドが集まる大型アウトレット。駐車場無料、館内Wi-Fi・EV充電あり。営業時間はショップ10:00–20:00、授業後でも十分回れます。スポーツ・カジュアルからTUMIなどの小物、近江牛グルメまで幅広く楽しめるのが魅力。混みそうな日は夕方からの来場がおすすめです。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('shopping-1')">詳細を表示する</button>
             </article>
-            <article class="card"><div class="title">湖の駅　浜大津</div>
+            <article class="card">
+              <div class="title">湖の駅　浜大津</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県大津市浜町2-1</div>
                 <div>大学からの時間</div><div>35分</div>
                 <div>URL</div><div><a href="https://umino-eki.jp/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>滋賀の特産品や地酒がそろうマーケット。フードコートでは近江米を使ったメニューなど手軽に滋賀グルメを味わえます。館内で500円以上の購入で駐車場が3時間無料。屋内で完結するので雨の日の気分転換にも向いています。買い物の後は大津港を散歩したり、ミシガンクルーズや夜のびわこ花噴水を楽しむのもおすすめです。</div>
+                <div>詳細</div><div class="detail-preview">滋賀の特産品や地酒がそろうマーケット。フードコートでは近江米を使ったメニューなど手軽に滋賀グルメを味わえます。館内で500円以上の購入で駐車場が3時間無料。屋内で完結するので雨の日の気分転換にも向いています。買い物の後は大津港を散歩したり、ミシガンクルーズや夜のびわこ花噴水を楽しむのもおすすめです。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('shopping-2')">詳細を表示する</button>
             </article>
-            <article class="card"><div class="title">エイスクエア</div>
+            <article class="card">
+              <div class="title">エイスクエア</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県草津市西渋川1丁目23-1</div>
                 <div>大学からの時間</div><div>15分</div>
                 <div>URL</div><div><a href="https://asquare.ayaha.co.jp/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>JR草津駅西口すぐの駅前モール。アル・プラザ草津に加えて無印良品・ロフト・ユニクロ／GU、大型ホームセンターのディオワールドまでそろいます。駐車場は3,000台・2時間無料（購入で3〜4時間無料に拡大）。雨の日も屋内中心で動きやすく、カフェやレストランも朝から夜まで営業。授業帰りにサクッと休憩したり、休日にまとめ買いとごはんを一気に済ませたりできる学生に人気のスポットです。</div>
+                <div>詳細</div><div class="detail-preview">JR草津駅西口すぐの駅前モール。アル・プラザ草津に加えて無印良品・ロフト・ユニクロ／GU、大型ホームセンターのディオワールドまでそろいます。駐車場は3,000台・2時間無料（購入で3〜4時間無料に拡大）。雨の日も屋内中心で動きやすく、カフェやレストランも朝から夜まで営業。授業帰りにサクッと休憩したり、休日にまとめ買いとごはんを一気に済ませたりできる学生に人気のスポットです。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('shopping-3')">詳細を表示する</button>
             </article>
           </div>
           <div id="drv-scenery-list" class="grid cards view">
-            <article class="card"><div class="title">海津大崎の桜</div>
+            <article class="card">
+              <div class="title">海津大崎の桜</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県高島市マキノ町海津</div>
                 <div>大学からの時間</div><div>1時間45分</div>
                 <div>URL</div><div><a href="https://takashima-kanko.jp/sakura/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>春のドライブなら海津大崎がおすすめ。びわ湖北岸に、約4km・約800本のソメイヨシノが続く桜トンネルがあり、車で走り抜けるだけでも爽快です。桜クルーズを組み合わせれば、陸と湖の両方から楽しめます。満開の週末は交通規制が入り、専用駐車場もないため、徒歩観賞＋今津港／長浜港発の期間限定クルーズを使うのがスムーズ。湖に突き出す岩礁と桜、その奥に竹生島がのぞく景色は「琵琶湖八景」級の迫力で、写真映えも抜群です。渋滞を避けたいなら、平日朝いちか夕方の訪問がねらい目です。</div>
+                <div>詳細</div><div class="detail-preview">春のドライブなら海津大崎がおすすめ。びわ湖北岸に、約4km・約800本のソメイヨシノが続く桜トンネルがあり、車で走り抜けるだけでも爽快です。桜クルーズを組み合わせれば、陸と湖の両方から楽しめます。満開の週末は交通規制が入り、専用駐車場もないため、徒歩観賞＋今津港／長浜港発の期間限定クルーズを使うのがスムーズ。湖に突き出す岩礁と桜、その奥に竹生島がのぞく景色は「琵琶湖八景」級の迫力で、写真映えも抜群です。渋滞を避けたいなら、平日朝いちか夕方の訪問がねらい目です。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('scenery-1')">詳細を表示する</button>
             </article>
-            <article class="card"><div class="title">メタセコイア並木</div>
+            <article class="card">
+              <div class="title">メタセコイア並木</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県高島市</div>
                 <div>大学からの時間</div><div>1時間45分</div>
                 <div>URL</div><div><a href="https://takashima-kanko.jp/spot/metasequoia.html" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>マキノのメタセコイア並木は、約2.4kmに約500本が一直線に続く定番ドライブ道。季節ごとに新緑→深緑→紅葉→雪景色と変わり、車でゆっくり流すだけでも"並木のトンネル"を満喫できます。アクセスは湖西道路〜国道161号が分かりやすく、撮影や休憩は路上駐停車NGなので、道の中央あたりにあるマキノピックランドの無料駐車場へ。混みやすいのは紅葉・新緑の休日なので、平日朝か夕方がねらい目です。並木を抜けたら、併設の直売所や「並木カフェ」でスイーツ休憩できます。</div>
+                <div>詳細</div><div class="detail-preview">マキノのメタセコイア並木は、約2.4kmに約500本が一直線に続く定番ドライブ道。季節ごとに新緑→深緑→紅葉→雪景色と変わり、車でゆっくり流すだけでも"並木のトンネル"を満喫できます。アクセスは湖西道路〜国道161号が分かりやすく、撮影や休憩は路上駐停車NGなので、道の中央あたりにあるマキノピックランドの無料駐車場へ。混みやすいのは紅葉・新緑の休日なので、平日朝か夕方がねらい目です。並木を抜けたら、併設の直売所や「並木カフェ」でスイーツ休憩できます。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('scenery-2')">詳細を表示する</button>
             </article>
-            <article class="card"><div class="title">琵琶湖テラス</div>
+            <article class="card">
+              <div class="title">琵琶湖テラス</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県大津市木戸1547-1</div>
                 <div>大学からの時間</div><div>1時間10分</div>
                 <div>URL</div><div><a href="https://biwako-valley.com/tips/biwako_terrace/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>びわ湖テラスは、山麓駅の大きな駐車場（普通車約1,700台）に停めて、ロープウェイで約5分・標高1,108mの打見山へ。山上の「グランドテラス」「ノーステラス」では、水盤とウッドデッキ越しに北湖から南湖まで一望できて、写真映えも抜群です。余裕があれば、有料の「インフィニティラウンジ」でゆったりくつろいだり、山頂リフトで蓬莱山側の「Café 360」（標高1,174m）まで行って360度の景色を楽しむのもおすすめ。週末は駐車場が分散するので場内循環バスを使うと移動がスムーズ。ロープウェイはおおむね15分間隔・所要約5分なので、朝いちや夕方に合わせて上がると混雑を避けやすく快適に過ごせます。</div>
+                <div>詳細</div><div class="detail-preview">びわ湖テラスは、山麓駅の大きな駐車場（普通車約1,700台）に停めて、ロープウェイで約5分・標高1,108mの打見山へ。山上の「グランドテラス」「ノーステラス」では、水盤とウッドデッキ越しに北湖から南湖まで一望できて、写真映えも抜群です。余裕があれば、有料の「インフィニティラウンジ」でゆったりくつろいだり、山頂リフトで蓬莱山側の「Café 360」（標高1,174m）まで行って360度の景色を楽しむのもおすすめ。週末は駐車場が分散するので場内循環バスを使うと移動がスムーズ。ロープウェイはおおむね15分間隔・所要約5分なので、朝いちや夕方に合わせて上がると混雑を避けやすく快適に過ごせます。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('scenery-3')">詳細を表示する</button>
             </article>
           </div>
           <div id="drv-break-list" class="grid cards view">
-            <article class="card"><div class="title">におの浜</div>
+            <article class="card">
+              <div class="title">におの浜</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県大津市におの浜</div>
                 <div>大学からの時間</div><div>30分</div>
                 <div>URL</div><div><a href="https://www.biwakokisen.co.jp/access/nionohama/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>「大津湖岸なぎさ公園」の中にある気持ちいい水辺スポット。浜大津〜近江大橋のあいだに散策路と芝生が整っていて、ドライブなら周辺の時間貸し駐車場に停めてすぐ歩けます。湖際のコンクリート護岸に腰掛ければ、静かな湖面と比叡・比良の山並みをのんびり眺められて小休憩に最適。中央の「市民プラザ」周辺は広場になっていて、軽く散歩したりベンチで一息つくのにちょうどいいです。特に夕方は空と水の色が変わっていく時間帯が美しく、気分転換できます。</div>
+                <div>詳細</div><div class="detail-preview">「大津湖岸なぎさ公園」の中にある気持ちいい水辺スポット。浜大津〜近江大橋のあいだに散策路と芝生が整っていて、ドライブなら周辺の時間貸し駐車場に停めてすぐ歩けます。湖際のコンクリート護岸に腰掛ければ、静かな湖面と比叡・比良の山並みをのんびり眺められて小休憩に最適。中央の「市民プラザ」周辺は広場になっていて、軽く散歩したりベンチで一息つくのにちょうどいいです。特に夕方は空と水の色が変わっていく時間帯が美しく、気分転換できます。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('break-1')">詳細を表示する</button>
             </article>
-            <article class="card"><div class="title">滋賀県立琵琶湖博物館</div>
+            <article class="card">
+              <div class="title">滋賀県立琵琶湖博物館</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県草津市下物町1091</div>
                 <div>大学からの時間</div><div>25分</div>
                 <div>URL</div><div><a href="https://www.biwahaku.jp/" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>草津からの息抜きドライブがてら、湖岸道路（さざなみ街道）を北上して烏丸半島の滋賀県立琵琶湖博物館へ。湖面や比叡・比良の山並みを眺めながら走るだけで気持ちよく、到着後は琵琶湖の400万年と人の暮らしを学べる展示や、水族展示室・トンネル水槽を楽しめます。駐車場は普通車420台・550円ですが観覧者は無料サービスで実質無料。9:30–17:00（月曜休・最終入館16:00）なので、空きコマや平日昼にも行きやすいです。時間があれば徒歩圏の水生植物公園みずの森との共通券（大学生580円）で、水辺散策までセットにするのがおすすめ。</div>
+                <div>詳細</div><div class="detail-preview">草津からの息抜きドライブがてら、湖岸道路（さざなみ街道）を北上して烏丸半島の滋賀県立琵琶湖博物館へ。湖面や比叡・比良の山並みを眺めながら走るだけで気持ちよく、到着後は琵琶湖の400万年と人の暮らしを学べる展示や、水族展示室・トンネル水槽を楽しめます。駐車場は普通車420台・550円ですが観覧者は無料サービスで実質無料。9:30–17:00（月曜休・最終入館16:00）なので、空きコマや平日昼にも行きやすいです。時間があれば徒歩圏の水生植物公園みずの森との共通券（大学生580円）で、水辺散策までセットにするのがおすすめ。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('break-2')">詳細を表示する</button>
             </article>
-            <article class="card"><div class="title">ラウンドワン浜大津アーカス(スポッチャ)</div>
+            <article class="card">
+              <div class="title">ラウンドワン浜大津アーカス(スポッチャ)</div>
               <div class="kvs" style="margin:8px 0;">
                 <div>住所</div><div>滋賀県大津市浜町2-1</div>
                 <div>大学からの時間</div><div>35分</div>
                 <div>URL</div><div><a href="https://www.round1.co.jp/shop/tenpo/shiga-hamaotsu.html" target="_blank" rel="noopener">公式サイト</a></div>
-                <div>詳細</div><div>大津港そばの「浜大津アーカス」内にあるラウンドワン スタジアム 浜大津アーカス店は、ボウリング・カラオケ・ゲームに加えてスポッチャまで一か所で楽しめる全天候型スポット。駐車場は約500台、ラウンドワン利用中は駐車無料（館内の他店も500円以上で3時間無料）なので車で行きやすく、平日は深夜まで、週末は終日営業の日もあって授業後にも立ち寄りやすいです。アクセスは名神・大津ICから車で約5分、電車なら京阪「びわ湖浜大津」駅すぐ。湖畔ロケーションなので、遊んだ帰りに大津港を軽く散歩してクールダウンできます。</div>
+                <div>詳細</div><div class="detail-preview">大津港そばの「浜大津アーカス」内にあるラウンドワン スタジアム 浜大津アーカス店は、ボウリング・カラオケ・ゲームに加えてスポッチャまで一か所で楽しめる全天候型スポット。駐車場は約500台、ラウンドワン利用中は駐車無料（館内の他店も500円以上で3時間無料）なので車で行きやすく、平日は深夜まで、週末は終日営業の日もあって授業後にも立ち寄りやすいです。アクセスは名神・大津ICから車で約5分、電車なら京阪「びわ湖浜大津」駅すぐ。湖畔ロケーションなので、遊んだ帰りに大津港を軽く散歩してクールダウンできます。</div>
               </div>
+              <button class="detail-btn" onclick="openDetailModal('break-3')">詳細を表示する</button>
             </article>
           </div>
         </div>
@@ -503,6 +601,94 @@
           #drive-break:checked ~ .drive-views #drv-shopping-list,
           #drive-break:checked ~ .drive-views #drv-scenery-list { display: none; }
         </style>
+        
+        <!-- 詳細表示モーダル -->
+        <div id="detail-modal" class="detail-modal">
+          <div class="detail-modal-card">
+            <div class="title" id="modal-title"></div>
+            <div class="kvs" id="modal-content"></div>
+            <button class="close-btn" onclick="closeDetailModal()">閉じる</button>
+          </div>
+        </div>
+        
+        <script>
+          const detailData = {
+            'shopping-1': {
+              title: '三井アウトレットパーク滋賀竜王',
+              content: `
+                <div>詳細</div><div>近畿最大級で約230ブランドが集まる大型アウトレット。駐車場無料、館内Wi-Fi・EV充電あり。営業時間はショップ10:00–20:00、授業後でも十分回れます。スポーツ・カジュアルからTUMIなどの小物、近江牛グルメまで幅広く楽しめるのが魅力。混みそうな日は夕方からの来場がおすすめです。</div>
+              `
+            },
+            'shopping-2': {
+              title: '湖の駅　浜大津',
+              content: `
+                <div>詳細</div><div>滋賀の特産品や地酒がそろうマーケット。フードコートでは近江米を使ったメニューなど手軽に滋賀グルメを味わえます。館内で500円以上の購入で駐車場が3時間無料。屋内で完結するので雨の日の気分転換にも向いています。買い物の後は大津港を散歩したり、ミシガンクルーズや夜のびわこ花噴水を楽しむのもおすすめです。</div>
+              `
+            },
+            'shopping-3': {
+              title: 'エイスクエア',
+              content: `
+                <div>詳細</div><div>JR草津駅西口すぐの駅前モール。アル・プラザ草津に加えて無印良品・ロフト・ユニクロ／GU、大型ホームセンターのディオワールドまでそろいます。駐車場は3,000台・2時間無料（購入で3〜4時間無料に拡大）。雨の日も屋内中心で動きやすく、カフェやレストランも朝から夜まで営業。授業帰りにサクッと休憩したり、休日にまとめ買いとごはんを一気に済ませたりできる学生に人気のスポットです。</div>
+              `
+            },
+            'scenery-1': {
+              title: '海津大崎の桜',
+              content: `
+                <div>詳細</div><div>春のドライブなら海津大崎がおすすめ。びわ湖北岸に、約4km・約800本のソメイヨシノが続く桜トンネルがあり、車で走り抜けるだけでも爽快です。桜クルーズを組み合わせれば、陸と湖の両方から楽しめます。満開の週末は交通規制が入り、専用駐車場もないため、徒歩観賞＋今津港／長浜港発の期間限定クルーズを使うのがスムーズ。湖に突き出す岩礁と桜、その奥に竹生島がのぞく景色は「琵琶湖八景」級の迫力で、写真映えも抜群です。渋滞を避けたいなら、平日朝いちか夕方の訪問がねらい目です。</div>
+              `
+            },
+            'scenery-2': {
+              title: 'メタセコイア並木',
+              content: `
+                <div>詳細</div><div>マキノのメタセコイア並木は、約2.4kmに約500本が一直線に続く定番ドライブ道。季節ごとに新緑→深緑→紅葉→雪景色と変わり、車でゆっくり流すだけでも"並木のトンネル"を満喫できます。アクセスは湖西道路〜国道161号が分かりやすく、撮影や休憩は路上駐停車NGなので、道の中央あたりにあるマキノピックランドの無料駐車場へ。混みやすいのは紅葉・新緑の休日なので、平日朝か夕方がねらい目です。並木を抜けたら、併設の直売所や「並木カフェ」でスイーツ休憩できます。</div>
+              `
+            },
+            'scenery-3': {
+              title: '琵琶湖テラス',
+              content: `
+                <div>詳細</div><div>びわ湖テラスは、山麓駅の大きな駐車場（普通車約1,700台）に停めて、ロープウェイで約5分・標高1,108mの打見山へ。山上の「グランドテラス」「ノーステラス」では、水盤とウッドデッキ越しに北湖から南湖まで一望できて、写真映えも抜群です。余裕があれば、有料の「インフィニティラウンジ」でゆったりくつろいだり、山頂リフトで蓬莱山側の「Café 360」（標高1,174m）まで行って360度の景色を楽しむのもおすすめ。週末は駐車場が分散するので場内循環バスを使うと移動がスムーズ。ロープウェイはおおむね15分間隔・所要約5分なので、朝いちや夕方に合わせて上がると混雑を避けやすく快適に過ごせます。</div>
+              `
+            },
+            'break-1': {
+              title: 'におの浜',
+              content: `
+                <div>詳細</div><div>「大津湖岸なぎさ公園」の中にある気持ちいい水辺スポット。浜大津〜近江大橋のあいだに散策路と芝生が整っていて、ドライブなら周辺の時間貸し駐車場に停めてすぐ歩けます。湖際のコンクリート護岸に腰掛ければ、静かな湖面と比叡・比良の山並みをのんびり眺められて小休憩に最適。中央の「市民プラザ」周辺は広場になっていて、軽く散歩したりベンチで一息つくのにちょうどいいです。特に夕方は空と水の色が変わっていく時間帯が美しく、気分転換できます。</div>
+              `
+            },
+            'break-2': {
+              title: '滋賀県立琵琶湖博物館',
+              content: `
+                <div>詳細</div><div>草津からの息抜きドライブがてら、湖岸道路（さざなみ街道）を北上して烏丸半島の滋賀県立琵琶湖博物館へ。湖面や比叡・比良の山並みを眺めながら走るだけで気持ちよく、到着後は琵琶湖の400万年と人の暮らしを学べる展示や、水族展示室・トンネル水槽を楽しめます。駐車場は普通車420台・550円ですが観覧者は無料サービスで実質無料。9:30–17:00（月曜休・最終入館16:00）なので、空きコマや平日昼にも行きやすいです。時間があれば徒歩圏の水生植物公園みずの森との共通券（大学生580円）で、水辺散策までセットにするのがおすすめ。</div>
+              `
+            },
+            'break-3': {
+              title: 'ラウンドワン浜大津アーカス(スポッチャ)',
+              content: `
+                <div>詳細</div><div>大津港そばの「浜大津アーカス」内にあるラウンドワン スタジアム 浜大津アーカス店は、ボウリング・カラオケ・ゲームに加えてスポッチャまで一か所で楽しめる全天候型スポット。駐車場は約500台、ラウンドワン利用中は駐車無料（館内の他店も500円以上で3時間無料）なので車で行きやすく、平日は深夜まで、週末は終日営業の日もあって授業後にも立ち寄りやすいです。アクセスは名神・大津ICから車で約5分、電車なら京阪「びわ湖浜大津」駅すぐ。湖畔ロケーションなので、遊んだ帰りに大津港を軽く散歩してクールダウンできます。</div>
+              `
+            }
+          };
+          
+          function openDetailModal(id) {
+            const data = detailData[id];
+            if (data) {
+              document.getElementById('modal-title').textContent = data.title;
+              document.getElementById('modal-content').innerHTML = data.content;
+              document.getElementById('detail-modal').classList.add('is-open');
+            }
+          }
+          
+          function closeDetailModal() {
+            document.getElementById('detail-modal').classList.remove('is-open');
+          }
+          
+          // モーダル外をクリックで閉じる
+          document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeDetailModal();
+            }
+          });
+        </script>
       </section>
     </main>
   </div>

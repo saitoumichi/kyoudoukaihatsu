@@ -159,6 +159,77 @@
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
     .grid { display: grid; gap: 14px; }
     .grid.cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    
+    /* 詳細表示モーダル */
+    .detail-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(15,23,42,.45);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .detail-modal.is-open {
+      display: flex;
+    }
+    .detail-modal-card {
+      width: min(800px, 92vw);
+      max-height: 80vh;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 60px rgba(15,23,42,.25);
+      overflow-y: auto;
+      backdrop-filter: blur(var(--blur)) saturate(1.05);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(1.05);
+    }
+    .detail-modal .title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    .detail-modal .kvs {
+      line-height: 1.6;
+    }
+    .detail-modal .kvs div:nth-child(odd) {
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 12px;
+    }
+    .detail-modal .kvs div:nth-child(even) {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .detail-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .detail-btn:hover {
+      background: color-mix(in oklab, var(--primary) 80%, black);
+    }
+    .close-btn {
+      background: var(--muted);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    .close-btn:hover {
+      background: color-mix(in oklab, var(--muted) 80%, black);
+    }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
     /* 常時ガラスUI（可読性を保つため白ベースは維持） */
     backdrop-filter: blur(10px) saturate(1.05);
@@ -382,7 +453,7 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">ホーム</a>
+            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
             <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
             <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
             <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
@@ -396,7 +467,7 @@
       <!-- ================= KARAOKE ================= -->
       <section id="karaoke" class="view" aria-labelledby="karaoke-title">
         <h2 id="karaoke-title" class="h1">カラオケ</h2>
-        <p class="sub">持ち込み可否 / 機種 / 営業時間 / 設備で比較できます（並び替えUIは削除）。</p>
+        <p class="sub"></p>
         <div class="grid cards">
           <article class="card">
             <div class="title">JOYJOY 南草津店</div>
@@ -409,6 +480,7 @@
               <div>設備</div><div>無料Wi‑Fi、ダーツ・ビリヤード併設</div>
             </div>
             <div aria-label="評価" class="star">★★★★☆</div>
+            <button class="detail-btn" onclick="openDetailModal('karaoke-1')">詳細を表示する</button>
           </article>
           <article class="card">
             <div class="title">ジャンカラ 草津駅東口店</div>
@@ -421,6 +493,7 @@
               <div>設備</div><div>店内Wi‑Fi、HDMI貸出など</div>
             </div>
             <div aria-label="評価" class="star">★★★☆☆</div>
+            <button class="detail-btn" onclick="openDetailModal('karaoke-2')">詳細を表示する</button>
           </article>
           <article class="card">
             <div class="title">カラオケStyle 南草津店</div>
@@ -433,8 +506,61 @@
               <div>設備</div><div>プロジェクター付き大部屋やダーツ、コミック読み放題</div>
             </div>
             <div aria-label="評価" class="star">★★★☆☆</div>
+            <button class="detail-btn" onclick="openDetailModal('karaoke-3')">詳細を表示する</button>
           </article>
         </div>
+        
+        <!-- 詳細表示モーダル -->
+        <div id="detail-modal" class="detail-modal">
+          <div class="detail-modal-card">
+            <div class="title" id="modal-title"></div>
+            <div class="kvs" id="modal-content"></div>
+            <button class="close-btn" onclick="closeDetailModal()">閉じる</button>
+          </div>
+        </div>
+        
+        <script>
+          const detailData = {
+            'karaoke-1': {
+              title: 'JOYJOY 南草津店',
+              content: `
+                <div>詳細</div><div>南草津駅から徒歩5分の好立地。個室は清潔で音響も良好。夜はアルコール飲み放題プランがあり、学生の飲み会に人気。ダーツやビリヤードも楽しめるので、カラオケ以外の遊びも充実。平日の昼間は比較的空いており、授業の合間にも利用しやすい。</div>
+              `
+            },
+            'karaoke-2': {
+              title: 'ジャンカラ 草津駅東口店',
+              content: `
+                <div>詳細</div><div>草津駅東口から徒歩3分の便利な立地。24時間営業なので、深夜までカラオケを楽しめる。HDMIケーブルの貸出があるので、スマホやタブレットの画面を大画面に映して動画鑑賞も可能。個室は広めで、グループでの利用に適している。</div>
+              `
+            },
+            'karaoke-3': {
+              title: 'カラオケStyle 南草津店',
+              content: `
+                <div>詳細</div><div>BKCから最も近いカラオケ店。プロジェクター付きの大部屋があり、グループでの利用に最適。コミック読み放題サービスで、カラオケの合間にマンガを読むこともできる。アルコール持ち込みは不可だが、店内でドリンクを購入可能。学生割引もあり、コスパが良い。</div>
+              `
+            }
+          };
+          
+          function openDetailModal(id) {
+            const data = detailData[id];
+            if (data) {
+              document.getElementById('modal-title').textContent = data.title;
+              document.getElementById('modal-content').innerHTML = data.content;
+              document.getElementById('detail-modal').classList.add('is-open');
+            }
+          }
+          
+          function closeDetailModal() {
+            document.getElementById('detail-modal').classList.remove('is-open');
+          }
+          
+          // モーダル外をクリックで閉じる
+          document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeDetailModal();
+            }
+          });
+        </script>
       </section>
     </main>
   </div>
