@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – {{ $place->name }}</title>
+  <title>BKC生のためのアプリ – 商品情報編集</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -196,21 +196,32 @@
     }
     #app[data-skin="sakura"] .meta{ color: var(--muted); }
 
-    /* 場所詳細ページ専用スタイル */
-    .place-container { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
-    .place-image { width: 100%; height: 400px; object-fit: cover; border-radius: 16px; }
-    .place-placeholder { width: 100%; height: 400px; background: var(--line); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; }
-    .place-info { display: flex; flex-direction: column; gap: 16px; }
-    .place-title { font-size: 32px; font-weight: 800; margin: 0; }
-    .place-address { font-size: 18px; color: var(--muted); margin: 8px 0; }
-    .place-description { margin: 16px 0; line-height: 1.6; }
-    .place-details { margin: 16px 0; }
-    .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+    /* フォームスタイル */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; margin-bottom: 4px; font-weight: 600; color: var(--ink); }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+      background: rgba(255,255,255,.8); color: var(--ink); font-size: 14px;
+      backdrop-filter: blur(4px);
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
 
-    @media (max-width: 768px) {
-      .place-container { grid-template-columns: 1fr; gap: 24px; }
-      .place-title { font-size: 24px; }
-      .actions { flex-direction: column; gap: 16px; align-items: stretch; }
+    #app[data-skin="sakura"] .field input,
+    #app[data-skin="sakura"] .field textarea,
+    #app[data-skin="sakura"] .field select {
+      background: rgba(8,12,20,.4);
+      border-color: rgba(255,255,255,.15);
+      color: var(--ink);
+    }
+    #app[data-skin="sakura"] .field input:focus,
+    #app[data-skin="sakura"] .field textarea:focus,
+    #app[data-skin="sakura"] .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 106, 169, 0.2);
     }
   </style>
 </head>
@@ -225,139 +236,109 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav style="display:flex; gap:8px;">
-            <a href="{{ route('places.index', request()->route('type')) }}" class="btn">一覧に戻る</a>
+            <a href="{{ route('my.free.index') }}" class="btn">出品一覧に戻る</a>
           </nav>
         </div>
       </div>
     </header>
 
     <main>
-      <h1 class="h1">{{ $place->name }}</h1>
-      <p class="sub">場所の詳細情報を確認できます。</p>
+      <h1 class="h1">商品情報編集</h1>
+      <p class="sub">{{ $free->title }} の情報を編集できます。</p>
 
-      <div class="place-container">
-        <!-- 場所画像 -->
-        <div>
-          @if($place->images && $place->images->count() > 0)
-            <img src="{{ $place->images->first()->image_url }}" alt="{{ $place->name }}" class="place-image">
-          @else
-            <div class="place-placeholder">
-              <span>画像なし</span>
-            </div>
-          @endif
-        </div>
+      <div class="card">
+        <div class="title">フリマ商品を編集</div>
+        <form method="POST" action="/my/free/{{ $free->id }}" enctype="multipart/form-data">
+          @csrf
+          @method('PUT')
 
-        <!-- 場所詳細 -->
-        <div class="place-info">
-          <!-- タイプバッジ -->
-          <div>
-            @switch($place->type)
-              @case('drive')
-                <span class="pill" style="background: var(--green); color: #fff;">
-                  ドライブ
-                </span>
-                @break
-              @case('karaoke')
-                <span class="pill" style="background: var(--accent); color: #fff;">
-                  カラオケ
-                </span>
-                @break
-              @case('izakaya')
-                <span class="pill" style="background: var(--amber); color: #fff;">
-                  居酒屋
-                </span>
-                @break
-            @endswitch
+          <div class="field">
+            <label>商品名</label>
+            <input type="text" name="title" value="{{ old('title', $free->title) }}" placeholder="例）〇〇の教科書" required />
+            @error('title')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
           </div>
 
-          <!-- 住所 -->
-          @if($place->address)
-            <div class="place-address">{{ $place->address }}</div>
-          @endif
-
-          <!-- 説明 -->
-          @if($place->description)
-            <div class="place-description">
-              <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">説明</h3>
-              <p>{{ $place->description }}</p>
-            </div>
-          @endif
-
-          <!-- 詳細情報 -->
-          <div class="place-details">
-            @if($place->tel)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">電話番号</h4>
-                <p class="meta">{{ $place->tel }}</p>
-              </div>
-            @endif
-
-            @if($place->url)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">URL</h4>
-                <a href="{{ $place->url }}" target="_blank" style="color: var(--primary); text-decoration: underline;">
-                  {{ $place->url }}
-                </a>
-              </div>
-            @endif
-
-            @if($place->campus_time_min)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">大学からの時間</h4>
-                <p class="meta">{{ $place->campus_time_min }}分</p>
-              </div>
-            @endif
-
-            @if($place->score > 0)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">評価</h4>
-                <div style="display: flex; align-items: center;">
-                  @for($i = 1; $i <= 5; $i++)
-                    @if($i <= $place->score)
-                      <span style="color: var(--amber);">★</span>
-                    @else
-                      <span style="color: var(--line);">★</span>
-                    @endif
-                  @endfor
-                  <span class="meta" style="margin-left: 8px;">({{ $place->score }}/5)</span>
-                </div>
-              </div>
-            @endif
+          <div class="field">
+            <label>商品説明</label>
+            <textarea name="description" rows="4" placeholder="例）商品の状態、受け渡し方法、注意事項など">{{ old('description', $free->description) }}</textarea>
+            @error('description')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
           </div>
 
-          <!-- 出品者情報 -->
-          @if($place->user)
-            <div style="margin: 16px 0;">
-              <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">出品者情報</h3>
-              <p class="meta">出品者: {{ $place->user->login_id }}</p>
-              <p class="meta">投稿日: {{ $place->created_at->format('Y年m月d日') }}</p>
-            </div>
-          @endif
-
-          <!-- アクションボタン -->
-          <div class="actions">
-            <a href="{{ route('places.index', request()->route('type')) }}" class="btn">
-              ← 一覧に戻る
-            </a>
-
-            @auth
-              @if($place->user_id === auth()->id())
-                <div style="display: flex; gap: 12px;">
-                  <a href="{{ route('my.places.edit', $place) }}" class="btn primary">
-                    編集
-                  </a>
-                  <form method="POST" action="{{ route('my.places.destroy', $place) }}" style="display: inline;" onsubmit="return confirm('削除しますか？')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn" style="color: var(--rose);">
-                      削除
-                    </button>
-                  </form>
-                </div>
-              @endif
-            @endauth
+          <div class="field">
+            <label>価格</label>
+            <input type="number" name="price" value="{{ old('price', $free->price) }}" placeholder="例）1500" min="0" required />
+            @error('price')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
           </div>
-        </div>
+
+          <div class="field">
+            <label>カテゴリ</label>
+            <select name="category" required>
+              <option value="">カテゴリを選択してください</option>
+              <option value="textbooks" {{ old('category', $free->category) == 'textbooks' ? 'selected' : '' }}>教科書</option>
+              <option value="electronics" {{ old('category', $free->category) == 'electronics' ? 'selected' : '' }}>家電・デジタル</option>
+              <option value="fashion" {{ old('category', $free->category) == 'fashion' ? 'selected' : '' }}>ファッション</option>
+              <option value="books" {{ old('category', $free->category) == 'books' ? 'selected' : '' }}>本・雑誌</option>
+              <option value="sports" {{ old('category', $free->category) == 'sports' ? 'selected' : '' }}>スポーツ・アウトドア</option>
+              <option value="hobby" {{ old('category', $free->category) == 'hobby' ? 'selected' : '' }}>ホビー・グッズ</option>
+              <option value="other" {{ old('category', $free->category) == 'other' ? 'selected' : '' }}>その他</option>
+            </select>
+            @error('category')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>商品状態</label>
+            <select name="condition" required>
+              <option value="">状態を選択してください</option>
+              <option value="new" {{ old('condition', $free->condition) == 'new' ? 'selected' : '' }}>新品</option>
+              <option value="like_new" {{ old('condition', $free->condition) == 'like_new' ? 'selected' : '' }}>ほぼ新品</option>
+              <option value="good" {{ old('condition', $free->condition) == 'good' ? 'selected' : '' }}>良い</option>
+              <option value="fair" {{ old('condition', $free->condition) == 'fair' ? 'selected' : '' }}>普通</option>
+            </select>
+            @error('condition')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>商品画像</label>
+            @if($free->image_url)
+              <div style="margin-bottom: 8px;">
+                <img src="{{ $free->image_url }}" alt="{{ $free->title }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                <p class="meta">現在の画像</p>
+              </div>
+            @endif
+            <input type="file" name="image" accept="image/*" />
+            <div class="hint">新しい画像を選択すると、既存の画像が置き換えられます</div>
+            @error('image')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>出品状態</label>
+            <select name="status">
+              <option value="active" {{ old('status', $free->status) == 'active' ? 'selected' : '' }}>出品中</option>
+              <option value="sold" {{ old('status', $free->status) == 'sold' ? 'selected' : '' }}>売り切れ</option>
+              <option value="cancelled" {{ old('status', $free->status) == 'cancelled' ? 'selected' : '' }}>キャンセル</option>
+            </select>
+            @error('status')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn primary">更新する</button>
+            <a href="{{ route('my.free.index') }}" class="btn">キャンセル</a>
+          </div>
+        </form>
       </div>
     </main>
   </div>

@@ -38,24 +38,24 @@
             <div class="bg-white border-b border-gray-200">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <nav class="flex space-x-8" aria-label="Tabs">
-                        <a href="{{ route('places.index') }}"
+                        <a href="{{ route('places.index', 'drive') }}"
                            class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.index') ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             ホーム
                         </a>
-                        <a href="{{ route('places.by-type', 'drive') }}"
-                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.by-type') && request()->route('type') == 'drive' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        <a href="{{ route('places.index', 'drive') }}"
+                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.index') && request()->route('type') == 'drive' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             ドライブ
                         </a>
-                        <a href="{{ route('places.by-type', 'karaoke') }}"
-                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.by-type') && request()->route('type') == 'karaoke' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        <a href="{{ route('places.index', 'karaoke') }}"
+                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.index') && request()->route('type') == 'karaoke' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             カラオケ
                         </a>
-                        <a href="{{ route('places.by-type', 'izakaya') }}"
-                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.by-type') && request()->route('type') == 'izakaya' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        <a href="{{ route('places.index', 'izakaya') }}"
+                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('places.index') && request()->route('type') == 'izakaya' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             居酒屋
                         </a>
-                        <a href="{{ route('freemarket.index') }}"
-                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('freemarket.*') ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        <a href="{{ route('free.index') }}"
+                           class="py-4 px-1 border-b-2 font-medium text-sm {{ request()->routeIs('free.*') ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                             フリマ
                         </a>
                     </nav>

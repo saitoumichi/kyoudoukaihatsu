@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class FreeController extends Controller
+{
+    /**
+     * フリマ商品一覧表示
+     */
+    public function index(): View
+    {
+        // 既存のビューファイルを使用
+        return view('bkc.fleamarket');
+    }
+
+    /**
+     * 詳細表示
+     */
+    public function show($id): View
+    {
+        // 簡単なテストデータを返す
+        $free = (object)[
+            'id' => $id,
+            'title' => 'テスト商品',
+            'description' => 'これはテスト商品です。',
+            'price' => 1000,
+            'category' => 'テスト',
+            'condition' => 'good',
+            'image' => null,
+            'user_id' => 2, // テスト用のユーザーID（現在のユーザーと異なる）
+            'user' => (object)['name' => 'テストユーザー'],
+            'created_at' => now()
+        ];
+        return view('free.show', compact('free'));
+    }
+
+    /**
+     * 買取処理
+     */
+    public function buy(Request $request, $id)
+    {
+        return redirect()->route('free.dm', $id)->with('success', '買取リクエストを送信しました。');
+    }
+
+    /**
+     * DM表示
+     */
+    public function dm($id): View
+    {
+        // 簡単なテストデータを返す
+        $free = (object)[
+            'id' => $id,
+            'title' => 'テスト商品',
+            'user' => (object)['name' => 'テストユーザー']
+        ];
+        $messages = collect([]);
+
+        return view('free.dm', compact('free', 'messages'));
+    }
+
+    /**
+     * DMメッセージ送信
+     */
+    public function sendMessage(Request $request, $id)
+    {
+        $request->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
+        // 実際の実装では、ここでメッセージをデータベースに保存
+        // 現在はテスト用のリダイレクト
+
+        return redirect()->route('free.dm', $id)->with('success', 'メッセージを送信しました。');
+    }
+
+    /**
+     * DMやり取り終了
+     */
+    public function closeDm(Request $request, $id)
+    {
+        return redirect()->route('free.show', $id)->with('success', 'やり取りを終了しました。');
+    }
+
+    /**
+     * 手続き状況表示
+     */
+    public function status($id): View
+    {
+        // 簡単なテストデータを返す
+        $free = (object)[
+            'id' => $id,
+            'title' => 'テスト商品',
+            'user' => (object)['name' => 'テストユーザー']
+        ];
+        $status = 'negotiating'; // 例：交渉中
+
+        return view('free.status', compact('free', 'status'));
+    }
+
+    /**
+     * 手続き情報更新
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        return redirect()->route('free.status', $id)->with('success', '手続き状況を更新しました。');
+    }
+
+    /**
+     * 商品情報更新
+     */
+    public function update(Request $request, $id)
+    {
+        return redirect()->route('free.show', $id)->with('success', '商品情報を更新しました。');
+    }
+}

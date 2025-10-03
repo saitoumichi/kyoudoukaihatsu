@@ -1,296 +1,296 @@
+# 共同開発プロジェクト
 
-# 協同開発プロジェクト - 大学周辺スポット共有システム
+## プロジェクト概要
+Laravel 11を使用した場所共有・フリマアプリケーション
 
-## 📖 プロジェクト概要
+## 技術スタック
+- **Backend**: Laravel 11, PHP 8.4
+- **Database**: MySQL (Laravel Sail)
+- **Frontend**: Blade Templates, Tailwind CSS, Alpine.js
+- **Development**: Docker, Laravel Sail
 
-大学周辺のドライブスポット、カラオケ、居酒屋などの場所情報を管理し、ユーザーがおすすめスポットを共有・評価できるWebアプリケーションです。
+## 現在の進捗状況
 
-### 🎯 主な機能
-- **ユーザー認証・セッション管理**: 安全なログイン・ログアウト機能
-- **場所情報管理**: スポットの基本情報、画像、評価の管理
-- **カテゴリ別分類**: ドライブ、カラオケ、居酒屋の種類別管理
-- **おすすめ順表示**: 評価や閲覧数に基づくスポットの並び替え
-- **セキュリティ機能**: ログイン試行の監視・制限
+### ✅ 完了済み機能
 
-## 🏗️ 技術スタック
+#### 1. 認証システム
+- ユーザー登録・ログイン・ログアウト
+- パスワードリセット機能
+- セッション管理
 
-### バックエンド
-- **PHP 8.0+**
-- **Laravel 8.x** - Webフレームワーク
-- **MySQL 8.0** - リレーショナルデータベース
-- **Redis** - セッション・キャッシュ管理
+#### 2. 場所管理システム
+- ドライブスポット一覧・詳細表示
+- カラオケスポット一覧・詳細表示
+- 居酒屋スポット一覧・詳細表示
+- 場所の登録・編集・削除
 
-### フロントエンド
-- **HTML/CSS/JavaScript**
-- **Blade** - Laravelテンプレートエンジン
-- **Vite** - アセットビルドツール
+#### 3. フリマ機能
+- 商品一覧・詳細表示
+- 商品の出品・編集・削除
+- 購入申請・DM機能
+- 取引状況管理
 
-### インフラ
-- **Docker** - コンテナ化
-- **Laravel Sail** - 開発環境
-- **Meilisearch** - 全文検索エンジン
+#### 4. マイページ機能
+- ユーザー情報管理
+- 自分の掲載一覧
+- 掲載の作成・編集・削除
 
-## 🚀 セットアップ手順
+### 🔧 実装済みコントローラー
 
-### 前提条件
-- Docker Desktop
-- Git
-- Composer（PHP 8.0+）
-
-### 1. リポジトリのクローン
-```bash
-git clone [リポジトリURL]
-cd kyoudoukaihatsu
+#### AuthController
+```php
+// 認証関連の機能
+- showLogin()     // ログインフォーム表示
+- login()         // ログイン処理
+- showRegister()  // 登録フォーム表示
+- register()      // 登録処理
+- showForgotPassword()  // パスワード忘れた方フォーム
+- sendResetLink() // パスワードリセットリンク送信
+- showResetPassword()   // 新パスワード設定フォーム
+- resetPassword() // パスワード更新処理
+- logout()        // ログアウト処理
 ```
 
-### 2. 環境変数の設定
-```bash
-cp .env.example .env
-# .envファイルを編集してデータベース接続情報を設定
+#### PlaceController
+```php
+// 場所管理の機能
+- index($type)    // 場所一覧表示（タイプ別）
+- show($type, $place)  // 場所詳細表示
 ```
 
-### 3. 依存関係のインストール
-```bash
-composer install
-npm install
+#### FreeController
+```php
+// フリマ機能
+- index()         // 商品一覧表示
+- show($id)       // 商品詳細表示
+- buy($id)        // 購入処理
+- dm($id)         // DM表示
+- closeDm($id)    // DM終了
+- status($id)     // 取引状況表示
+- updateStatus($id)  // 取引状況更新
+- update($id)     // 商品情報更新
 ```
 
-### 4. アプリケーションキーの生成
-```bash
-php artisan key:generate
+#### MyController
+```php
+// マイページ機能
+- index()         // マイページ表示
+- createPlace()   // 場所作成フォーム
+- storePlace()    // 場所保存
+- editPlace()     // 場所編集フォーム
+- updatePlace()   // 場所更新
+- destroyPlace()  // 場所削除
+- showPlace()     // 場所詳細
+- places()        // 場所一覧
+- createFree()    // フリマ商品作成フォーム
+- storeFree()     // フリマ商品保存
+- editFree()      // フリマ商品編集フォーム
+- updateFree()    // フリマ商品更新
+- destroyFree()   // フリマ商品削除
+- showFree()      // フリマ商品詳細
+- free()          // フリマ商品一覧
 ```
 
-### 5. Docker環境の起動
+### 🗄️ データベース設計
+
+#### users テーブル
+```sql
+- id (Primary Key)
+- login_id (120文字, ユニーク)
+- email (255文字, ユニーク, nullable)
+- password_hash (255文字)
+- password_algo (255文字)
+- role (255文字)
+- is_active (tinyint, default: 1)
+- email_verified_at (timestamp, nullable)
+- last_login_at (datetime, nullable)
+- last_login_ip (45文字, nullable)
+- remember_token (100文字, nullable)
+- created_at, updated_at
+```
+
+#### places テーブル
+```sql
+- id (Primary Key)
+- user_id (Foreign Key)
+- name (120文字)
+- kana (120文字, nullable)
+- tel (20文字, nullable)
+- address (255文字, nullable)
+- description (text, nullable)
+- url (255文字, nullable)
+- score (integer, default: 0)
+- tags (255文字, nullable)
+- rating_avg (decimal(3,2), default: 0)
+- rating_count (unsigned integer, default: 0)
+- recommend_score (integer, default: 0)
+- reason (255文字, nullable)
+- campus_time_min (unsigned small integer, nullable)
+- is_active (tinyint, default: 1)
+- type (enum: 'drive', 'karaoke', 'izakaya')
+- created_at, updated_at
+```
+
+### 🌐 URL設計
+
+#### 認証関連
+```
+GET  /login              # ログインページ
+POST /login              # ログイン処理
+GET  /register           # 登録ページ
+POST /register           # 登録処理
+GET  /forgot-password    # パスワード忘れた方
+POST /forgot-password    # パスワードリセットリンク送信
+GET  /reset-password/{token}  # 新パスワード設定
+POST /reset-password/{token}  # パスワード更新
+POST /logout             # ログアウト
+```
+
+#### 場所関連
+```
+GET  /places/{type}           # 場所一覧（タイプ別）
+GET  /places/{type}/{place}   # 場所詳細
+```
+
+#### フリマ関連
+```
+GET  /free                    # フリマ商品一覧
+GET  /free/{id}               # 商品詳細
+POST /free/{id}/buy           # 購入申請
+GET  /free/{id}/dm            # DM表示
+POST /free/{id}/dm/close      # DM終了
+GET  /free/{id}/status        # 取引状況
+PUT  /free/{id}/status        # 取引状況更新
+PUT  /free/{id}               # 商品情報更新
+```
+
+#### マイページ関連（認証必須）
+```
+GET  /my                      # マイページ
+GET  /my/places/create        # 場所作成フォーム
+POST /my/places               # 場所保存
+GET  /my/places/{id}/edit     # 場所編集フォーム
+PUT  /my/places/{id}          # 場所更新
+DELETE /my/places/{id}        # 場所削除
+GET  /my/places/{id}          # 場所詳細
+GET  /my/places               # 場所一覧
+GET  /my/free/create          # フリマ商品作成フォーム
+POST /my/free                 # フリマ商品保存
+GET  /my/free/{id}/edit       # フリマ商品編集フォーム
+PUT  /my/free/{id}            # フリマ商品更新
+DELETE /my/free/{id}          # フリマ商品削除
+GET  /my/free/{id}            # フリマ商品詳細
+GET  /my/free                 # フリマ商品一覧
+```
+
+### 🎨 フロントエンド状況
+
+#### 実装済みビューファイル
+- `resources/views/auth/login.blade.php` - ログインフォーム
+- `resources/views/auth/register.blade.php` - 登録フォーム
+- `resources/views/places/index.blade.php` - 場所一覧
+- `resources/views/layouts/navigation.blade.php` - ナビゲーション
+
+#### デザインシステム
+- **Tailwind CSS**: モダンなユーティリティファーストCSS
+- **Alpine.js**: 軽量なJavaScriptフレームワーク
+- **Bootstrap**: 追加のコンポーネントサポート
+- **レスポンシブデザイン**: モバイル対応
+
+### 🚀 開発環境
+
+#### Laravel Sail (Docker)
 ```bash
+# 開発環境起動
 ./vendor/bin/sail up -d
-```
 
-### 6. データベースの初期化
-```bash
-# 初期化スクリプトの配置
-mkdir -p initdb
-cp docs/db/schema.sql initdb/01-schema.sql
-
-# コンテナの再起動
-./vendor/bin/sail down
-./vendor/bin/sail up -d
-```
-
-### 7. マイグレーションの実行
-```bash
+# マイグレーション実行
 ./vendor/bin/sail artisan migrate
+
+# ルート確認
+./vendor/bin/sail artisan route:list
+
+# 開発サーバー起動
+./vendor/bin/sail artisan serve
 ```
 
-### 8. アプリケーションの起動確認
-ブラウザで `http://localhost` にアクセス
+#### 環境設定
+- **DB_CONNECTION**: mysql
+- **DB_HOST**: mysql
+- **DB_DATABASE**: laravel
+- **DB_USERNAME**: root
+- **DB_PASSWORD**: password
 
-## 📊 データベース設計
+### 📋 今後の開発予定
 
-### 主要テーブル構成
+#### バックエンド
+- [ ] 画像アップロード機能
+- [ ] 検索・フィルタ機能
+- [ ] レビュー・評価機能
+- [ ] 通知機能
+- [ ] API エンドポイントの拡張
 
-#### 認証・ユーザー管理
-- `users` - ユーザー基本情報
-- `password_reset_tokens` - パスワードリセット
-- `sessions` - セッション管理
-- `login_attempts` - ログイン試行ログ
+#### フロントエンド（resourcesディレクトリ）
+- [ ] 詳細なスタイリング調整
+- [ ] JavaScript機能の実装
+- [ ] レスポンシブデザインの改善
+- [ ] ユーザーインターフェースの最適化
+- [ ] アニメーション効果の追加
 
-#### 場所・スポット管理
-- `places` - 場所の基本情報（メインテーブル）
-- `drives_categories` - ドライブカテゴリ
-- `drives` - ドライブスポット固有情報
-- `karaokes` - カラオケ店固有情報
-- `izakayas` - 居酒屋固有情報
-- `place_images` - 場所の画像管理
+### 🔄 共同開発の進め方
 
-### ERD図
-詳細なデータベース設計は `docs/db/ERD.md` を参照してください。
+#### バックエンド担当
+- コントローラー・モデル・ルートの実装
+- データベース設計・マイグレーション
+- API設計・実装
+- 認証・認可機能
 
-## 🔐 認証システム
+#### フロントエンド担当
+- `resources/views/` ディレクトリでのビューファイル実装
+- `resources/css/` でのスタイリング
+- `resources/js/` でのJavaScript機能
+- ユーザーインターフェース設計
 
-### ✅ 実装済み機能
-- **ユーザー登録・ログイン**: Laravel Breezeによる完全な認証システム
-- **パスワードリセット**: メール送信による安全なパスワードリセット
-- **メール認証**: ユーザー登録後のメールアドレス確認
-- **セッション管理**: 安全なログイン状態の管理
-- **CSRF保護**: クロスサイトリクエストフォージェリ対策
+### 📝 注意事項
 
-### 🛣️ 認証ルート
+1. **resourcesディレクトリ**: フロントエンド担当者が管理
+2. **バックエンドファイル**: コントローラー・モデル・ルートは実装済み
+3. **データベース**: マイグレーション済み
+4. **URL設計**: 完了済み、すべて動作確認済み
+
+### 🎯 現在の状態
+
+- ✅ バックエンド基盤: 完了
+- ✅ 認証システム: 完了
+- ✅ 基本的なCRUD操作: 完了
+- ✅ URL設計: 完了
+- 🔄 フロントエンド: 開発中（resourcesディレクトリ）
+
+## 開発者向け情報
+
+### プロジェクト構造
 ```
-/login          - ログインフォーム・処理
-/register      - ユーザー登録
-/forgot-password - パスワードリセット
-/logout        - ログアウト
-```
-
-### 🎯 セキュリティ機能
-- パスワードハッシュ化（bcrypt）
-- ログイン試行の監視・制限
-- セッションハイジャック対策
-- パスワード強度の検証
-- メール認証によるアカウント確認
-
-## 🔧 開発コマンド
-
-### Sailコマンド（Docker環境）
-```bash
-# コンテナの起動
-./vendor/bin/sail up -d
-
-# コンテナの停止
-./vendor/bin/sail down
-
-# コンテナ内でコマンド実行
-./vendor/bin/sail artisan [コマンド]
-./vendor/bin/sail composer [コマンド]
-./vendor/bin/sail npm [コマンド]
-```
-
-### Artisanコマンド
-```bash
-# マイグレーション
-php artisan migrate
-php artisan migrate:rollback
-
-# シーダー
-php artisan db:seed
-
-# キャッシュクリア
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
+app/
+├── Http/Controllers/     # コントローラー（実装済み）
+├── Models/              # モデル（実装済み）
+database/
+├── migrations/          # マイグレーション（実装済み）
+routes/
+├── web.php              # Webルート（実装済み）
+resources/
+├── views/               # ビューファイル（開発中）
+├── css/                 # スタイルシート（開発中）
+└── js/                  # JavaScript（開発中）
 ```
 
-## 📁 プロジェクト構造
-
-```
-kyoudoukaihatsu/
-├── app/                    # アプリケーションロジック
-│   ├── Http/Controllers/  # コントローラー
-│   ├── Models/           # Eloquentモデル
-│   └── Providers/        # サービスプロバイダー
-├── config/               # 設定ファイル
-├── database/             # データベース関連
-│   ├── migrations/      # マイグレーションファイル
-│   ├── seeders/         # シーダーファイル
-│   └── factories/       # ファクトリーファイル
-├── docs/                # ドキュメント
-│   └── db/             # データベース設計書
-├── resources/           # フロントエンドリソース
-│   ├── views/          # Bladeテンプレート
-│   ├── css/            # スタイルシート
-│   └── js/             # JavaScript
-├── routes/              # ルート定義
-├── storage/             # ファイルストレージ
-├── tests/               # テストファイル
-└── vendor/              # Composer依存関係
-```
-
-## 🧪 テスト
-
-### テストの実行
-```bash
-# 全テストの実行
-./vendor/bin/sail artisan test
-
-# 特定のテストファイルの実行
-./vendor/bin/sail artisan test tests/Feature/ExampleTest.php
-
-# テストカバレッジの確認
-./vendor/bin/sail artisan test --coverage
-```
-
-## 📝 開発ガイドライン
-
-### コーディング規約
-- PSR-12準拠
-- Laravel Pintによる自動フォーマット
-- 日本語コメントの使用
-
-### コミットメッセージ
-```
-feat: 新機能の追加
-fix: バグ修正
-docs: ドキュメント更新
-style: コードスタイルの変更
-refactor: リファクタリング
-test: テストの追加・修正
-```
-
-### ブランチ戦略
-- `main` - 本番環境
-- `develop` - 開発環境
-- `feature/*` - 機能開発
-- `hotfix/*` - 緊急修正
-
-## 🚀 デプロイ
-
-### 本番環境へのデプロイ
-1. 環境変数の設定
-2. データベースのマイグレーション
-3. アセットのビルド
-4. キャッシュのクリア
-
-```bash
-# 本番環境での実行
-php artisan migrate --force
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-## 🤝 コントリビューション
-
-1. このリポジトリをフォーク
-2. 機能ブランチを作成 (`git checkout -b feature/AmazingFeature`)
-3. 変更をコミット (`git commit -m 'Add some AmazingFeature'`)
-4. ブランチにプッシュ (`git push origin feature/AmazingFeature`)
-5. プルリクエストを作成
-
-## 📄 ライセンス
-
-このプロジェクトは [MIT License](LICENSE) の下で公開されています。
-
-## 📞 サポート
-
-質問や問題がある場合は、以下の方法でお問い合わせください：
-
-- Issueの作成
-- プロジェクトメンバーへの直接連絡
-- 開発チームのSlack/Teams
-
-## 📈 プロジェクト進捗状況
-
-### ✅ 完了済み
-- **インフラ環境**: Laravel Sail + Docker環境構築
-- **データベース設計**: 完全なスキーマ設計完了
-- **認証システム**: Laravel Breezeによる完全実装
-- **プロジェクトドキュメント**: README、DB設計書
-
-### 🚧 進行中
-- **データベース初期化**: スキーマ適用準備中
-
-### 📋 今後の予定
-- **Laravelマイグレーション**: スキーマのLaravel化
-- **Eloquentモデル**: User、Place、Category等の作成
-- **場所管理機能**: CRUD操作の実装
-- **フロントエンド**: Bladeテンプレートの開発
-- **API開発**: RESTful APIの実装
-
-### 📊 進捗率
-- **インフラ・環境**: 90%完了
-- **データベース設計**: 100%完了
-- **認証システム**: 100%完了
-- **アプリケーション機能**: 0%完了
-- **全体**: 約60%完了
-
-## 🔄 更新履歴
-
-- **v1.0.0** - 初期リリース
-  - 基本的な認証機能
-  - 場所管理機能
-  - カテゴリ分類機能
+### 開発開始方法
+1. `git clone` でプロジェクトを取得
+2. `./vendor/bin/sail up -d` で開発環境起動
+3. `./vendor/bin/sail artisan migrate` でマイグレーション実行
+4. `http://localhost` でアクセス
 
 ---
 
-**協同開発プロジェクトチーム** - より良い大学ライフをサポートします 🎓✨
-
+**最終更新**: 2025年10月2日
+**バックエンド進捗**: 100% 完了
+**フロントエンド進捗**: 開発中

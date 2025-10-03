@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – マイページ</title>
+  <title>BKC生のためのアプリ – 商品を出品する</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -85,14 +85,6 @@
     }
 @media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
 
-    /* ★ チェック時：色変数を"暗色ガラスUI"に上書き（デモ用） */
-    #bgprev:checked ~ #app {
-      --ink:#0f172a;
-      --card: rgba(255,255,255,.92);
-      --line: rgba(15,23,42,.12);
-      --muted: #64748b;
-    }
-
     /* ---------- App Shell ---------- */
     header {
       position: sticky; top: 0; z-index: 10;
@@ -107,80 +99,22 @@
     .brand { font-weight: 800; letter-spacing: .5px; }
     .brand span { color: var(--primary); }
 
-    /* Tabs */
-    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tabs label,
-    .tabs .tabs-link {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 12px; border-radius: 999px; cursor: pointer;
-      border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-      background: var(--card);
-      transition: box-shadow .2s ease, transform .05s ease;
-      user-select: none;
-    }
-    .tabs label:hover,
-    .tabs .tabs-link:hover { box-shadow: 0 1px 0 #e5e7eb, 0 0 0 4px rgba(37,99,235,.08) inset; }
-    .tabs label[data-color="blue"],
-    .tabs .tabs-link[data-color="blue"]{ border-color:#dbeafe; background:#eff6ff; }
-    .tabs label[data-color="violet"],
-    .tabs .tabs-link[data-color="violet"]{ border-color:#ede9fe; background:#f5f3ff; }
-    .tabs label[data-color="rose"],
-    .tabs .tabs-link[data-color="rose"]{ border-color:#ffe4e6; background:#fff1f2; }
-    .tabs label[data-color="amber"],
-    .tabs .tabs-link[data-color="amber"]{ border-color:#ffedd5; background:#fff7ed; }
-    .tabs label[data-color="green"],
-    .tabs .tabs-link[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
-
-    input[type="radio"].tab { display: none; }
-    main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
-    section.view { display: none; }
-
-    /* show selected section */
-    #tab-home:checked ~ header label[for="tab-home"],
-    #tab-drive:checked ~ header label[for="tab-drive"],
-    #tab-karaoke:checked ~ header label[for="tab-karaoke"],
-    #tab-izakaya:checked ~ header label[for="tab-izakaya"],
-    #tab-fleamarket:checked ~ header label[for="tab-fleamarket"],
-    #tab-mypage:checked ~ header label[for="tab-mypage"] {
-      outline: 2px solid var(--primary);
-      box-shadow: 0 6px 16px rgba(37,99,235,.15);
-      transform: translateY(-1px);
-    }
-
-    #tab-home:checked ~ main #home,
-    #tab-drive:checked ~ main #drive,
-    #tab-karaoke:checked ~ main #karaoke,
-    #tab-izakaya:checked ~ main #izakaya,
-    #tab-fleamarket:checked ~ main #fleamarket,
-    #tab-mypage:checked ~ main #mypage { display: block; }
-
     /* ---------- UI atoms ---------- */
     .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-    .grid { display: grid; gap: 14px; }
-    .grid.cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
     /* 常時ガラスUI（可読性を保つため白ベースは維持） */
     backdrop-filter: blur(10px) saturate(1.05);
     -webkit-backdrop-filter: blur(10px) saturate(1.05);
   }
-    #bgprev:checked ~ #app .card { box-shadow: 0 6px 30px rgba(0,0,0,.24); backdrop-filter: blur(10px); }
     .card .title { font-weight: 700; margin: 2px 0 6px; }
     .meta { color: var(--muted); font-size: 13px; }
-    .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#f1f5f9; border:1px solid var(--line); font-size:12px; }
 
     .btn { display:inline-block; padding:10px 14px; border-radius: 12px; border: 1px solid var(--line); background: #fff; text-decoration:none; color:var(--ink); font-weight:700; }
     .btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
     .btn.ghost { background: #fff; }
     .btn.full { width: 100%; text-align: center; }
     .btn-row { display:flex; gap:10px; flex-wrap: wrap; }
-
-    .kvs { display:grid; grid-template-columns: auto 1fr; gap:6px 12px; font-size: 14px; }
-    .star { color: #f59e0b; font-size: 16px; }
-
-    .toolbar { display:flex; gap:8px; flex-wrap: wrap; align-items:center; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px; }
-    .toolbar .field { display:flex; align-items:center; gap:6px; padding:6px 10px; background:#f8fafc; border-radius:10px; border:1px solid var(--line); }
-    .toolbar input, .toolbar select { border: none; background: transparent; outline: none; font-size:14px; min-width: 120px; }
 
     form .field { display:grid; gap:6px; margin-bottom:12px; }
     form input[type="text"],
@@ -201,22 +135,13 @@
     form textarea { min-height: 120px; resize: vertical; }
     .hint { color: var(--muted); font-size: 12px; }
 
-    .cols { display:grid; gap: 16px; grid-template-columns: 1.2fr .8fr; }
-    @media (max-width: 960px) { .cols { grid-template-columns: 1fr; } }
-
-    .empty { padding: 24px; border: 2px dashed var(--line); border-radius: 16px; background: #fff; display: grid; gap: 8px; justify-items: start; }
-
     .chips { display:flex; flex-wrap:wrap; gap:8px; }
     .chip { padding:6px 10px; border:1px solid var(--line); background:#fff; border-radius:999px; cursor:pointer; }
 
-    table { width:100%; border-collapse: collapse; }
-    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--line); }
-    th { font-size: 13px; color: var(--muted); font-weight: 700; }
-
-    footer { text-align:center; color:var(--muted); font-size:12px; padding: 28px 16px; }
-
     /* toggle helpers */
     .toggle { display:none; }
+
+    main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
 
     /* Sakuraテーマ（ダークガラス + 桜色グロー） */
     #app[data-skin="sakura"]{
@@ -277,59 +202,6 @@
         0 0 22px 2px rgba(255,122,150,.10);
     }
 
-    #app[data-skin="sakura"] .tabs label,
-    #app[data-skin="sakura"] .chip{
-      border-color: rgba(255,255,255,.08);
-      background: rgba(12,18,30,.56);
-      color: #ffffff;
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.04),
-        0 0 0 2px rgba(255,152,177,.08);
-    }
-    #app[data-skin="sakura"] .tabs label:hover{
-      box-shadow:
-        inset 0 0 0 2px rgba(255,152,177,.16),
-        0 6px 18px rgba(0,0,0,.35);
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link{
-      border-color: rgba(255,255,255,.08);
-      background: rgba(12,18,30,.56);
-      color: #ffe4ef;
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.04),
-        0 0 0 2px rgba(255,152,177,.08);
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link:hover{
-      box-shadow:
-        inset 0 0 0 2px rgba(255,152,177,.16),
-        0 6px 18px rgba(0,0,0,.35);
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
-      background: rgba(59,130,246,.2);
-      border-color: rgba(59,130,246,.3);
-      color: #dbeafe;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
-      background: rgba(139,92,246,.2);
-      border-color: rgba(139,92,246,.3);
-      color: #e9d5ff;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
-      background: rgba(244,63,94,.2);
-      border-color: rgba(244,63,94,.3);
-      color: #fecaca;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
-      background: rgba(245,158,11,.2);
-      border-color: rgba(245,158,11,.3);
-      color: #fde68a;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
-      background: rgba(34,197,94,.2);
-      border-color: rgba(34,197,94,.3);
-      color: #bbf7d0;
-    }
-
     #app[data-skin="sakura"] .btn{
       background: rgba(12,18,30,.6);
       border: 1px solid rgba(255,255,255,.10);
@@ -350,17 +222,6 @@
       border: 1px solid rgba(255,255,255,.10);
     }
     #app[data-skin="sakura"] .meta{ color: var(--muted); }
-
-    /* 選択中タブのアウトラインをテーマ色に */
-    #app[data-skin="sakura"] #tab-home:checked ~ header label[for="tab-home"],
-    #app[data-skin="sakura"] #tab-drive:checked ~ header label[for="tab-drive"],
-    #app[data-skin="sakura"] #tab-karaoke:checked ~ header label[for="tab-karaoke"],
-    #app[data-skin="sakura"] #tab-izakaya:checked ~ header label[for="tab-izakaya"],
-    #app[data-skin="sakura"] #tab-fleamarket:checked ~ header label[for="tab-fleamarket"],
-    #app[data-skin="sakura"] #tab-mypage:checked ~ header label[for="tab-mypage"]{
-      outline: 2px solid var(--primary);
-      box-shadow: 0 6px 16px color-mix(in oklab, var(--primary) 35%, black);
-    }
   </style>
 </head>
 <body>
@@ -369,59 +230,80 @@
 
   <!-- ======= APP WRAPPER ======= -->
   <div id="app" data-skin="sakura">
-    <!-- NAV RADIO TABS (no JS) must be before header/main for CSS ~ selectors -->
-    <input id="tab-home" class="tab" type="radio" name="nav">
-    <input id="tab-drive" class="tab" type="radio" name="nav">
-    <input id="tab-karaoke" class="tab" type="radio" name="nav">
-    <input id="tab-izakaya" class="tab" type="radio" name="nav">
-    <input id="tab-fleamarket" class="tab" type="radio" name="nav">
-    <input id="tab-mypage" class="tab" type="radio" name="nav" checked>
-
     <header>
       <div class="container">
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
-          <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/my" class="tabs-link" data-color="blue">マイページ</a>
-            <a href="/places/drive" class="tabs-link" data-color="violet">ドライブ</a>
-            <a href="/places/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
-            <a href="/places/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
-            <a href="/free" class="tabs-link" data-color="green">フリマ</a>
+          <nav style="display:flex; gap:8px;">
+            <a href="/my" class="btn">マイページに戻る</a>
           </nav>
         </div>
       </div>
     </header>
 
     <main>
-      <!-- ================= MY PAGE ================= -->
-      <section id="mypage" class="view" aria-labelledby="mypage-title">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
-        <h2 id="mypage-title" class="h1">マイページ</h2>
-          <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn" style="background: var(--rose); color: white; border-color: var(--rose);">ログアウト</button>
-          </form>
-        </div>
+      <h1 class="h1">商品を出品する</h1>
+      <p class="sub">新しい商品を出品して、他のBKC生と取引しましょう。</p>
 
-        <!-- 場所管理 -->
-        <div class="card" style="margin-top:14px;">
-          <div class="title">場所管理</div>
-          <div class="btn-row">
-            <a href="/my/places/create" class="btn primary">新しい場所を追加</a>
-            <a href="/my/places" class="btn primary">場所一覧を見る</a>
-          </div>
-            </div>
+      <!-- フリマ出品フォーム -->
+      <div class="card">
+        <div class="title">商品情報を入力</div>
 
-        <!-- フリマ管理 -->
-        <div class="card" style="margin-top:14px;">
-          <div class="title">フリマ管理</div>
-          <div class="btn-row">
-            <a href="/my/free/create" class="btn primary">新しく出品する</a>
-            <a href="/my/free" class="btn primary">自分の出品を見る</a>
+        <form method="POST" action="{{ route('my.free.store') }}" enctype="multipart/form-data">
+                        @csrf
+
+          <div class="field">
+            <label>商品名</label>
+            <input type="text" name="title" placeholder="例）MacBook Pro 13インチ" required />
+                        </div>
+
+          <div class="field">
+            <label>商品説明</label>
+            <textarea name="description" placeholder="例）購入から1年、使用頻度は低く状態良好です。付属品も全て揃っています。"></textarea>
+                        </div>
+
+          <div class="field">
+            <label>価格（円）</label>
+            <input type="number" name="price" placeholder="例）50000" min="0" required />
+                        </div>
+
+          <div class="field">
+            <label>カテゴリ</label>
+            <select name="category" required>
+                                <option value="">カテゴリを選択してください</option>
+              <option value="electronics">家電・デジタル</option>
+              <option value="fashion">ファッション</option>
+              <option value="books">本・雑誌</option>
+              <option value="sports">スポーツ・アウトドア</option>
+              <option value="hobby">ホビー・グッズ</option>
+              <option value="other">その他</option>
+            </select>
           </div>
-        </div>
-      </section>
+
+          <div class="field">
+            <label>商品の状態</label>
+            <select name="condition" required>
+              <option value="">状態を選択してください</option>
+              <option value="new">新品</option>
+              <option value="like_new">ほぼ新品</option>
+              <option value="good">良い</option>
+              <option value="fair">普通</option>
+                            </select>
+                        </div>
+
+          <div class="field">
+            <label>商品画像</label>
+            <input type="file" name="image" accept="image/*" />
+            <div class="hint">※ 画像は任意です。JPEG、PNG形式に対応しています。</div>
+                        </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn primary">出品する</button>
+            <a href="{{ route('my.free.index') }}" class="btn">キャンセル</a>
+                        </div>
+                    </form>
+                </div>
     </main>
-  </div>
+            </div>
 </body>
 </html>

@@ -382,10 +382,10 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
-            <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
-            <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
-            <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
+            <a href="/my" class="tabs-link" data-color="blue">マイページ</a>
+            <a href="/places/drive" class="tabs-link" data-color="violet">ドライブ</a>
+            <a href="/places/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
+            <a href="/places/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
             <a href="/free" class="tabs-link" data-color="green">フリマ</a>
           </nav>
         </div>
@@ -397,16 +397,17 @@
       <section id="home" class="view" aria-labelledby="home-title">
         <h1 id="home-title" class="h1">ログイン</h1>
         <div class="card" style="max-width:520px; margin: 0 auto;">
-          <form>
-            <div class="field"><label>メールアドレス</label><input type="email" placeholder="you@example.com" /></div>
-            <div class="field"><label>ニックネーム</label><input type="text" placeholder="例）bkc_student" /></div>
-            <div class="field"><label>パスワード</label><input type="password" placeholder="••••••••" /></div>
+          <form method="POST" action="/login">
+            @csrf
+            <div class="field"><label>メールアドレス</label><input type="email" name="email" placeholder="you@example.com" /></div>
+            <div class="field"><label>ニックネーム</label><input type="text" name="login_id" placeholder="例）bkc_student" required /></div>
+            <div class="field"><label>パスワード</label><input type="password" name="password" placeholder="••••••••" required /></div>
             <div class="btn-row">
-              <a href="/places/type/register" class="btn primary">ログイン</a>
-              <a href="/places/type/register" class="btn">新規作成へ</a>
+              <button type="submit" class="btn primary">ログイン</button>
+              <a href="/register" class="btn">新規作成へ</a>
             </div>
             <div class="hint">アカウントをお持ちでない方は「新規作成へ」を押してください。</div>
-            <div class="hint" style="margin-top: 8px;"><a href="#" style="color: var(--primary); text-decoration: underline;">パスワードを忘れた人はこちら</a></div>
+            <div class="hint" style="margin-top: 8px;"><a href="/forgot-password" style="color: var(--primary); text-decoration: underline;">パスワードを忘れた人はこちら</a></div>
           </form>
         </div>
       </section>

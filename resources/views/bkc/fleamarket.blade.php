@@ -382,10 +382,10 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav class="tabs" aria-label="主要ナビゲーション">
-            <a href="/places" class="tabs-link" data-color="blue">マイページ</a>
-            <a href="/places/type/drive" class="tabs-link" data-color="violet">ドライブ</a>
-            <a href="/places/type/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
-            <a href="/places/type/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
+            <a href="/my" class="tabs-link" data-color="blue">マイページ</a>
+            <a href="/places/drive" class="tabs-link" data-color="violet">ドライブ</a>
+            <a href="/places/karaoke" class="tabs-link" data-color="rose">カラオケ</a>
+            <a href="/places/izakaya" class="tabs-link" data-color="amber">居酒屋</a>
             <a href="/free" class="tabs-link" data-color="green">フリマ</a>
           </nav>
         </div>
@@ -397,7 +397,7 @@
       <section id="fleamarket" class="view" aria-labelledby="fleamarket-title">
         <h2 id="fleamarket-title" class="h1">フリマ（教科書）</h2>
         <p class="sub"></p>
-        
+
         <div class="grid cards">
           <article class="card">
             <div class="title">線形代数入門</div>
@@ -410,9 +410,10 @@
             </div>
             <div class="btn-row" style="margin-top:8px;">
               <button type="button" class="btn primary" onclick="openDetailModal('linear-algebra')">詳細を見る</button>
+              <a href="/free/1/dm" class="btn secondary">DMで相談</a>
             </div>
           </article>
-          
+
           <article class="card">
             <div class="title">統計学入門</div>
             <div class="meta">¥1,800</div>
@@ -424,9 +425,10 @@
             </div>
             <div class="btn-row" style="margin-top:8px;">
               <button type="button" class="btn primary" onclick="openDetailModal('statistics')">詳細を見る</button>
+              <a href="/free/2/dm" class="btn secondary">DMで相談</a>
             </div>
           </article>
-          
+
           <article class="card">
             <div class="title">微分積分学</div>
             <div class="meta">¥2,000</div>
@@ -438,9 +440,10 @@
             </div>
             <div class="btn-row" style="margin-top:8px;">
               <button type="button" class="btn primary" onclick="openDetailModal('calculus')">詳細を見る</button>
+              <a href="/free/3/dm" class="btn secondary">DMで相談</a>
             </div>
           </article>
-          
+
           <article class="card">
             <div class="title">経済学概論</div>
             <div class="meta">¥1,200</div>
@@ -452,10 +455,11 @@
             </div>
             <div class="btn-row" style="margin-top:8px;">
               <button type="button" class="btn primary" onclick="openDetailModal('economics')">詳細を見る</button>
+              <a href="/free/4/dm" class="btn secondary">DMで相談</a>
             </div>
           </article>
         </div>
-        
+
         <!-- 詳細モーダル -->
         <div id="detail-modal" class="modal" style="display: none;">
           <div class="modal-card">
@@ -466,32 +470,32 @@
             </div>
           </div>
         </div>
-        
+
         <style>
-          .modal { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            z-index: 60; 
-            background: rgba(15,23,42,.45); 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px; 
+          .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(15,23,42,.45);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
           }
-          .modal-card { 
-            width: min(520px, 92vw); 
-            background: #fff; 
-            border:1px solid var(--line); 
-            border-radius:16px; 
-            padding:18px; 
-            box-shadow: 0 20px 60px rgba(15,23,42,.25); 
+          .modal-card {
+            width: min(520px, 92vw);
+            background: #fff;
+            border:1px solid var(--line);
+            border-radius:16px;
+            padding:18px;
+            box-shadow: 0 20px 60px rgba(15,23,42,.25);
           }
           #app[data-skin="sakura"] .modal-card {
             background: var(--card);
             border: 1px solid rgba(255,255,255,.06);
             color: var(--ink);
           }
-          
+
           .detail-preview {
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -500,7 +504,7 @@
             line-height: 1.4;
           }
         </style>
-        
+
         <script>
           const detailData = {
             'linear-algebra': {
@@ -528,7 +532,7 @@
               `
             }
           };
-          
+
           function openDetailModal(id) {
             const data = detailData[id];
             if (data) {
@@ -537,11 +541,11 @@
               document.getElementById('detail-modal').style.display = 'flex';
             }
           }
-          
+
           function closeDetailModal() {
             document.getElementById('detail-modal').style.display = 'none';
           }
-          
+
           // モーダル外をクリックしたら閉じる
           document.getElementById('detail-modal').addEventListener('click', function(e) {
             if (e.target === this) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – {{ $place->name }}</title>
+  <title>BKC生のためのアプリ – 掲載情報編集</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -196,21 +196,55 @@
     }
     #app[data-skin="sakura"] .meta{ color: var(--muted); }
 
-    /* 場所詳細ページ専用スタイル */
-    .place-container { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
-    .place-image { width: 100%; height: 400px; object-fit: cover; border-radius: 16px; }
-    .place-placeholder { width: 100%; height: 400px; background: var(--line); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; }
-    .place-info { display: flex; flex-direction: column; gap: 16px; }
-    .place-title { font-size: 32px; font-weight: 800; margin: 0; }
-    .place-address { font-size: 18px; color: var(--muted); margin: 8px 0; }
-    .place-description { margin: 16px 0; line-height: 1.6; }
-    .place-details { margin: 16px 0; }
-    .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+    /* フォームスタイル */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; margin-bottom: 4px; font-weight: 600; color: var(--ink); }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+      background: rgba(255,255,255,.8); color: var(--ink); font-size: 14px;
+      backdrop-filter: blur(4px);
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .chip {
+      padding: 6px 12px; border: 1px solid var(--line); border-radius: 20px;
+      background: rgba(255,255,255,.6); cursor: pointer; font-size: 12px; transition: all 0.2s;
+    }
+    .chip:hover { background: rgba(255,255,255,.8); }
+    .toggle { display: none; }
+    .toggle:checked + .chip {
+      background: var(--primary); color: #fff; border-color: var(--primary);
+    }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
 
-    @media (max-width: 768px) {
-      .place-container { grid-template-columns: 1fr; gap: 24px; }
-      .place-title { font-size: 24px; }
-      .actions { flex-direction: column; gap: 16px; align-items: stretch; }
+    #app[data-skin="sakura"] .field input,
+    #app[data-skin="sakura"] .field textarea,
+    #app[data-skin="sakura"] .field select {
+      background: rgba(8,12,20,.4);
+      border-color: rgba(255,255,255,.15);
+      color: var(--ink);
+    }
+    #app[data-skin="sakura"] .field input:focus,
+    #app[data-skin="sakura"] .field textarea:focus,
+    #app[data-skin="sakura"] .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 106, 169, 0.2);
+    }
+    #app[data-skin="sakura"] .chip {
+      background: rgba(8,12,20,.4);
+      border-color: rgba(255,255,255,.15);
+      color: var(--ink);
+    }
+    #app[data-skin="sakura"] .chip:hover {
+      background: rgba(255,255,255,.1);
+    }
+    #app[data-skin="sakura"] .toggle:checked + .chip {
+      background: var(--primary);
+      color: #0b0f18;
+      border-color: var(--primary);
     }
   </style>
 </head>
@@ -225,139 +259,115 @@
         <div class="row" style="justify-content: space-between;">
           <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
           <nav style="display:flex; gap:8px;">
-            <a href="{{ route('places.index', request()->route('type')) }}" class="btn">一覧に戻る</a>
+            <a href="{{ route('my.places.index') }}" class="btn">マイページに戻る</a>
           </nav>
         </div>
       </div>
     </header>
 
     <main>
-      <h1 class="h1">{{ $place->name }}</h1>
-      <p class="sub">場所の詳細情報を確認できます。</p>
+      <h1 class="h1">掲載情報編集</h1>
+      <p class="sub">{{ $place->name }} の情報を編集できます。</p>
 
-      <div class="place-container">
-        <!-- 場所画像 -->
-        <div>
-          @if($place->images && $place->images->count() > 0)
-            <img src="{{ $place->images->first()->image_url }}" alt="{{ $place->name }}" class="place-image">
-          @else
-            <div class="place-placeholder">
-              <span>画像なし</span>
-            </div>
-          @endif
-        </div>
+      <div class="card">
+        <div class="title">場所情報を編集</div>
+        <form method="POST" action="{{ route('my.places.update', $place) }}">
+          @csrf
+          @method('PUT')
 
-        <!-- 場所詳細 -->
-        <div class="place-info">
-          <!-- タイプバッジ -->
-          <div>
-            @switch($place->type)
-              @case('drive')
-                <span class="pill" style="background: var(--green); color: #fff;">
-                  ドライブ
-                </span>
-                @break
-              @case('karaoke')
-                <span class="pill" style="background: var(--accent); color: #fff;">
-                  カラオケ
-                </span>
-                @break
-              @case('izakaya')
-                <span class="pill" style="background: var(--amber); color: #fff;">
-                  居酒屋
-                </span>
-                @break
-            @endswitch
+          <div class="field">
+            <label>場所名</label>
+            <input type="text" name="name" value="{{ old('name', $place->name) }}" placeholder="例）メタセコイア並木 / 三井アウトレット滋賀竜王" required />
+            @error('name')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
           </div>
 
-          <!-- 住所 -->
-          @if($place->address)
-            <div class="place-address">{{ $place->address }}</div>
-          @endif
-
-          <!-- 説明 -->
-          @if($place->description)
-            <div class="place-description">
-              <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">説明</h3>
-              <p>{{ $place->description }}</p>
-            </div>
-          @endif
-
-          <!-- 詳細情報 -->
-          <div class="place-details">
-            @if($place->tel)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">電話番号</h4>
-                <p class="meta">{{ $place->tel }}</p>
-              </div>
-            @endif
-
-            @if($place->url)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">URL</h4>
-                <a href="{{ $place->url }}" target="_blank" style="color: var(--primary); text-decoration: underline;">
-                  {{ $place->url }}
-                </a>
-              </div>
-            @endif
-
-            @if($place->campus_time_min)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">大学からの時間</h4>
-                <p class="meta">{{ $place->campus_time_min }}分</p>
-              </div>
-            @endif
-
-            @if($place->score > 0)
-              <div style="margin-bottom: 12px;">
-                <h4 style="font-weight: 600; margin-bottom: 4px;">評価</h4>
-                <div style="display: flex; align-items: center;">
-                  @for($i = 1; $i <= 5; $i++)
-                    @if($i <= $place->score)
-                      <span style="color: var(--amber);">★</span>
-                    @else
-                      <span style="color: var(--line);">★</span>
-                    @endif
-                  @endfor
-                  <span class="meta" style="margin-left: 8px;">({{ $place->score }}/5)</span>
-                </div>
-              </div>
-            @endif
+          <div class="field">
+            <label>住所</label>
+            <input type="text" name="address" value="{{ old('address', $place->address) }}" placeholder="例）滋賀県高島市… / 滋賀県蒲生郡竜王町…" />
+            @error('address')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
           </div>
 
-          <!-- 出品者情報 -->
-          @if($place->user)
-            <div style="margin: 16px 0;">
-              <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">出品者情報</h3>
-              <p class="meta">出品者: {{ $place->user->login_id }}</p>
-              <p class="meta">投稿日: {{ $place->created_at->format('Y年m月d日') }}</p>
-            </div>
-          @endif
-
-          <!-- アクションボタン -->
-          <div class="actions">
-            <a href="{{ route('places.index', request()->route('type')) }}" class="btn">
-              ← 一覧に戻る
-            </a>
-
-            @auth
-              @if($place->user_id === auth()->id())
-                <div style="display: flex; gap: 12px;">
-                  <a href="{{ route('my.places.edit', $place) }}" class="btn primary">
-                    編集
-                  </a>
-                  <form method="POST" action="{{ route('my.places.destroy', $place) }}" style="display: inline;" onsubmit="return confirm('削除しますか？')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn" style="color: var(--rose);">
-                      削除
-                    </button>
-                  </form>
-                </div>
-              @endif
-            @endauth
+          <div class="field">
+            <label>電話番号</label>
+            <input type="tel" name="tel" value="{{ old('tel', $place->tel) }}" placeholder="例）0740-XX-XXXX" />
+            @error('tel')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
           </div>
-        </div>
+
+          <div class="field">
+            <label>大学からの時間（分）</label>
+            <input type="number" name="campus_time_min" value="{{ old('campus_time_min', $place->campus_time_min) }}" placeholder="例）30 / 105" min="0" />
+            @error('campus_time_min')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>URL</label>
+            <input type="url" name="url" value="{{ old('url', $place->url) }}" placeholder="https://example.com" />
+            @error('url')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>種類</label>
+            <div class="chips">
+              <input id="edit-type-drive" type="radio" name="type" value="drive" class="toggle" {{ old('type', $place->type) == 'drive' ? 'checked' : '' }}>
+              <label for="edit-type-drive" class="chip">ドライブ</label>
+
+              <input id="edit-type-karaoke" type="radio" name="type" value="karaoke" class="toggle" {{ old('type', $place->type) == 'karaoke' ? 'checked' : '' }}>
+              <label for="edit-type-karaoke" class="chip">カラオケ</label>
+
+              <input id="edit-type-izakaya" type="radio" name="type" value="izakaya" class="toggle" {{ old('type', $place->type) == 'izakaya' ? 'checked' : '' }}>
+              <label for="edit-type-izakaya" class="chip">居酒屋</label>
+            </div>
+            @error('type')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>詳細</label>
+            <textarea name="description" rows="4" placeholder="例）見どころ・設備・注意事項など">{{ old('description', $place->description) }}</textarea>
+            @error('description')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>評価</label>
+            <select name="score">
+              <option value="0" {{ old('score', $place->score) == 0 ? 'selected' : '' }}>評価なし</option>
+              <option value="1" {{ old('score', $place->score) == 1 ? 'selected' : '' }}>★☆☆☆☆ (1)</option>
+              <option value="2" {{ old('score', $place->score) == 2 ? 'selected' : '' }}>★★☆☆☆ (2)</option>
+              <option value="3" {{ old('score', $place->score) == 3 ? 'selected' : '' }}>★★★☆☆ (3)</option>
+              <option value="4" {{ old('score', $place->score) == 4 ? 'selected' : '' }}>★★★★☆ (4)</option>
+              <option value="5" {{ old('score', $place->score) == 5 ? 'selected' : '' }}>★★★★★ (5)</option>
+            </select>
+            @error('score')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>おすすめ理由</label>
+            <textarea name="reason" rows="3" placeholder="例）なぜこの場所をおすすめするか">{{ old('reason', $place->reason) }}</textarea>
+            @error('reason')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn primary">更新する</button>
+            <a href="{{ route('my.places.index') }}" class="btn">キャンセル</a>
+          </div>
+        </form>
       </div>
     </main>
   </div>

@@ -1,77 +1,75 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MyController;
 use App\Http\Controllers\PlaceController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ImageController;
-use App\Http\Controllers\FreeMarketController;
-use App\Http\Controllers\BkcAppController;
+use App\Http\Controllers\FreeController;
 use Illuminate\Support\Facades\Route;
 
 // トップページ
 Route::get('/', function () {
-    return redirect()->route('places.index');
+    return redirect()->route('login');
 });
 
-// BKCアプリ
-Route::get('/bkc', [BkcAppController::class, 'index'])->name('bkc.index');
+// 認証関連ルート
+// ログインページ
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
-// ダッシュボード
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// ユーザー登録ページ
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
 
-// 場所管理（認証必須）
-Route::middleware(['auth', 'verified'])->group(function () {
-    // 場所のCRUD
-    Route::resource('places', PlaceController::class);
+// パスワード忘れた方フォーム
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('forgot-password');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink']);
 
-    // タイプ別一覧
-    Route::get('/places/type/{type}', [PlaceController::class, 'byType'])->name('places.by-type');
+// 新パスワード設定
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('password.update');
 
-    // 検索
-    Route::get('/places/search', [PlaceController::class, 'search'])->name('places.search');
+// マイページ関連ルート（認証必須）
+Route::middleware(['auth'])->group(function () {
+    // マイページ
+    Route::get('/my', [MyController::class, 'index'])->name('my.index');
+    // ログアウト
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // カテゴリ管理
-    Route::resource('categories', CategoryController::class);
-    Route::post('/categories/sort', [CategoryController::class, 'updateSort'])->name('categories.sort');
-    Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive'])->name('categories.toggle-active');
+    // 掲載作成（フリマ以外）
+    Route::get('/my/places/create', [MyController::class, 'createPlace'])->name('my.places.create');
+    Route::post('/my/places', [MyController::class, 'storePlace'])->name('my.places.store');
+    Route::get('/my/places/{place}/edit', [MyController::class, 'editPlace'])->name('my.places.edit');
+    Route::put('/my/places/{place}', [MyController::class, 'updatePlace'])->name('my.places.update');
+    Route::delete('/my/places/{place}', [MyController::class, 'destroyPlace'])->name('my.places.destroy');
+    Route::get('/my/places/{place}', [MyController::class, 'showPlace'])->name('my.places.show');
+    Route::get('/my/places', [MyController::class, 'places'])->name('my.places.index'); // 掲載一覧
 
-    // 画像管理
-    Route::post('/places/{place}/images', [ImageController::class, 'upload'])->name('images.upload');
-    Route::delete('/images/{image}', [ImageController::class, 'destroy'])->name('images.destroy');
-    Route::post('/places/{place}/images/sort', [ImageController::class, 'updateSort'])->name('images.sort');
-    Route::patch('/images/{image}/alt-text', [ImageController::class, 'updateAltText'])->name('images.alt-text');
-    Route::get('/places/{place}/images', [ImageController::class, 'index'])->name('images.index');
+    // 掲載作成（フリマ）
+    Route::get('/my/free/create', [MyController::class, 'createFree'])->name('my.free.create');
+    Route::post('/my/free', [MyController::class, 'storeFree'])->name('my.free.store');
+    Route::get('/my/free/{id}/edit', [MyController::class, 'editFree'])->name('my.free.edit');
+    Route::delete('/my/free/{id}', [MyController::class, 'destroyFree'])->name('my.free.destroy');
+    Route::get('/my/free/{id}', [MyController::class, 'showFree'])->name('my.free.show');
+    Route::get('/my/free', [MyController::class, 'free'])->name('my.free.index'); // 出品一覧
 });
 
-// 一般公開（認証不要）
-Route::get('/places', [PlaceController::class, 'index'])->name('places.index');
-Route::get('/places/{place}', [PlaceController::class, 'show'])->name('places.show');
+// 場所一覧（認証不要）
+Route::get('/places/{type}', [PlaceController::class, 'index'])->name('places.index');
+Route::get('/places/{type}/{place}', [PlaceController::class, 'show'])->name('places.show');
 
-// フリマ機能（一覧・詳細は認証不要）
-Route::get('/free', [FreeMarketController::class, 'index'])->name('freemarket.index');
-Route::get('/free/buy', [FreeMarketController::class, 'buy'])->name('freemarket.buy');
-Route::get('/free/{id}', [FreeMarketController::class, 'show'])->name('freemarket.show');
+// フリマ商品一覧（認証不要）
+Route::get('/free', [FreeController::class, 'index'])->name('free.index');
+Route::get('/free/{item}', [FreeController::class, 'show'])->name('free.show');
 
 // フリマ機能（認証必須）
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/free/dm', [FreeMarketController::class, 'dm'])->name('freemarket.dm');
-    Route::get('/free/create', [FreeMarketController::class, 'create'])->name('freemarket.create');
-    Route::post('/free', [FreeMarketController::class, 'store'])->name('freemarket.store');
-    Route::get('/free/my', [FreeMarketController::class, 'my'])->name('freemarket.my');
-    Route::get('/free/my/{id}', [FreeMarketController::class, 'myShow'])->name('freemarket.my.show');
-    Route::resource('free/my', FreeMarketController::class)
-        ->names('freemarket.my')
-        ->only(['edit','update','destroy'])
-        ->parameters(['my' => 'id']);
+Route::middleware(['auth'])->group(function () {
+    Route::post('/free/{item}/buy', [FreeController::class, 'buy'])->name('free.buy');
+    Route::get('/free/{item}/dm', [FreeController::class, 'dm'])->name('free.dm');
+    Route::post('/free/{item}/dm', [FreeController::class, 'sendMessage'])->name('free.dm.send');
+    Route::post('/free/{item}/dm/close', [FreeController::class, 'closeDm'])->name('free.dm.close');
+    Route::get('/free/{item}/status', [FreeController::class, 'status'])->name('free.status');
+    Route::put('/free/{item}/status', [FreeController::class, 'updateStatus'])->name('free.status.update');
+    Route::put('/free/{item}', [FreeController::class, 'update'])->name('free.update');
 });
 
-// プロフィール管理
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php'; // 重複を避けるため無効化

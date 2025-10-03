@@ -69,7 +69,7 @@
                             <a href="{{ route('places.create') }}" class="block w-full bg-blue-500 text-white text-center py-2 px-4 rounded-md hover:bg-blue-600 transition duration-150">
                                 新しい場所を追加
                             </a>
-                            <a href="{{ route('places.index') }}" class="block w-full bg-gray-500 text-white text-center py-2 px-4 rounded-md hover:bg-gray-600 transition duration-150">
+                            <a href="{{ route('places.index', 'drive') }}" class="block w-full bg-gray-500 text-white text-center py-2 px-4 rounded-md hover:bg-gray-600 transition duration-150">
                                 場所一覧を見る
                             </a>
                         </div>
@@ -99,7 +99,7 @@
                             <a href="/profile" class="block w-full bg-red-500 text-white text-center py-2 px-4 rounded-md hover:bg-red-600 transition duration-150">
                                 パスワード変更
                             </a>
-                            <a href="http://localhost:8000/places/create" class="block w-full bg-purple-500 text-white text-center py-2 px-4 rounded-md hover:bg-purple-600 transition duration-150">
+                            <a href="/my/places/create" class="block w-full bg-purple-500 text-white text-center py-2 px-4 rounded-md hover:bg-purple-600 transition duration-150">
                                 新しく掲載を作成
                             </a>
                             <a href="/places/edit" class="block w-full bg-orange-500 text-white text-center py-2 px-4 rounded-md hover:bg-orange-600 transition duration-150">

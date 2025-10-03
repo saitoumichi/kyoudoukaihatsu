@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class FreeMarket extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'title',
+        'description',
+        'price',
+        'condition',
+        'category',
+        'image_url',
+        'status',
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+    ];
+
+    /**
+     * ユーザーとのリレーション
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * スコープ: アクティブな商品のみ
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * スコープ: カテゴリ別
+     */
+    public function scopeByCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
+}

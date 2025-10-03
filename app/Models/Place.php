@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Place extends Model
 {
     protected $fillable = [
+        'user_id',
         'name',
         'kana',
         'tel',
@@ -34,6 +36,14 @@ class Place extends Model
         'recommend_score' => 'integer',
         'campus_time_min' => 'integer',
     ];
+
+    /**
+     * ユーザーとのリレーション
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * ドライブスポットとのリレーション
