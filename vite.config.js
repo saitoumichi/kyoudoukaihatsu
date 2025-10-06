@@ -11,6 +11,12 @@ export default defineConfig({
   css: {
     postcss: false, // PostCSSを無効化して-35エラーを回避
   },
+  esbuild: {
+    // TypeScriptを完全に無効化
+    loader: 'js',
+    include: /.*\.(js|ts)$/,
+    exclude: [],
+  },
   server: {
     host: true, // 0.0.0.0
     watch: {

@@ -346,7 +346,7 @@
             @csrf
             <input type="hidden" name="type" value="drive">
 
-            <div class="field"><label>名称</label><input type="text" name="name" placeholder="例）メタセコイア並木 / 三井アウトレット滋賀竜王" required /></div>
+            <div class="field"><label>場所名</label><input type="text" name="name" placeholder="例）メタセコイア並木 / 三井アウトレット滋賀竜王" required /></div>
             <div class="field"><label>住所</label><input type="text" name="address" placeholder="例）滋賀県高島市… / 滋賀県蒲生郡竜王町…" /></div>
             <div class="field"><label>大学からの時間（分）</label><input type="number" name="campus_time_min" placeholder="例）30 / 105" min="0" /></div>
             <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
@@ -361,7 +361,21 @@
                                 </div>
               <div class="hint">※ ドライブは「ショッピング / 景色 / 息抜き」から1つ選択</div>
                             </div>
-            <div class="field"><label>詳細</label><textarea name="description" placeholder="例）見どころ・設備・注意事項など"></textarea></div>
+                            <div class="field">
+            <label>評価</label>
+            <select name="score">
+              <option value="0" {{ old('score', 0) == 0 ? 'selected' : '' }}>評価なし</option>
+              <option value="1" {{ old('score', 0) == 1 ? 'selected' : '' }}>★☆☆☆☆ (1)</option>
+              <option value="2" {{ old('score', 0) == 2 ? 'selected' : '' }}>★★☆☆☆ (2)</option>
+              <option value="3" {{ old('score', 0) == 3 ? 'selected' : '' }}>★★★☆☆ (3)</option>
+              <option value="4" {{ old('score', 0) == 4 ? 'selected' : '' }}>★★★★☆ (4)</option>
+              <option value="5" {{ old('score', 0) == 5 ? 'selected' : '' }}>★★★★★ (5)</option>
+            </select>
+            @error('score')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+                            <div class="field"><label>おすすめ理由</label><textarea name="description" placeholder="例）見どころ・設備・注意事項など"></textarea></div>
             <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
           </form>
 
