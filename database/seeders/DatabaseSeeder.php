@@ -19,5 +19,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // フリマ商品のサンプルデータを追加
+        $this->call(FreeMarketSeeder::class);
     }
 }

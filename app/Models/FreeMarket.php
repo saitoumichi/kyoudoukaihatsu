@@ -45,4 +45,15 @@ class FreeMarket extends Model
     {
         return $query->where('category', $category);
     }
+
+    /**
+     * スコープ: カテゴリ一覧取得
+     */
+    public function scopeCategories($query)
+    {
+        return $query->select('category')
+            ->distinct()
+            ->whereNotNull('category')
+            ->orderBy('category');
+    }
 }
