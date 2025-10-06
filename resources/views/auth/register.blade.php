@@ -133,7 +133,7 @@
 
             <!-- Email Address -->
             <div class="field">
-              <label for="email">メールアドレス（任意）</label>
+              <label for="email">メールアドレス</label>
               <input type="email" id="email" name="email" value="{{ old('email') }}" autocomplete="username" placeholder="you@example.com" />
               @if ($errors->get('email'))
                 <div class="error">{{ $errors->get('email')[0] }}</div>

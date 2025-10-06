@@ -292,14 +292,6 @@
           </div>
 
           <div class="field">
-            <label>電話番号</label>
-            <input type="tel" name="tel" value="{{ old('tel', $place->tel) }}" placeholder="例）0740-XX-XXXX" />
-            @error('tel')
-              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="field">
             <label>大学からの時間（分）</label>
             <input type="number" name="campus_time_min" value="{{ old('campus_time_min', $place->campus_time_min) }}" placeholder="例）30 / 105" min="0" />
             @error('campus_time_min')
@@ -357,7 +349,7 @@
 
           <div class="field">
             <label>おすすめ理由</label>
-            <textarea name="reason" rows="3" placeholder="例）なぜこの場所をおすすめするか">{{ old('reason', $place->reason) }}</textarea>
+            <textarea name="reason" rows="3" placeholder="例）見どころ・設備・注意事項など">{{ old('reason', $place->reason) }}</textarea>
             @error('reason')
               <div class="hint" style="color: var(--rose);">{{ $message }}</div>
             @enderror
