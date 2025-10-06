@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="flex items-center justify-end space-x-4">
-                            <a href="{{ route('freemarket.index') }}" class="text-gray-600 hover:text-gray-800">
+                            <a href="{{ route('free.index') }}" class="text-gray-600 hover:text-gray-800">
                                 {{ __('キャンセル') }}
                             </a>
                             <x-primary-button>

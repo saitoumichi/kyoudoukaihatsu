@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FreeMarket;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -10,10 +11,27 @@ class FreeController extends Controller
     /**
      * フリマ商品一覧表示
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        // 既存のビューファイルを使用
-        return view('bkc.fleamarket');
+        $query = FreeMarket::active();
+
+        // カテゴリフィルター
+        if ($request->has('category') && $request->category) {
+            $query->byCategory($request->category);
+        }
+
+        // 検索機能
+        if ($request->has('search') && $request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $items = $query->with('user')->latest()->get();
+        $categories = FreeMarket::categories()->pluck('category');
+
+        return view('free.index', compact('items', 'categories'));
     }
 
     /**
@@ -21,19 +39,7 @@ class FreeController extends Controller
      */
     public function show($id): View
     {
-        // 簡単なテストデータを返す
-        $free = (object)[
-            'id' => $id,
-            'title' => 'テスト商品',
-            'description' => 'これはテスト商品です。',
-            'price' => 1000,
-            'category' => 'テスト',
-            'condition' => 'good',
-            'image' => null,
-            'user_id' => 2, // テスト用のユーザーID（現在のユーザーと異なる）
-            'user' => (object)['name' => 'テストユーザー'],
-            'created_at' => now()
-        ];
+        $free = FreeMarket::with('user')->findOrFail($id);
         return view('free.show', compact('free'));
     }
 
