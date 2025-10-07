@@ -279,11 +279,18 @@
                                 </select>
                             </div>
 
-                            <!-- 価格範囲 -->
+                            <!-- 最低価格 -->
                             <div class="form-group">
                                 <label for="price_min">💰 最低価格</label>
                                 <input id="price_min" type="number" name="price_min"
-                                    value="{{ request('price_min') }}" placeholder="0" />
+                                    value="{{ request('price_min') }}" placeholder="0" min="0" />
+                            </div>
+
+                            <!-- 最高価格 -->
+                            <div class="form-group">
+                                <label for="price_max">💴 最高価格</label>
+                                <input id="price_max" type="number" name="price_max"
+                                    value="{{ request('price_max') }}" placeholder="上限なし" min="0" />
                             </div>
 
                             <!-- ソート -->
@@ -299,7 +306,7 @@
                         </div>
 
                         <div class="btn-group">
-                            <button type="button" class="btn" onclick="this.form.reset()">リセット</button>
+                            <button type="button" class="btn" onclick="window.location.href='{{ route('free.index') }}'">リセット</button>
                             <button type="submit" class="btn primary">検索する</button>
                         </div>
                     </form>

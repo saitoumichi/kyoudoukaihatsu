@@ -28,7 +28,35 @@ class FreeController extends Controller
             });
         }
 
-        $items = $query->with('user')->latest()->get();
+        // 価格フィルター（最低価格）
+        if ($request->has('price_min') && $request->price_min !== null && $request->price_min !== '') {
+            $query->where('price', '>=', $request->price_min);
+        }
+
+        // 価格フィルター（最高価格）
+        if ($request->has('price_max') && $request->price_max !== null && $request->price_max !== '') {
+            $query->where('price', '<=', $request->price_max);
+        }
+
+        // ソート機能
+        $sort = $request->get('sort', 'newest');
+        switch ($sort) {
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'newest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $items = $query->with('user')->get();
         $categories = FreeMarket::categories()->pluck('category');
 
         return view('free.index', compact('items', 'categories'));
