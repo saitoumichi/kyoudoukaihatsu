@@ -159,7 +159,7 @@
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
     .grid { display: grid; gap: 14px; }
     .grid.cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-    
+
     /* 詳細表示モーダル */
     .detail-modal {
       display: none;
@@ -468,6 +468,60 @@
       <section id="karaoke" class="view" aria-labelledby="karaoke-title">
         <h2 id="karaoke-title" class="h1">カラオケ</h2>
         <p class="sub"></p>
+
+        <!-- ユーザー投稿の場所 -->
+        @if(isset($places) && $places->count() > 0)
+        <div style="margin: 32px 0 24px;">
+          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">みんなの投稿</h3>
+          <div class="grid cards">
+            @foreach($places as $place)
+            <article class="card">
+              <!-- 場所の画像 -->
+              @if($place->images && $place->images->count() > 0)
+                <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+                  <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                       style="width: 100%; height: 160px; object-fit: cover;">
+                </div>
+              @endif
+
+              <div class="title">{{ $place->name }}</div>
+              <div class="kvs" style="margin:8px 0;">
+                @if($place->address)
+                  <div>住所</div><div>{{ $place->address }}</div>
+                @endif
+                @if($place->campus_time_min)
+                  <div>大学からの時間</div><div>{{ $place->campus_time_min }}分</div>
+                @endif
+                @if($place->url)
+                  <div>URL</div><div><a href="{{ $place->url }}" target="_blank" rel="noopener">公式サイト</a></div>
+                @endif
+                @if($place->description)
+                  <div>詳細</div><div class="detail-preview">{{ $place->description }}</div>
+                @endif
+                @if($place->score > 0)
+                  <div>評価</div>
+                  <div>
+                    @for($i = 1; $i <= 5; $i++)
+                      @if($i <= $place->score)
+                        <span class="star">★</span>
+                      @else
+                        <span style="color: var(--line);">★</span>
+                      @endif
+                    @endfor
+                  </div>
+                @endif
+                @if($place->user)
+                  <div>投稿者</div><div>{{ $place->user->login_id ?? $place->user->name }}</div>
+                @endif
+              </div>
+              <a href="{{ route('places.show', ['type' => 'karaoke', 'place' => $place->id]) }}" class="detail-btn" style="text-decoration: none;">詳細を表示する</a>
+            </article>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <h3 style="font-size: 20px; font-weight: 700; margin: 32px 0 16px;">公式おすすめスポット</h3>
         <div class="grid cards">
           <article class="card">
             <div class="title">JOYJOY 南草津店</div>
@@ -509,7 +563,7 @@
             <button class="detail-btn" onclick="openDetailModal('karaoke-3')">詳細を表示する</button>
           </article>
         </div>
-        
+
         <!-- 詳細表示モーダル -->
         <div id="detail-modal" class="detail-modal">
           <div class="detail-modal-card">
@@ -518,7 +572,7 @@
             <button class="close-btn" onclick="closeDetailModal()">閉じる</button>
           </div>
         </div>
-        
+
         <script>
           const detailData = {
             'karaoke-1': {
@@ -540,7 +594,7 @@
               `
             }
           };
-          
+
           function openDetailModal(id) {
             const data = detailData[id];
             if (data) {
@@ -549,11 +603,11 @@
               document.getElementById('detail-modal').classList.add('is-open');
             }
           }
-          
+
           function closeDetailModal() {
             document.getElementById('detail-modal').classList.remove('is-open');
           }
-          
+
           // モーダル外をクリックで閉じる
           document.getElementById('detail-modal').addEventListener('click', function(e) {
             if (e.target === this) {

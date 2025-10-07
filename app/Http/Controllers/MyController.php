@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Place;
+use App\Models\PlaceImage;
 use App\Models\FreeMarket;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class MyController extends Controller
@@ -19,7 +21,7 @@ class MyController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        $places = Place::where('user_id', $user->id)->latest()->get();
+        $places = Place::where('user_id', $user->id)->with('images')->latest()->get();
         $freeItems = FreeMarket::where('user_id', $user->id)->latest()->get();
 
         return view('bkc.mypage', compact('places', 'freeItems'));
@@ -53,22 +55,47 @@ class MyController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'type' => ['required', 'string', 'in:drive,karaoke,izakaya'],
-            'address' => ['required', 'string'],
-            'phone' => ['nullable', 'string'],
-            'website' => ['nullable', 'url'],
+            'address' => ['nullable', 'string'],
+            'tel' => ['nullable', 'string'],
+            'url' => ['nullable', 'url'],
+            'campus_time_min' => ['nullable', 'integer', 'min:0'],
+            'score' => ['nullable', 'integer', 'min:0', 'max:5'],
+            'reason' => ['nullable', 'string'],
+            'category_id' => ['nullable', 'integer'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
-        Place::create([
+        $place = Place::create([
             'name' => $request->name,
             'description' => $request->description,
             'type' => $request->type,
             'address' => $request->address,
-            'phone' => $request->phone,
-            'website' => $request->website,
+            'tel' => $request->tel,
+            'url' => $request->url,
+            'campus_time_min' => $request->campus_time_min,
+            'score' => $request->score,
+            'reason' => $request->reason,
             'user_id' => Auth::id(),
+            'is_active' => true,
         ]);
+
+        // 画像アップロード処理
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $path = $image->storeAs('place-images', $filename, 's3');
+            $imageUrl = Storage::disk('s3')->url($path);
+
+            PlaceImage::create([
+                'place_id' => $place->id,
+                'path' => $imageUrl,
+                'alt_text' => $request->name,
+                'sort_order' => 1,
+            ]);
+        }
 
         return redirect('/my')->with('success', '掲載を作成しました。');
     }
@@ -79,6 +106,7 @@ class MyController extends Controller
     public function editPlace(Place $place): View
     {
         $this->authorize('update', $place);
+        $place->load('images');
         return view('my.places.edit', compact('place'));
     }
 
@@ -99,9 +127,40 @@ class MyController extends Controller
             'description' => 'nullable|string',
             'score' => 'nullable|integer|min:0|max:5',
             'reason' => 'nullable|string',
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         $place->update($validated);
+
+        // 画像アップロード処理
+        if ($request->hasFile('image')) {
+            // 既存の画像を削除
+            $existingImages = $place->images;
+            if ($existingImages->count() > 0) {
+                foreach ($existingImages as $existingImage) {
+                    // S3から画像を削除
+                    $oldPath = parse_url($existingImage->path, PHP_URL_PATH);
+                    if ($oldPath) {
+                        Storage::disk('s3')->delete(ltrim($oldPath, '/'));
+                    }
+                    $existingImage->delete();
+                }
+            }
+
+            // 新しい画像をアップロード
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $path = $image->storeAs('place-images', $filename, 's3');
+            $imageUrl = Storage::disk('s3')->url($path);
+
+            PlaceImage::create([
+                'place_id' => $place->id,
+                'path' => $imageUrl,
+                'alt_text' => $request->name,
+                'sort_order' => 1,
+            ]);
+        }
 
         return redirect()->route('my.places.index')
             ->with('success', '場所情報を更新しました。');
@@ -137,16 +196,28 @@ class MyController extends Controller
             'price' => ['required', 'numeric', 'min:0'],
             'condition' => ['required', 'string', 'in:new,like_new,good,fair'],
             'category' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
-        FreeMarket::create([
+        $data = [
             'title' => $request->title,
             'description' => $request->description,
             'price' => $request->price,
             'condition' => $request->condition,
             'category' => $request->category,
             'user_id' => Auth::id(),
-        ]);
+        ];
+
+        // 画像アップロード処理
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $path = $image->storeAs('free-market-images', $filename, 's3');
+            $data['image_url'] = Storage::disk('s3')->url($path);
+        }
+
+        FreeMarket::create($data);
 
         return redirect('/my')->with('success', '出品を作成しました。');
     }
@@ -176,9 +247,31 @@ class MyController extends Controller
             'price' => ['required', 'numeric', 'min:0'],
             'condition' => ['required', 'string', 'in:new,like_new,good,fair'],
             'category' => ['required', 'string'],
+            'status' => ['nullable', 'string', 'in:active,sold,cancelled'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
-        $free->update($request->all());
+        $data = $request->only(['title', 'description', 'price', 'condition', 'category', 'status']);
+
+        // 画像アップロード処理
+        if ($request->hasFile('image')) {
+            // 古い画像を削除（オプション）
+            if ($free->image_url) {
+                $oldPath = parse_url($free->image_url, PHP_URL_PATH);
+                if ($oldPath) {
+                    Storage::disk('s3')->delete(ltrim($oldPath, '/'));
+                }
+            }
+
+            // 新しい画像をアップロード
+            $image = $request->file('image');
+            $extension = $image->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $path = $image->storeAs('free-market-images', $filename, 's3');
+            $data['image_url'] = Storage::disk('s3')->url($path);
+        }
+
+        $free->update($data);
 
         return redirect('/my')->with('success', '出品を更新しました。');
     }
@@ -205,7 +298,7 @@ class MyController extends Controller
      */
     public function places(): View
     {
-        $places = Place::where('user_id', Auth::id())->latest()->get();
+        $places = Place::where('user_id', Auth::id())->with('images')->latest()->get();
         return view('my.places.index', compact('places'));
     }
 

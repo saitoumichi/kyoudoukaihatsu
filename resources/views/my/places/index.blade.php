@@ -269,6 +269,18 @@
       <div class="grid cards" style="margin-top: 18px;">
         @forelse($places ?? [] as $place)
         <div class="card">
+          <!-- 場所の画像 -->
+          @if($place->images && $place->images->count() > 0)
+            <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+              <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                   style="width: 100%; height: 160px; object-fit: cover;">
+            </div>
+          @else
+            <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(255,106,169,.1), rgba(255,193,220,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+              <span style="color: var(--muted); font-size: 13px;">📷 画像なし</span>
+            </div>
+          @endif
+
           <div class="title">{{ $place->name }}</div>
           <div class="meta">{{ $place->address ?? '住所情報なし' }}</div>
           @if($place->campus_time_min)

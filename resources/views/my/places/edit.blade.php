@@ -271,7 +271,7 @@
 
       <div class="card">
         <div class="title">場所情報を編集</div>
-        <form method="POST" action="{{ route('my.places.update', $place) }}">
+        <form method="POST" action="{{ route('my.places.update', $place) }}" enctype="multipart/form-data">
           @csrf
           @method('PUT')
 
@@ -351,6 +351,21 @@
             <label>おすすめ理由</label>
             <textarea name="reason" rows="3" placeholder="例）見どころ・設備・注意事項など">{{ old('reason', $place->reason) }}</textarea>
             @error('reason')
+              <div class="hint" style="color: var(--rose);">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="field">
+            <label>場所の画像</label>
+            @if($place->images && $place->images->count() > 0)
+              <div style="margin-bottom: 8px;">
+                <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}" style="max-width: 200px; border-radius: 8px;">
+                <div class="hint">現在の画像（新しい画像をアップロードすると置き換わります）</div>
+              </div>
+            @endif
+            <input type="file" name="image" accept="image/*" />
+            <div class="hint">※ 画像は任意です。JPEG、PNG形式に対応しています。</div>
+            @error('image')
               <div class="hint" style="color: var(--rose);">{{ $message }}</div>
             @enderror
           </div>

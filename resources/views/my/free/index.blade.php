@@ -283,6 +283,18 @@
       <div class="grid cards" style="margin-top: 18px;">
         @forelse($freeItems ?? [] as $item)
         <div class="card">
+          <!-- 商品画像 -->
+          @if($item->image_url)
+            <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+              <img src="{{ $item->image_url }}" alt="{{ $item->title }}"
+                   style="width: 100%; height: 160px; object-fit: cover;">
+            </div>
+          @else
+            <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(255,106,169,.1), rgba(255,193,220,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+              <span style="color: var(--muted); font-size: 13px;">📷 画像なし</span>
+            </div>
+          @endif
+
           <div class="title">{{ $item->title }}</div>
           <div class="meta">価格: ¥{{ number_format($item->price) }}</div>
           <div class="meta">カテゴリ: {{ $item->category }}</div>

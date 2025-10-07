@@ -238,8 +238,8 @@
 
                         <!-- 商品画像 -->
                         <div>
-            @if($free->image)
-                <img src="{{ $free->image }}" alt="{{ $free->title }}" class="product-image">
+            @if($free->image_url)
+                <img src="{{ $free->image_url }}" alt="{{ $free->title }}" class="product-image">
                             @else
                 <div class="product-placeholder">
                     <span>画像なし</span>
