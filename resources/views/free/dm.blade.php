@@ -144,7 +144,7 @@
           <div class="product-info">
             <div>
               <h3 class="product-title">{{ $free->title }}</h3>
-              <p class="product-seller">出品者: {{ $free->user->name }}</p>
+              <p class="product-seller">出品者: {{ $free->user->login_id ?? '不明' }}</p>
             </div>
             <div class="product-price">¥{{ number_format($free->price ?? 0) }}</div>
           </div>

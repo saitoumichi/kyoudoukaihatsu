@@ -333,7 +333,7 @@
 
             <div class="seller-info">
                 <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">出品者情報</h3>
-                <p class="meta">出品者: {{ $free->user->name }}</p>
+                <p class="meta">出品者: {{ $free->user->login_id ?? '不明' }}</p>
                 <p class="meta">出品日: {{ $free->created_at->format('Y年m月d日') }}</p>
                             </div>
 
