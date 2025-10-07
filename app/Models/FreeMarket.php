@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FreeMarket extends Model
 {
@@ -28,6 +29,14 @@ class FreeMarket extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * メッセージとのリレーション
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(FreeMarketMessage::class, 'free_market_id');
     }
 
     /**

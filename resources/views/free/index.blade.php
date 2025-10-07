@@ -375,11 +375,29 @@
                         </div>
                     @endif
 
-                    <!-- カテゴリバッジ -->
-                    <div style="margin-bottom: 12px;">
+                    <!-- バッジ（カテゴリと状態） -->
+                    <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
                         <span class="pill" style="background: rgba(255,106,169,.2); border-color: rgba(255,106,169,.3); color: #ffc1dc;">
                             {{ ucfirst($item->category) }}
                         </span>
+                        
+                        @if($item->condition == 'new')
+                          <span class="pill" style="background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.3); color: #bbf7d0;">
+                            ✨ 新品
+                          </span>
+                        @elseif($item->condition == 'like_new')
+                          <span class="pill" style="background: rgba(59,130,246,.2); border-color: rgba(59,130,246,.3); color: #dbeafe;">
+                            ⭐ ほぼ新品
+                          </span>
+                        @elseif($item->condition == 'good')
+                          <span class="pill" style="background: rgba(245,158,11,.2); border-color: rgba(245,158,11,.3); color: #fde68a;">
+                            👍 良い
+                          </span>
+                        @else
+                          <span class="pill" style="background: rgba(100,116,139,.2); border-color: rgba(100,116,139,.3); color: #cbd5e1;">
+                            📦 普通
+                          </span>
+                        @endif
                     </div>
 
                     <!-- 商品名 -->
@@ -420,6 +438,9 @@
                         @auth
                             @if($item->user_id === auth()->id())
                                 <div style="display: flex; gap: 8px;">
+                                    <a href="{{ route('my.free.messages', $item->id) }}" class="btn" style="padding: 8px 12px; font-size: 12px; background: rgba(59,130,246,.2); border-color: rgba(59,130,246,.3); color: #dbeafe;">
+                                        💬 DM
+                                    </a>
                                     <a href="{{ route('my.free.edit', $item->id) }}" class="btn" style="padding: 8px 12px; font-size: 12px; background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.3); color: #bbf7d0;">
                                         編集
                                     </a>

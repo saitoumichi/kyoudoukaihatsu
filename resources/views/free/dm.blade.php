@@ -62,12 +62,64 @@
         linear-gradient(180deg, #0b0f18 0%, #0a1420 50%, #08121c 100%) !important;
     }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
-    .row { display: flex; align-items: center; gap: 12px; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(12px) saturate(1.1);
+      background: var(--card-strong);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 4px 18px rgba(0,0,0,.35);
+    }
 
-    header { padding: 20px 0; border-bottom: 1px solid var(--line); }
-    .brand { font-size: 24px; font-weight: 700; color: var(--primary); }
-    .brand span { color: var(--muted); font-weight: 400; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 14px 20px; }
+    .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { font-weight: 800; letter-spacing: .5px; color: var(--ink); }
+    .brand span { color: var(--primary); }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs label,
+    .tabs .tabs-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid rgba(255,255,255,.10); color: #ffe4ef; text-decoration: none;
+      background: rgba(12,18,30,.56);
+      transition: box-shadow .2s ease, transform .05s ease;
+      user-select: none;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 2px rgba(255,152,177,.08);
+    }
+    .tabs label:hover,
+    .tabs .tabs-link:hover {
+      box-shadow:
+        inset 0 0 0 2px rgba(255,152,177,.16),
+        0 6px 18px rgba(0,0,0,.35);
+    }
+    .tabs .tabs-link[data-color="blue"]{
+      background: rgba(59,130,246,.2);
+      border-color: rgba(59,130,246,.3);
+      color: #dbeafe;
+    }
+    .tabs .tabs-link[data-color="violet"]{
+      background: rgba(139,92,246,.2);
+      border-color: rgba(139,92,246,.3);
+      color: #e9d5ff;
+    }
+    .tabs .tabs-link[data-color="rose"]{
+      background: rgba(244,63,94,.2);
+      border-color: rgba(244,63,94,.3);
+      color: #fecaca;
+    }
+    .tabs .tabs-link[data-color="amber"]{
+      background: rgba(245,158,11,.2);
+      border-color: rgba(245,158,11,.3);
+      color: #fde68a;
+    }
+    .tabs .tabs-link[data-color="green"]{
+      background: rgba(34,197,94,.2);
+      border-color: rgba(34,197,94,.3);
+      color: #bbf7d0;
+    }
 
     main { padding: 40px 0; }
     .h1 { font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink); }
@@ -159,9 +211,12 @@
               @foreach($messages as $message)
                 <div class="message {{ $message->sender_id === auth()->id() ? 'own' : 'other' }}">
                   <div class="message-bubble">
-                    <p>{{ $message->message ?? 'テストメッセージ' }}</p>
+                    <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">
+                      {{ $message->sender->login_id }}
+                    </div>
+                    <p>{{ $message->message }}</p>
                     <div class="message-time">
-                      {{ $message->created_at->format('m/d H:i') ?? now()->format('m/d H:i') }}
+                      {{ $message->created_at->format('m/d H:i') }}
                     </div>
                   </div>
                 </div>
@@ -179,10 +234,10 @@
         <div class="card">
           <div class="title">メッセージを送信</div>
 
-          <form method="POST" action="{{ route('free.dm.send', $free->id) }}">
+          <form method="POST" action="{{ route('free.dm.send', $free->id) }}" id="message-form">
             @csrf
             <div class="field">
-              <textarea name="message" rows="4" placeholder="メッセージを入力してください..." required></textarea>
+              <textarea name="message" id="message-input" rows="4" placeholder="メッセージを入力してください..." required></textarea>
             </div>
 
             <div class="btn-row">
@@ -206,5 +261,15 @@
       </div>
     </main>
   </div>
+
+  <script>
+    // ページ読み込み時にメッセージ履歴の最下部にスクロール
+    window.addEventListener('load', function() {
+      const messagesContainer = document.querySelector('.messages');
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    });
+  </script>
 </body>
 </html>

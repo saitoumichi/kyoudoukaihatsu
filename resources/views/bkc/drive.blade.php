@@ -474,12 +474,12 @@
           <label for="drive-scenery"  data-color="green">景色</label>
           <label for="drive-break"    data-color="amber">息抜き</label>
         </div>
-        <!-- ユーザー投稿の場所 -->
-        @if(isset($places) && $places->count() > 0)
-        <div style="margin: 32px 0 24px;">
-          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">みんなの投稿</h3>
-          <div class="grid cards">
-            @foreach($places as $place)
+        <div class="drive-views">
+          <!-- ショッピングのユーザー投稿 -->
+          @if(isset($placesGrouped) && isset($placesGrouped['shopping']) && $placesGrouped['shopping']->count() > 0)
+          <div id="drv-shopping-user" class="grid cards view" style="margin-bottom: 32px;">
+            <h3 style="grid-column: 1 / -1; font-size: 18px; font-weight: 700; margin-bottom: 8px;">みんなの投稿（ショッピング）</h3>
+            @foreach($placesGrouped['shopping'] as $place)
             <article class="card">
               <!-- 場所の画像 -->
               @if($place->images && $place->images->count() > 0)
@@ -523,11 +523,105 @@
             </article>
             @endforeach
           </div>
-        </div>
-        @endif
+          @endif
 
-        <h3 style="font-size: 20px; font-weight: 700; margin: 32px 0 16px;">公式おすすめスポット</h3>
-        <div class="drive-views">
+          <!-- 景色のユーザー投稿 -->
+          @if(isset($placesGrouped) && isset($placesGrouped['scenery']) && $placesGrouped['scenery']->count() > 0)
+          <div id="drv-scenery-user" class="grid cards view" style="margin-bottom: 32px;">
+            <h3 style="grid-column: 1 / -1; font-size: 18px; font-weight: 700; margin-bottom: 8px;">みんなの投稿（景色）</h3>
+            @foreach($placesGrouped['scenery'] as $place)
+            <article class="card">
+              @if($place->images && $place->images->count() > 0)
+                <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+                  <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                       style="width: 100%; height: 160px; object-fit: cover;">
+                </div>
+              @endif
+              <div class="title">{{ $place->name }}</div>
+              <div class="kvs" style="margin:8px 0;">
+                @if($place->address)
+                  <div>住所</div><div>{{ $place->address }}</div>
+                @endif
+                @if($place->campus_time_min)
+                  <div>大学からの時間</div><div>{{ $place->campus_time_min }}分</div>
+                @endif
+                @if($place->url)
+                  <div>URL</div><div><a href="{{ $place->url }}" target="_blank" rel="noopener">公式サイト</a></div>
+                @endif
+                @if($place->description)
+                  <div>詳細</div><div class="detail-preview">{{ $place->description }}</div>
+                @endif
+                @if($place->score > 0)
+                  <div>評価</div>
+                  <div>
+                    @for($i = 1; $i <= 5; $i++)
+                      @if($i <= $place->score)
+                        <span class="star">★</span>
+                      @else
+                        <span style="color: var(--line);">★</span>
+                      @endif
+                    @endfor
+                  </div>
+                @endif
+                @if($place->user)
+                  <div>投稿者</div><div>{{ $place->user->login_id ?? $place->user->name }}</div>
+                @endif
+              </div>
+              <a href="{{ route('places.show', ['type' => 'drive', 'place' => $place->id]) }}" class="detail-btn" style="text-decoration: none;">詳細を表示する</a>
+            </article>
+            @endforeach
+          </div>
+          @endif
+
+          <!-- 息抜きのユーザー投稿 -->
+          @if(isset($placesGrouped) && isset($placesGrouped['break']) && $placesGrouped['break']->count() > 0)
+          <div id="drv-break-user" class="grid cards view" style="margin-bottom: 32px;">
+            <h3 style="grid-column: 1 / -1; font-size: 18px; font-weight: 700; margin-bottom: 8px;">みんなの投稿（息抜き）</h3>
+            @foreach($placesGrouped['break'] as $place)
+            <article class="card">
+              @if($place->images && $place->images->count() > 0)
+                <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+                  <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                       style="width: 100%; height: 160px; object-fit: cover;">
+                </div>
+              @endif
+              <div class="title">{{ $place->name }}</div>
+              <div class="kvs" style="margin:8px 0;">
+                @if($place->address)
+                  <div>住所</div><div>{{ $place->address }}</div>
+                @endif
+                @if($place->campus_time_min)
+                  <div>大学からの時間</div><div>{{ $place->campus_time_min }}分</div>
+                @endif
+                @if($place->url)
+                  <div>URL</div><div><a href="{{ $place->url }}" target="_blank" rel="noopener">公式サイト</a></div>
+                @endif
+                @if($place->description)
+                  <div>詳細</div><div class="detail-preview">{{ $place->description }}</div>
+                @endif
+                @if($place->score > 0)
+                  <div>評価</div>
+                  <div>
+                    @for($i = 1; $i <= 5; $i++)
+                      @if($i <= $place->score)
+                        <span class="star">★</span>
+                      @else
+                        <span style="color: var(--line);">★</span>
+                      @endif
+                    @endfor
+                  </div>
+                @endif
+                @if($place->user)
+                  <div>投稿者</div><div>{{ $place->user->login_id ?? $place->user->name }}</div>
+                @endif
+              </div>
+              <a href="{{ route('places.show', ['type' => 'drive', 'place' => $place->id]) }}" class="detail-btn" style="text-decoration: none;">詳細を表示する</a>
+            </article>
+            @endforeach
+          </div>
+          @endif
+
+          <h3 style="font-size: 20px; font-weight: 700; margin: 0 0 16px;">公式おすすめスポット</h3>
           <div id="drv-shopping-list" class="grid cards view">
             <article class="card">
               <div class="title">三井アウトレットパーク滋賀竜王</div>
@@ -631,14 +725,26 @@
           #drive-break:checked     ~ .tabs label[for="drive-break"] {
             outline: 2px solid var(--primary); box-shadow: 0 6px 16px rgba(37,99,235,.15); transform: translateY(-1px);
           }
+          /* ショッピング選択時 */
+          #drive-shopping:checked ~ .drive-views #drv-shopping-user,
           #drive-shopping:checked ~ .drive-views #drv-shopping-list { display: grid; }
+          #drive-shopping:checked ~ .drive-views #drv-scenery-user,
           #drive-shopping:checked ~ .drive-views #drv-scenery-list,
+          #drive-shopping:checked ~ .drive-views #drv-break-user,
           #drive-shopping:checked ~ .drive-views #drv-break-list { display: none; }
+          /* 景色選択時 */
+          #drive-scenery:checked ~ .drive-views #drv-scenery-user,
           #drive-scenery:checked ~ .drive-views #drv-scenery-list { display: grid; }
+          #drive-scenery:checked ~ .drive-views #drv-shopping-user,
           #drive-scenery:checked ~ .drive-views #drv-shopping-list,
+          #drive-scenery:checked ~ .drive-views #drv-break-user,
           #drive-scenery:checked ~ .drive-views #drv-break-list { display: none; }
+          /* 息抜き選択時 */
+          #drive-break:checked ~ .drive-views #drv-break-user,
           #drive-break:checked ~ .drive-views #drv-break-list { display: grid; }
+          #drive-break:checked ~ .drive-views #drv-shopping-user,
           #drive-break:checked ~ .drive-views #drv-shopping-list,
+          #drive-break:checked ~ .drive-views #drv-scenery-user,
           #drive-break:checked ~ .drive-views #drv-scenery-list { display: none; }
         </style>
 
