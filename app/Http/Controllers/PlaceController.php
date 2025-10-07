@@ -17,8 +17,15 @@ class PlaceController extends Controller
             abort(404);
         }
 
+        // データベースから該当タイプの場所を取得（画像とユーザー情報を含む）
+        $places = Place::where('type', $type)
+            ->where('is_active', true)
+            ->with(['images', 'user'])
+            ->latest()
+            ->get();
+
         // 既存のビューファイルを使用
-        return view("bkc.{$type}");
+        return view("bkc.{$type}", compact('places'));
     }
 
     /**

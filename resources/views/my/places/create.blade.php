@@ -342,7 +342,7 @@
 
         <div class="mpnew-forms">
           <!-- ドライブ新規作成フォーム -->
-          <form id="mpnew-form-drive" class="view" method="POST" action="{{ route('my.places.store') }}">
+          <form id="mpnew-form-drive" class="view" method="POST" action="{{ route('my.places.store') }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="type" value="drive">
 
@@ -376,11 +376,16 @@
             @enderror
           </div>
                             <div class="field"><label>おすすめ理由</label><textarea name="description" placeholder="例）見どころ・設備・注意事項など"></textarea></div>
+            <div class="field">
+              <label>場所の画像</label>
+              <input type="file" name="image" accept="image/*" />
+              <div class="hint">※ 画像は任意です。JPEG、PNG形式に対応しています。</div>
+            </div>
             <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
           </form>
 
           <!-- カラオケ新規作成フォーム -->
-          <form id="mpnew-form-karaoke" class="view" method="POST" action="{{ route('my.places.store') }}">
+          <form id="mpnew-form-karaoke" class="view" method="POST" action="{{ route('my.places.store') }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="type" value="karaoke">
 
@@ -392,11 +397,16 @@
             <div class="field"><label>設備</label><input type="text" name="facilities" placeholder="例）店内Wi‑Fi、HDMI貸出、ダーツ等" /></div>
             <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
             <div class="field"><label>詳細</label><textarea name="description" placeholder="例）予約可否、注意事項など"></textarea></div>
+            <div class="field">
+              <label>店舗の画像</label>
+              <input type="file" name="image" accept="image/*" />
+              <div class="hint">※ 画像は任意です。JPEG、PNG形式に対応しています。</div>
+            </div>
             <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
           </form>
 
           <!-- 居酒屋新規作成フォーム -->
-          <form id="mpnew-form-izakaya" class="view" method="POST" action="{{ route('my.places.store') }}">
+          <form id="mpnew-form-izakaya" class="view" method="POST" action="{{ route('my.places.store') }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="type" value="izakaya">
 
@@ -420,6 +430,11 @@
 
             <div class="field"><label>URL</label><input type="url" name="url" placeholder="https://example.com" /></div>
             <div class="field"><label>詳細</label><textarea name="description" placeholder="例）席数、予約、注意事項など"></textarea></div>
+            <div class="field">
+              <label>店舗の画像</label>
+              <input type="file" name="image" accept="image/*" />
+              <div class="hint">※ 画像は任意です。JPEG、PNG形式に対応しています。</div>
+            </div>
             <div class="btn-row"><button type="submit" class="btn primary">掲載する</button><button type="reset" class="btn">消去</button></div>
                     </form>
                 </div>

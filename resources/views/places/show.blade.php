@@ -239,7 +239,7 @@
         <!-- 場所画像 -->
         <div>
           @if($place->images && $place->images->count() > 0)
-            <img src="{{ $place->images->first()->image_url }}" alt="{{ $place->name }}" class="place-image">
+            <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}" class="place-image">
           @else
             <div class="place-placeholder">
               <span>画像なし</span>

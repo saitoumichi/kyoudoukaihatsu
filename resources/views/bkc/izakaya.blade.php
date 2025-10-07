@@ -397,6 +397,60 @@
       <section id="izakaya" class="view" aria-labelledby="izakaya-title">
         <h2 id="izakaya-title" class="h1">居酒屋</h2>
         <p class="sub"></p>
+
+        <!-- ユーザー投稿の場所 -->
+        @if(isset($places) && $places->count() > 0)
+        <div style="margin: 32px 0 24px;">
+          <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">みんなの投稿</h3>
+          <div class="grid cards">
+            @foreach($places as $place)
+            <article class="card">
+              <!-- 場所の画像 -->
+              @if($place->images && $place->images->count() > 0)
+                <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+                  <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                       style="width: 100%; height: 160px; object-fit: cover;">
+                </div>
+              @endif
+
+              <div class="title">{{ $place->name }}</div>
+              <div class="kvs" style="margin:8px 0;">
+                @if($place->address)
+                  <div>住所</div><div>{{ $place->address }}</div>
+                @endif
+                @if($place->campus_time_min)
+                  <div>大学からの時間</div><div>{{ $place->campus_time_min }}分</div>
+                @endif
+                @if($place->url)
+                  <div>URL</div><div><a href="{{ $place->url }}" target="_blank" rel="noopener">公式サイト</a></div>
+                @endif
+                @if($place->description)
+                  <div>詳細</div><div class="detail-preview">{{ $place->description }}</div>
+                @endif
+                @if($place->score > 0)
+                  <div>評価</div>
+                  <div>
+                    @for($i = 1; $i <= 5; $i++)
+                      @if($i <= $place->score)
+                        <span class="star">★</span>
+                      @else
+                        <span style="color: var(--line);">★</span>
+                      @endif
+                    @endfor
+                  </div>
+                @endif
+                @if($place->user)
+                  <div>投稿者</div><div>{{ $place->user->login_id ?? $place->user->name }}</div>
+                @endif
+              </div>
+              <a href="{{ route('places.show', ['type' => 'izakaya', 'place' => $place->id]) }}" class="detail-btn" style="text-decoration: none;">詳細を表示する</a>
+            </article>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <h3 style="font-size: 20px; font-weight: 700; margin: 32px 0 16px;">公式おすすめスポット</h3>
         <div class="chips" style="margin-bottom:12px;">
           <input id="f-cheap" type="checkbox" class="filter" hidden>
           <label for="f-cheap" class="chip">安い</label>
@@ -405,15 +459,15 @@
           <input id="f-nomihodai" type="checkbox" class="filter" hidden>
           <label for="f-nomihodai" class="chip">飲み放題あり</label>
         </div>
-        <style> 
-          input.filter:checked + label.chip { 
-            background: var(--rose); 
-            border-color: var(--rose); 
+        <style>
+          input.filter:checked + label.chip {
+            background: var(--rose);
+            border-color: var(--rose);
             color: white;
-            box-shadow: 0 0 0 2px rgba(244,63,94,.12) inset; 
+            box-shadow: 0 0 0 2px rgba(244,63,94,.12) inset;
             transform: scale(1.05);
             font-weight: 700;
-          } 
+          }
           input#f-cheap:checked + label.chip {
             background: rgba(16,185,129,.2);
             border-color: rgba(16,185,129,.3);
@@ -456,22 +510,22 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
           }
-          .category-tag.cheap { 
+          .category-tag.cheap {
             background: rgba(16,185,129,.2);
             border-color: rgba(16,185,129,.3);
             color: #10b981;
           }
-          .category-tag.near { 
+          .category-tag.near {
             background: rgba(245,158,11,.2);
             border-color: rgba(245,158,11,.3);
             color: #f59e0b;
           }
-          .category-tag.nomihodai { 
+          .category-tag.nomihodai {
             background: rgba(244,63,94,.2);
             border-color: rgba(244,63,94,.3);
             color: #f43f5e;
           }
-          
+
           /* 詳細表示モーダル */
           .detail-modal {
             display: none;
@@ -547,14 +601,14 @@
           document.addEventListener('DOMContentLoaded', function() {
             const filters = document.querySelectorAll('.filter');
             const cards = document.querySelectorAll('#izakaya-cards .card');
-            
+
             filters.forEach(filter => {
               filter.addEventListener('change', function() {
                 const checkedFilters = Array.from(filters).filter(f => f.checked).map(f => f.id.replace('f-', ''));
-                
+
                 cards.forEach(card => {
                   const cardCategories = card.getAttribute('data-categories').split(',');
-                  
+
                   if (checkedFilters.length === 0) {
                     // すべてのボタンが押されていない場合はすべて表示
                     card.classList.remove('hidden');
@@ -619,7 +673,7 @@
             <button class="detail-btn" onclick="openDetailModal('izakaya-3')">詳細を表示する</button>
           </article>
         </div>
-        
+
         <!-- 詳細表示モーダル -->
         <div id="detail-modal" class="detail-modal">
           <div class="detail-modal-card">
@@ -628,7 +682,7 @@
             <button class="close-btn" onclick="closeDetailModal()">閉じる</button>
           </div>
         </div>
-        
+
         <script>
           const detailData = {
             'izakaya-1': {
@@ -650,7 +704,7 @@
               `
             }
           };
-          
+
           function openDetailModal(id) {
             const data = detailData[id];
             if (data) {
@@ -659,11 +713,11 @@
               document.getElementById('detail-modal').classList.add('is-open');
             }
           }
-          
+
           function closeDetailModal() {
             document.getElementById('detail-modal').classList.remove('is-open');
           }
-          
+
           // モーダル外をクリックで閉じる
           document.getElementById('detail-modal').addEventListener('click', function(e) {
             if (e.target === this) {
