@@ -311,16 +311,7 @@
 
   <!-- ======= APP WRAPPER ======= -->
   <div id="app" data-skin="sakura">
-    <header>
-      <div class="container">
-        <div class="row" style="justify-content: space-between;">
-          <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
-          <nav style="display:flex; gap:8px;">
-            <a href="/my" class="btn">マイページに戻る</a>
-          </nav>
-                            </div>
-                        </div>
-    </header>
+    @include('components.header')
 
     <main>
       <h1 class="h1">新しく掲載を作成</h1>

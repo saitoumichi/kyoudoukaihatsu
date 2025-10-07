@@ -99,6 +99,30 @@
     .brand { font-weight: 800; letter-spacing: .5px; }
     .brand span { color: var(--primary); }
 
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs label,
+    .tabs .tabs-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+      background: var(--card);
+      transition: box-shadow .2s ease, transform .05s ease;
+      user-select: none;
+    }
+    .tabs label:hover,
+    .tabs .tabs-link:hover { box-shadow: 0 1px 0 #e5e7eb, 0 0 0 4px rgba(37,99,235,.08) inset; }
+    .tabs label[data-color="blue"],
+    .tabs .tabs-link[data-color="blue"]{ border-color:#dbeafe; background:#eff6ff; }
+    .tabs label[data-color="violet"],
+    .tabs .tabs-link[data-color="violet"]{ border-color:#ede9fe; background:#f5f3ff; }
+    .tabs label[data-color="rose"],
+    .tabs .tabs-link[data-color="rose"]{ border-color:#ffe4e6; background:#fff1f2; }
+    .tabs label[data-color="amber"],
+    .tabs .tabs-link[data-color="amber"]{ border-color:#ffedd5; background:#fff7ed; }
+    .tabs label[data-color="green"],
+    .tabs .tabs-link[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
+
     /* ---------- UI atoms ---------- */
     .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
@@ -176,6 +200,47 @@
         0 8px 30px rgba(0,0,0,.45),
         0 0 0 1.5px rgba(255,122,150,.08),
         0 0 22px 2px rgba(255,122,150,.10);
+    }
+
+    #app[data-skin="sakura"] .tabs label,
+    #app[data-skin="sakura"] .tabs .tabs-link{
+      border-color: rgba(255,255,255,.08);
+      background: rgba(12,18,30,.56);
+      color: #ffe4ef;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 2px rgba(255,152,177,.08);
+    }
+    #app[data-skin="sakura"] .tabs label:hover,
+    #app[data-skin="sakura"] .tabs .tabs-link:hover{
+      box-shadow:
+        inset 0 0 0 2px rgba(255,152,177,.16),
+        0 6px 18px rgba(0,0,0,.35);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
+      background: rgba(59,130,246,.2);
+      border-color: rgba(59,130,246,.3);
+      color: #dbeafe;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
+      background: rgba(139,92,246,.2);
+      border-color: rgba(139,92,246,.3);
+      color: #e9d5ff;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
+      background: rgba(244,63,94,.2);
+      border-color: rgba(244,63,94,.3);
+      color: #fecaca;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
+      background: rgba(245,158,11,.2);
+      border-color: rgba(245,158,11,.3);
+      color: #fde68a;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
+      background: rgba(34,197,94,.2);
+      border-color: rgba(34,197,94,.3);
+      color: #bbf7d0;
     }
 
     #app[data-skin="sakura"] .btn{

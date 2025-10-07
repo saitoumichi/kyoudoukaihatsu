@@ -120,6 +120,52 @@
         .brand { font-weight: 800; letter-spacing: .5px; color: var(--ink); }
         .brand span { color: var(--primary); }
 
+        /* Tabs */
+        .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tabs label,
+        .tabs .tabs-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 999px; cursor: pointer;
+            border: 1px solid rgba(255,255,255,.10); color: #ffe4ef; text-decoration: none;
+            background: rgba(12,18,30,.56);
+            transition: box-shadow .2s ease, transform .05s ease;
+            user-select: none;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,.04),
+                0 0 0 2px rgba(255,152,177,.08);
+        }
+        .tabs label:hover,
+        .tabs .tabs-link:hover {
+            box-shadow:
+                inset 0 0 0 2px rgba(255,152,177,.16),
+                0 6px 18px rgba(0,0,0,.35);
+        }
+        .tabs .tabs-link[data-color="blue"]{
+            background: rgba(59,130,246,.2);
+            border-color: rgba(59,130,246,.3);
+            color: #dbeafe;
+        }
+        .tabs .tabs-link[data-color="violet"]{
+            background: rgba(139,92,246,.2);
+            border-color: rgba(139,92,246,.3);
+            color: #e9d5ff;
+        }
+        .tabs .tabs-link[data-color="rose"]{
+            background: rgba(244,63,94,.2);
+            border-color: rgba(244,63,94,.3);
+            color: #fecaca;
+        }
+        .tabs .tabs-link[data-color="amber"]{
+            background: rgba(245,158,11,.2);
+            border-color: rgba(245,158,11,.3);
+            color: #fde68a;
+        }
+        .tabs .tabs-link[data-color="green"]{
+            background: rgba(34,197,94,.2);
+            border-color: rgba(34,197,94,.3);
+            color: #bbf7d0;
+        }
+
         /* カード */
         .card {
             background: var(--card);
@@ -235,18 +281,8 @@
 <body>
     <div id="bg" aria-hidden="true"></div>
 
-    <div id="app">
-        <header>
-            <div class="container">
-                <div class="row" style="justify-content: space-between;">
-                    <div class="brand">フリマ<span>商品一覧</span></div>
-                    <nav>
-                        <a href="/my" class="btn">マイページ</a>
-                        <a href="/free" class="btn primary">フリマ</a>
-                    </nav>
-                </div>
-            </div>
-        </header>
+    <div id="app" data-skin="sakura">
+        @include('components.header')
 
         <main style="max-width: 1200px; margin: 32px auto 120px; padding: 0 24px;">
             <div class="section">

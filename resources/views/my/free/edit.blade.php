@@ -99,6 +99,30 @@
     .brand { font-weight: 800; letter-spacing: .5px; }
     .brand span { color: var(--primary); }
 
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs label,
+    .tabs .tabs-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+      background: var(--card);
+      transition: box-shadow .2s ease, transform .05s ease;
+      user-select: none;
+    }
+    .tabs label:hover,
+    .tabs .tabs-link:hover { box-shadow: 0 1px 0 #e5e7eb, 0 0 0 4px rgba(37,99,235,.08) inset; }
+    .tabs label[data-color="blue"],
+    .tabs .tabs-link[data-color="blue"]{ border-color:#dbeafe; background:#eff6ff; }
+    .tabs label[data-color="violet"],
+    .tabs .tabs-link[data-color="violet"]{ border-color:#ede9fe; background:#f5f3ff; }
+    .tabs label[data-color="rose"],
+    .tabs .tabs-link[data-color="rose"]{ border-color:#ffe4e6; background:#fff1f2; }
+    .tabs label[data-color="amber"],
+    .tabs .tabs-link[data-color="amber"]{ border-color:#ffedd5; background:#fff7ed; }
+    .tabs label[data-color="green"],
+    .tabs .tabs-link[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
+
     /* ---------- UI atoms ---------- */
     .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
