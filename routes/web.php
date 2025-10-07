@@ -49,8 +49,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/my/free', [MyController::class, 'storeFree'])->name('my.free.store');
     Route::get('/my/free/{id}/edit', [MyController::class, 'editFree'])->name('my.free.edit');
     Route::delete('/my/free/{id}', [MyController::class, 'destroyFree'])->name('my.free.destroy');
+    Route::get('/my/free/{id}/messages', [MyController::class, 'freeMessages'])->name('my.free.messages'); // メッセージ一覧
     Route::get('/my/free/{id}', [MyController::class, 'showFree'])->name('my.free.show');
     Route::get('/my/free', [MyController::class, 'free'])->name('my.free.index'); // 出品一覧
+    
+    // DM一覧
+    Route::get('/my/messages', [MyController::class, 'allMessages'])->name('my.messages');
 });
 
 // 場所一覧（認証不要）

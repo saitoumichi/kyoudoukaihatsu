@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Place;
 use App\Models\PlaceImage;
+use App\Models\Drive;
 use App\Models\FreeMarket;
+use App\Models\FreeMarketMessage;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class MyController extends Controller
@@ -21,10 +24,41 @@ class MyController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        $places = Place::where('user_id', $user->id)->with('images')->latest()->get();
-        $freeItems = FreeMarket::where('user_id', $user->id)->latest()->get();
+        $places = Place::where('user_id', $user->id)->with(['images', 'drive'])->latest()->get();
+        $freeItems = FreeMarket::where('user_id', $user->id)
+            ->withCount('messages')
+            ->latest()
+            ->take(5)
+            ->get();
 
-        return view('bkc.mypage', compact('places', 'freeItems'));
+        // やり取り中のDMを取得（自分が出品者の商品に対するメッセージ）
+        $activeConversations = FreeMarketMessage::whereIn('free_market_id', function($query) {
+                $query->select('id')
+                    ->from('free_markets')
+                    ->where('user_id', Auth::id());
+            })
+            ->with(['sender', 'receiver', 'freeMarket'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function($message) {
+                // 相手（購入希望者）でグループ化
+                return ($message->sender_id == Auth::id() ? $message->receiver_id : $message->sender_id) . '-' . $message->free_market_id;
+            })
+            ->map(function($messages) {
+                $firstMessage = $messages->first();
+                return [
+                    'user' => $firstMessage->sender_id == Auth::id() 
+                        ? $firstMessage->receiver 
+                        : $firstMessage->sender,
+                    'free_market' => $firstMessage->freeMarket,
+                    'last_message' => $firstMessage,
+                    'unread_count' => $messages->where('receiver_id', Auth::id())->where('is_read', false)->count(),
+                    'total_count' => $messages->count(),
+                ];
+            })
+            ->take(5);
+
+        return view('bkc.mypage', compact('places', 'freeItems', 'activeConversations'));
     }
 
     /**
@@ -81,6 +115,14 @@ class MyController extends Controller
             'is_active' => true,
         ]);
 
+        // ドライブの場合、Driveテーブルにもレコード作成
+        if ($request->type === 'drive' && $request->category_id) {
+            Drive::create([
+                'place_id' => $place->id,
+                'category_id' => $request->category_id,
+            ]);
+        }
+
         // 画像アップロード処理
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -106,7 +148,7 @@ class MyController extends Controller
     public function editPlace(Place $place): View
     {
         $this->authorize('update', $place);
-        $place->load('images');
+        $place->load(['images', 'drive']);
         return view('my.places.edit', compact('place'));
     }
 
@@ -127,10 +169,23 @@ class MyController extends Controller
             'description' => 'nullable|string',
             'score' => 'nullable|integer|min:0|max:5',
             'reason' => 'nullable|string',
+            'category_id' => ['nullable', 'integer'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         $place->update($validated);
+
+        // ドライブの場合、Driveテーブルも更新
+        if ($request->type === 'drive' && $request->category_id) {
+            if ($place->drive) {
+                $place->drive->update(['category_id' => $request->category_id]);
+            } else {
+                Drive::create([
+                    'place_id' => $place->id,
+                    'category_id' => $request->category_id,
+                ]);
+            }
+        }
 
         // 画像アップロード処理
         if ($request->hasFile('image')) {
@@ -298,8 +353,35 @@ class MyController extends Controller
      */
     public function places(): View
     {
-        $places = Place::where('user_id', Auth::id())->with('images')->latest()->get();
-        return view('my.places.index', compact('places'));
+        $places = Place::where('user_id', Auth::id())->with(['images', 'drive'])->latest()->get();
+        
+        // やり取り中のDMを取得（フリマ関連のみ）
+        $activeConversations = FreeMarketMessage::whereIn('free_market_id', function($query) {
+                $query->select('id')
+                    ->from('free_markets')
+                    ->where('user_id', Auth::id());
+            })
+            ->with(['sender', 'receiver', 'freeMarket'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function($message) {
+                return ($message->sender_id == Auth::id() ? $message->receiver_id : $message->sender_id) . '-' . $message->free_market_id;
+            })
+            ->map(function($messages) {
+                $firstMessage = $messages->first();
+                return [
+                    'user' => $firstMessage->sender_id == Auth::id() 
+                        ? $firstMessage->receiver 
+                        : $firstMessage->sender,
+                    'free_market' => $firstMessage->freeMarket,
+                    'last_message' => $firstMessage,
+                    'unread_count' => $messages->where('receiver_id', Auth::id())->where('is_read', false)->count(),
+                    'total_count' => $messages->count(),
+                ];
+            })
+            ->take(5);
+        
+        return view('my.places.index', compact('places', 'activeConversations'));
     }
 
 
@@ -317,10 +399,38 @@ class MyController extends Controller
      */
     public function free(): View
     {
-        // データベースから実際のデータを取得
-        $freeItems = FreeMarket::where('user_id', Auth::id())->latest()->get();
+        // データベースから実際のデータを取得（メッセージ数も含む）
+        $freeItems = FreeMarket::where('user_id', Auth::id())
+            ->withCount('messages')
+            ->latest()
+            ->get();
 
-        return view('my.free.index', compact('freeItems'));
+        // やり取り中のDMを取得
+        $activeConversations = FreeMarketMessage::whereIn('free_market_id', function($query) {
+                $query->select('id')
+                    ->from('free_markets')
+                    ->where('user_id', Auth::id());
+            })
+            ->with(['sender', 'receiver', 'freeMarket'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function($message) {
+                return ($message->sender_id == Auth::id() ? $message->receiver_id : $message->sender_id) . '-' . $message->free_market_id;
+            })
+            ->map(function($messages) {
+                $firstMessage = $messages->first();
+                return [
+                    'user' => $firstMessage->sender_id == Auth::id() 
+                        ? $firstMessage->receiver 
+                        : $firstMessage->sender,
+                    'free_market' => $firstMessage->freeMarket,
+                    'last_message' => $firstMessage,
+                    'unread_count' => $messages->where('receiver_id', Auth::id())->where('is_read', false)->count(),
+                    'total_count' => $messages->count(),
+                ];
+            });
+
+        return view('my.free.index', compact('freeItems', 'activeConversations'));
     }
 
     /**
@@ -334,5 +444,73 @@ class MyController extends Controller
             ->firstOrFail();
 
         return view('my.free.show', compact('free'));
+    }
+
+    /**
+     * フリマ商品のメッセージ一覧
+     */
+    public function freeMessages($id): View
+    {
+        $free = FreeMarket::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // この商品に関するメッセージを、購入希望者ごとにグループ化
+        $conversations = FreeMarketMessage::where('free_market_id', $id)
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function($message) {
+                // 自分が出品者なので、相手（購入希望者）でグループ化
+                return $message->sender_id == Auth::id() ? $message->receiver_id : $message->sender_id;
+            })
+            ->map(function($messages) {
+                return [
+                    'user' => $messages->first()->sender_id == Auth::id() 
+                        ? $messages->first()->receiver 
+                        : $messages->first()->sender,
+                    'last_message' => $messages->first(),
+                    'unread_count' => $messages->where('receiver_id', Auth::id())->where('is_read', false)->count(),
+                    'total_count' => $messages->count(),
+                ];
+            });
+
+        return view('my.free.messages', compact('free', 'conversations'));
+    }
+
+    /**
+     * 全てのDM一覧表示
+     */
+    public function allMessages(): View
+    {
+        // すべての商品に対するDMを取得
+        $conversations = FreeMarketMessage::whereIn('free_market_id', function($query) {
+                $query->select('id')
+                    ->from('free_markets')
+                    ->where('user_id', Auth::id());
+            })
+            ->with(['sender', 'receiver', 'freeMarket'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function($message) {
+                return ($message->sender_id == Auth::id() ? $message->receiver_id : $message->sender_id) . '-' . $message->free_market_id;
+            })
+            ->map(function($messages) {
+                $firstMessage = $messages->first();
+                return [
+                    'user' => $firstMessage->sender_id == Auth::id() 
+                        ? $firstMessage->receiver 
+                        : $firstMessage->sender,
+                    'free_market' => $firstMessage->freeMarket,
+                    'last_message' => $firstMessage,
+                    'unread_count' => $messages->where('receiver_id', Auth::id())->where('is_read', false)->count(),
+                    'total_count' => $messages->count(),
+                ];
+            })
+            ->sortByDesc(function($conversation) {
+                return $conversation['last_message']->created_at;
+            });
+
+        return view('my.messages', compact('conversations'));
     }
 }

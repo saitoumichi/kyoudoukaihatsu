@@ -304,6 +304,44 @@
       <h1 class="h1">フリマ管理</h1>
       <p class="sub">あなたが出品したフリマ商品を管理できます。</p>
 
+      <!-- やり取り中のDM -->
+      @if(isset($activeConversations) && $activeConversations->count() > 0)
+      <div class="card" style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div class="title" style="margin: 0;">💬 やり取り中のDM ({{ $activeConversations->count() }}件)</div>
+          <a href="{{ route('my.messages') }}" class="btn" style="padding: 6px 12px; font-size: 13px;">全て見る</a>
+        </div>
+        <div style="margin-top: 16px;">
+          @foreach($activeConversations as $key => $conversation)
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 8px; background: rgba(59,130,246,.08); border-radius: 8px; border: 1px solid rgba(59,130,246,.2);">
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px; color: var(--ink);">
+                  👤 {{ $conversation['user']->login_id }}
+                </div>
+                <div class="meta" style="margin-bottom: 4px;">
+                  商品: {{ $conversation['free_market']->title }}
+                </div>
+                <div class="meta" style="font-size: 12px;">
+                  {{ Str::limit($conversation['last_message']->message, 40) }}
+                </div>
+                <div class="meta" style="font-size: 11px; margin-top: 2px;">
+                  {{ $conversation['last_message']->created_at->diffForHumans() }}
+                  @if($conversation['unread_count'] > 0)
+                    <span style="color: var(--rose); font-weight: 700;">
+                      • {{ $conversation['unread_count'] }}件未読
+                    </span>
+                  @endif
+                </div>
+              </div>
+              <a href="{{ route('free.dm', $conversation['free_market']->id) }}" class="btn primary" style="padding: 8px 16px; font-size: 13px;">
+                返信する
+              </a>
+            </div>
+          @endforeach
+        </div>
+      </div>
+      @endif
+
       <!-- アクションツールバー -->
       <div class="toolbar">
         <div class="field">
@@ -363,11 +401,25 @@
           <div class="title">{{ $item->title }}</div>
           <div class="meta">価格: ¥{{ number_format($item->price) }}</div>
           <div class="meta">カテゴリ: {{ $item->category }}</div>
-          <div class="meta">状態: {{
-            $item->condition == 'new' ? '新品' :
-            ($item->condition == 'like_new' ? 'ほぼ新品' :
-            ($item->condition == 'good' ? '良い' : '普通'))
-          }}</div>
+          <div style="margin: 8px 0;">
+            @if($item->condition == 'new')
+              <span class="pill" style="background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.3); color: #bbf7d0;">
+                ✨ 新品
+              </span>
+            @elseif($item->condition == 'like_new')
+              <span class="pill" style="background: rgba(59,130,246,.2); border-color: rgba(59,130,246,.3); color: #dbeafe;">
+                ⭐ ほぼ新品
+              </span>
+            @elseif($item->condition == 'good')
+              <span class="pill" style="background: rgba(245,158,11,.2); border-color: rgba(245,158,11,.3); color: #fde68a;">
+                👍 良い
+              </span>
+            @else
+              <span class="pill" style="background: rgba(100,116,139,.2); border-color: rgba(100,116,139,.3); color: #cbd5e1;">
+                📦 普通
+              </span>
+            @endif
+          </div>
           <div class="meta">出品日: {{ $item->created_at->format('Y/m/d') }}</div>
           <div class="meta">
             @if($item->status == 'active')
@@ -384,6 +436,14 @@
           <div class="btn-row" style="margin-top: 12px;">
             <a href="/free/{{ $item->id }}" class="btn">詳細を見る</a>
             <a href="/my/free/{{ $item->id }}/edit" class="btn">編集</a>
+            <a href="{{ route('my.free.messages', $item->id) }}" class="btn" style="position: relative; background: rgba(59,130,246,.2); border-color: rgba(59,130,246,.3); color: #dbeafe;">
+              💬 DM
+              @if($item->messages_count > 0)
+                <span style="position: absolute; top: -6px; right: -6px; background: var(--rose); color: white; border-radius: 999px; padding: 2px 6px; font-size: 10px; font-weight: 700;">
+                  {{ $item->messages_count }}
+                </span>
+              @endif
+            </a>
             <form method="POST" action="/my/free/{{ $item->id }}" style="display: inline;" onsubmit="return confirm('この商品を削除しますか？')">
               @csrf
               @method('DELETE')

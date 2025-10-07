@@ -389,6 +389,23 @@
             @enderror
           </div>
 
+          @if(old('type', $place->type) == 'drive')
+          <div class="field">
+            <label>ドライブカテゴリ</label>
+            <div class="chips">
+              <input id="edit-drive-shopping" type="radio" name="category_id" value="1" class="toggle" {{ old('category_id', $place->drive->category_id ?? null) == 1 ? 'checked' : '' }}>
+              <label for="edit-drive-shopping" class="chip">ショッピング</label>
+              
+              <input id="edit-drive-scenery" type="radio" name="category_id" value="2" class="toggle" {{ old('category_id', $place->drive->category_id ?? null) == 2 ? 'checked' : '' }}>
+              <label for="edit-drive-scenery" class="chip">景色</label>
+              
+              <input id="edit-drive-break" type="radio" name="category_id" value="3" class="toggle" {{ old('category_id', $place->drive->category_id ?? null) == 3 ? 'checked' : '' }}>
+              <label for="edit-drive-break" class="chip">息抜き</label>
+            </div>
+            <div class="hint">※ ドライブの場合は必須です</div>
+          </div>
+          @endif
+
           <div class="field">
             <label>詳細</label>
             <textarea name="description" rows="4" placeholder="例）見どころ・設備・注意事項など">{{ old('description', $place->description) }}</textarea>

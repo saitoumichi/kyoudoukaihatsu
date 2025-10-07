@@ -304,6 +304,44 @@
       <h1 class="h1">場所管理</h1>
       <p class="sub">あなたが投稿した場所を管理できます。</p>
 
+      <!-- やり取り中のDM -->
+      @if(isset($activeConversations) && $activeConversations->count() > 0)
+      <div class="card" style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div class="title" style="margin: 0;">💬 やり取り中のDM ({{ $activeConversations->count() }}件)</div>
+          <a href="{{ route('my.messages') }}" class="btn" style="padding: 6px 12px; font-size: 13px;">全て見る</a>
+        </div>
+        <div style="margin-top: 16px;">
+          @foreach($activeConversations as $key => $conversation)
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 8px; background: rgba(59,130,246,.08); border-radius: 8px; border: 1px solid rgba(59,130,246,.2);">
+              <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px; color: var(--ink);">
+                  👤 {{ $conversation['user']->login_id }}
+                </div>
+                <div class="meta" style="margin-bottom: 4px;">
+                  商品: {{ $conversation['free_market']->title }}
+                </div>
+                <div class="meta" style="font-size: 12px;">
+                  {{ Str::limit($conversation['last_message']->message, 40) }}
+                </div>
+                <div class="meta" style="font-size: 11px; margin-top: 2px;">
+                  {{ $conversation['last_message']->created_at->diffForHumans() }}
+                  @if($conversation['unread_count'] > 0)
+                    <span style="color: var(--rose); font-weight: 700;">
+                      • {{ $conversation['unread_count'] }}件未読
+                    </span>
+                  @endif
+                </div>
+              </div>
+              <a href="{{ route('free.dm', $conversation['free_market']->id) }}" class="btn primary" style="padding: 8px 16px; font-size: 13px;">
+                返信する
+              </a>
+            </div>
+          @endforeach
+        </div>
+      </div>
+      @endif
+
       <!-- アクションツールバー -->
       <div class="toolbar">
         <div class="field">

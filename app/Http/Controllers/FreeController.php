@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\FreeMarket;
+use App\Models\FreeMarketMessage;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class FreeController extends Controller
 {
@@ -84,13 +86,18 @@ class FreeController extends Controller
      */
     public function dm($id): View
     {
-        // 簡単なテストデータを返す
-        $free = (object)[
-            'id' => $id,
-            'title' => 'テスト商品',
-            'user' => (object)['name' => 'テストユーザー']
-        ];
-        $messages = collect([]);
+        // データベースから商品情報を取得
+        $free = FreeMarket::with('user')->findOrFail($id);
+        
+        // メッセージ履歴を取得（送信・受信両方）
+        $messages = FreeMarketMessage::where('free_market_id', $id)
+            ->where(function($query) {
+                $query->where('sender_id', Auth::id())
+                      ->orWhere('receiver_id', Auth::id());
+            })
+            ->with(['sender', 'receiver'])
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         return view('free.dm', compact('free', 'messages'));
     }
@@ -104,8 +111,16 @@ class FreeController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
-        // 実際の実装では、ここでメッセージをデータベースに保存
-        // 現在はテスト用のリダイレクト
+        $free = FreeMarket::findOrFail($id);
+        
+        // メッセージを保存
+        FreeMarketMessage::create([
+            'free_market_id' => $id,
+            'sender_id' => Auth::id(),
+            'receiver_id' => $free->user_id,
+            'message' => $request->message,
+            'is_read' => false,
+        ]);
 
         return redirect()->route('free.dm', $id)->with('success', 'メッセージを送信しました。');
     }
@@ -123,12 +138,8 @@ class FreeController extends Controller
      */
     public function status($id): View
     {
-        // 簡単なテストデータを返す
-        $free = (object)[
-            'id' => $id,
-            'title' => 'テスト商品',
-            'user' => (object)['name' => 'テストユーザー']
-        ];
+        // データベースから商品情報を取得
+        $free = FreeMarket::with('user')->findOrFail($id);
         $status = 'negotiating'; // 例：交渉中
 
         return view('free.status', compact('free', 'status'));
