@@ -403,7 +403,7 @@
 
                     <!-- 出品者情報 -->
                     <div class="meta" style="margin-bottom: 8px;">
-                        👤 {{ $item->user->name ?? '不明' }}
+                        👤 {{ $item->user->login_id ?? '不明' }}
                     </div>
 
                     <!-- 出品日 -->

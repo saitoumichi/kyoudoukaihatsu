@@ -13,7 +13,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900">{{ $free->title }}</h3>
-                            <p class="text-gray-600">出品者: {{ $free->user->name }}</p>
+                            <p class="text-gray-600">出品者: {{ $free->user->login_id ?? '不明' }}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-2xl font-bold text-green-600">¥{{ number_format($free->price ?? 0) }}</p>
