@@ -80,4 +80,4 @@ Route::middleware(['auth'])->group(function () {
 
 // require __DIR__.'/auth.php'; // 重複を避けるため無効化
 
-Route::get('/places', [\App\Http\Controllers\PlaceController::class, 'index'])->defaults('type', 'all');
+Route::get('/places', [PlaceController::class, 'index'])->defaults('type', 'all');
