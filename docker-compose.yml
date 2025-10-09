@@ -11,7 +11,6 @@ services:
       - 'host.docker.internal:host-gateway'
     ports:
       - "80:80"
-      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
     environment:
       WWWUSER: '${WWWUSER}'
       LARAVEL_SAIL: 1
@@ -30,7 +29,7 @@ services:
   mysql:
     image: 'mysql/mysql-server:8.0'
     ports:
-      - '${FORWARD_DB_PORT:-3306}:3306'
+      - '127.0.0.1:${FORWARD_DB_PORT:-3306}:3306'
     environment:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ROOT_HOST: '%'
@@ -51,7 +50,7 @@ services:
   redis:
     image: 'redis:alpine'
     ports:
-      - '${FORWARD_REDIS_PORT:-6379}:6379'
+      - '127.0.0.1:${FORWARD_REDIS_PORT:-6379}:6379'
     volumes:
       - 'sail-redis:/data'
     healthcheck:
@@ -62,7 +61,7 @@ services:
   meilisearch:
     image: 'getmeili/meilisearch:latest'
     ports:
-      - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
+      - '127.0.0.1:${FORWARD_MEILISEARCH_PORT:-7700}:7700'
     environment:
       MEILI_NO_ANALYTICS: '${MEILISEARCH_NO_ANALYTICS:-false}'
     volumes:
@@ -75,8 +74,8 @@ services:
   mailpit:
     image: 'axllent/mailpit:latest'
     ports:
-      - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-      - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+      - '127.0.0.1:${FORWARD_MAILPIT_PORT:-1025}:1025'
+      - '127.0.0.1:${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
 
   selenium:
     image: selenium/standalone-chromium
