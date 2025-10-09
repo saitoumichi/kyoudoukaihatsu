@@ -11,12 +11,9 @@ class PlaceController extends Controller
     /**
      * 場所一覧表示（タイプ別）
      */
-    public function index(?string $type = 'all')
+    public function index(string $type = 'all')
     {
-        if ($type === null || $type === 'all') {
-            return response('OK /places (all)', 200);
-        }
-        return response("OK /places type={$type}", 200);
+        return response("OK /places ($type)");
     }
 
     /**
