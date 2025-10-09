@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MyController;
 use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\FreeController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // トップページ
@@ -84,3 +85,23 @@ Route::middleware(['auth'])->group(function () {
 // require __DIR__.'/auth.php'; // 重複を避けるため無効化
 
 Route::get("/health-ping", fn() => response("pong",200));
+
+Route::fallback(function(Request $r){
+    return response()->json([
+        "fallback" => true,
+        "path"     => $r->path(),
+        "host"     => $r->getHost(),
+        "headers"  => $r->headers->all(),
+    ], 404);
+});
+
+Route::get("/debug", function(Request $r){
+    return response()->json([
+        "ok"        => true,
+        "host"      => $r->getHost(),
+        "url"       => (string) $r->fullUrl(),
+        "app_url"   => env("APP_URL"),
+        "app_env"   => env("APP_ENV"),
+        "routes"    => collect(Route::getRoutes())->map->uri()->take(5),
+    ], 200);
+});

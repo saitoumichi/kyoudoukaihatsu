@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'forgot-password',
             'reset-password/*',
         ]);
+        $middleware->trustHosts([
+            '15-168-43-164\.sslip\.io',
+            '15\.168\.43\.164',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
