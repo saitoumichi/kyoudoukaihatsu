@@ -16,8 +16,12 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'login_id' => 'testuser',
             'email' => 'test@example.com',
+            'password_hash' => bcrypt('password123'),
+            'password_algo' => 'bcrypt',
+            'role' => 'admin',
+            'is_active' => 1,
         ]);
 
         // フリマ商品のサンプルデータを追加
