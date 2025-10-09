@@ -11,9 +11,9 @@
       --ink: #0f172a;
       --muted: #64748b;
       --line: #e5e7eb;
-      --primary: #2563eb; /* blue */
+      --primary: #00a000; /* green */
       --accent: #a78bfa;  /* violet */
-      --pink: #f472b6;
+      --pink: #00a000;
       --green: #10b981;
       --amber: #f59e0b;
       --rose: #f43f5e;
@@ -162,9 +162,9 @@
       --blur:12px;
 
       /* テーマ色 */
-      --theme-0:#ff6aa9;
-      --theme-1:#ffc1dc;
-      --theme-2:#ffe4ef;
+      --theme-0:#00a000;
+      --theme-1:#00cc00;
+      --theme-2:#ccffcc;
       --primary:var(--theme-0);
       color:var(--ink);
     }
@@ -172,16 +172,16 @@
     /* #bg が #app の前にあっても効くように :has で背景を更新 */
     body:has(#app[data-skin="sakura"]) #bg{
       background:
-        radial-gradient(1200px 800px at 50% -20%, rgba(255,106,169,.18), transparent 60%),
-        radial-gradient(900px 600px at 0% 30%,   rgba(255,193,220,.18), transparent 60%),
-        radial-gradient(900px 600px at 100% 70%, rgba(255,142,187,.14), transparent 60%),
-        linear-gradient(180deg, #0b0f18 0%, #0a1420 50%, #08121c 100%) !important;
+        radial-gradient(1200px 800px at 50% -20%, rgba(0,160,0,.18), transparent 60%),
+        radial-gradient(900px 600px at 0% 30%,   rgba(0,200,0,.18), transparent 60%),
+        radial-gradient(900px 600px at 100% 70%, rgba(0,180,0,.14), transparent 60%),
+        linear-gradient(180deg, #001a00 0%, #002200 50%, #001500 100%) !important;
     }
     body:has(#app[data-skin="sakura"]) #bg::after{
       background:
-        radial-gradient(420px 320px at 18% 78%, rgba(255,106,169,.22), transparent 60%),
-        radial-gradient(380px 260px at 80% 22%, rgba(255,193,220,.20), transparent 60%),
-        radial-gradient(280px 240px at 78% 86%, rgba(255,142,187,.16), transparent 60%),
+        radial-gradient(420px 320px at 18% 78%, rgba(0,160,0,.22), transparent 60%),
+        radial-gradient(380px 260px at 80% 22%, rgba(0,200,0,.20), transparent 60%),
+        radial-gradient(280px 240px at 78% 86%, rgba(0,180,0,.16), transparent 60%),
         radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.10), transparent 45%);
       opacity:.9;
     }
@@ -379,7 +379,7 @@
                    style="width: 100%; height: 160px; object-fit: cover;">
             </div>
           @else
-            <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(255,106,169,.1), rgba(255,193,220,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+            <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(0,160,0,.1), rgba(0,200,0,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
               <span style="color: var(--muted); font-size: 13px;">📷 画像なし</span>
             </div>
           @endif
