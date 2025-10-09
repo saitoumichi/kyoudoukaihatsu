@@ -58,8 +58,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // 場所一覧（認証不要）
-Route::get('/places/{type}', [PlaceController::class, 'index'])->name('places.index');
-Route::get('/places/{type}/{place}', [PlaceController::class, 'show'])->name('places.show');
+Route::get('/places/{type?}', [\App\Http\Controllers\PlaceController::class, 'index'])
+    ->name('places.index')
+    ->defaults('type', 'all');
+    Route::get('/places/{type}/{place}', [PlaceController::class, 'show'])->name('places.show');
 
 // フリマ商品一覧（認証不要）
 Route::get('/free', [FreeController::class, 'index'])->name('free.index');
@@ -78,4 +80,4 @@ Route::middleware(['auth'])->group(function () {
 
 // require __DIR__.'/auth.php'; // 重複を避けるため無効化
 
-Route::get("/places", [PlaceController::class, "index"])->defaults("type", "all");
+Route::get('/places', [\App\Http\Controllers\PlaceController::class, 'index'])->defaults('type', 'all');
