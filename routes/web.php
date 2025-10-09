@@ -52,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my/free/{id}/messages', [MyController::class, 'freeMessages'])->name('my.free.messages'); // メッセージ一覧
     Route::get('/my/free/{id}', [MyController::class, 'showFree'])->name('my.free.show');
     Route::get('/my/free', [MyController::class, 'free'])->name('my.free.index'); // 出品一覧
-    
+
     // DM一覧
     Route::get('/my/messages', [MyController::class, 'allMessages'])->name('my.messages');
 });
@@ -77,3 +77,5 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // require __DIR__.'/auth.php'; // 重複を避けるため無効化
+
+Route::get("/places", [PlaceController::class, "index"])->defaults("type", "all");
