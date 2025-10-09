@@ -11,8 +11,17 @@ class PlaceController extends Controller
     /**
      * 場所一覧表示（タイプ別）
      */
-    public function index(string $type, Request $request): View
+    public function index(?string $type = 'all', Request $request): View
     {
+        // 全件表示の場合
+        if ($type === 'all') {
+            $places = Place::where('is_active', true)
+                ->with(['images', 'user', 'drive.category', 'karaoke', 'izakaya'])
+                ->latest()
+                ->get();
+            return view('bkc.all', compact('places'));
+        }
+
         // タイプが有効かチェック
         if (!in_array($type, ['drive', 'karaoke', 'izakaya'])) {
             abort(404);
