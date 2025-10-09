@@ -105,3 +105,5 @@ Route::get("/debug", function(Request $r){
         "routes"    => collect(Route::getRoutes())->map->uri()->take(5),
     ], 200);
 });
+
+Route::redirect('/', '/places');
