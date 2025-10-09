@@ -11,9 +11,9 @@
             --ink: #0f172a;
             --muted: #64748b;
             --line: #e5e7eb;
-            --primary: #2563eb;
+            --primary: #00a000;
             --accent: #a78bfa;
-            --pink: #f472b6;
+            --pink: #00a000;
             --green: #10b981;
             --amber: #f59e0b;
             --rose: #f43f5e;
@@ -40,9 +40,9 @@
             opacity: 1;
             transition: opacity .25s ease;
             background:
-                radial-gradient(1200px 800px at 50% -20%, rgba(255,106,169,.18), transparent 60%),
-                radial-gradient(900px 600px at 0% 30%, rgba(255,193,220,.18), transparent 60%),
-                radial-gradient(900px 600px at 100% 70%, rgba(255,142,187,.14), transparent 60%),
+                radial-gradient(1200px 800px at 50% -20%, rgba(0,160,0,.18), transparent 60%),
+                radial-gradient(900px 600px at 0% 30%, rgba(0,200,0,.18), transparent 60%),
+                radial-gradient(900px 600px at 100% 70%, rgba(0,180,0,.14), transparent 60%),
                 linear-gradient(180deg, #0b0f18 0%, #0a1420 50%, #08121c 100%);
         }
 
@@ -74,9 +74,9 @@
             mix-blend-mode: screen;
             filter: saturate(1.03);
             background:
-                radial-gradient(260px 200px at 16% 78%, rgba(255,106,169,.22), transparent 60%),
-                radial-gradient(320px 220px at 78% 18%, rgba(255,193,220,.20), transparent 60%),
-                radial-gradient(220px 220px at 80% 86%, rgba(255,142,187,.16), transparent 60%),
+                radial-gradient(260px 200px at 16% 78%, rgba(0,160,0,.22), transparent 60%),
+                radial-gradient(320px 220px at 78% 18%, rgba(0,200,0,.20), transparent 60%),
+                radial-gradient(220px 220px at 80% 86%, rgba(0,180,0,.16), transparent 60%),
                 radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.10), transparent 45%);
             opacity: .9;
         }
@@ -97,9 +97,9 @@
             --card:rgba(8,12,20,.52);
             --card-strong:rgba(8,12,20,.66);
             --blur:12px;
-            --theme-0:#ff6aa9;
-            --theme-1:#ffc1dc;
-            --theme-2:#ffe4ef;
+            --theme-0:#00a000;
+            --theme-1:#00cc00;
+            --theme-2:#ccffcc;
             --primary:var(--theme-0);
             color:var(--ink);
         }
@@ -259,7 +259,7 @@
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255,106,169,.2);
+            box-shadow: 0 0 0 3px rgba(0,160,0,.2);
         }
 
         /* ボタングループ */
@@ -370,17 +370,17 @@
                                  style="width: 100%; height: 200px; object-fit: cover;">
                         </div>
                     @else
-                        <div style="margin: -20px -20px 20px -20px; height: 200px; background: linear-gradient(135deg, rgba(255,106,169,.1), rgba(255,193,220,.1)); display: flex; align-items: center; justify-content: center; border-radius: 20px 20px 0 0;">
+                        <div style="margin: -20px -20px 20px -20px; height: 200px; background: linear-gradient(135deg, rgba(0,160,0,.1), rgba(0,200,0,.1)); display: flex; align-items: center; justify-content: center; border-radius: 20px 20px 0 0;">
                             <span style="color: var(--muted); font-size: 14px;">📷 画像なし</span>
                         </div>
                     @endif
 
                     <!-- バッジ（カテゴリと状態） -->
                     <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
-                        <span class="pill" style="background: rgba(255,106,169,.2); border-color: rgba(255,106,169,.3); color: #ffc1dc;">
+                        <span class="pill" style="background: rgba(0,160,0,.2); border-color: rgba(0,160,0,.3); color: #ccffcc;">
                             {{ ucfirst($item->category) }}
                         </span>
-                        
+
                         @if($item->condition == 'new')
                           <span class="pill" style="background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.3); color: #bbf7d0;">
                             ✨ 新品

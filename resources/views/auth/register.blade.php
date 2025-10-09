@@ -11,9 +11,9 @@
       --ink: #0f172a;
       --muted: #64748b;
       --line: #e5e7eb;
-      --primary: #2563eb;
+      --primary: #00a000;
       --accent: #a78bfa;
-      --pink: #f472b6;
+      --pink: #00a000;
       --green: #10b981;
       --amber: #f59e0b;
       --rose: #f43f5e;
@@ -56,9 +56,9 @@
 
     body:has(#app[data-skin="sakura"]) #bg{
       background:
-        radial-gradient(1200px 800px at 50% -20%, rgba(255,106,169,.18), transparent 60%),
-        radial-gradient(900px 600px at 0% 30%,   rgba(255,193,220,.18), transparent 60%),
-        radial-gradient(900px 600px at 100% 70%, rgba(255,142,187,.14), transparent 60%),
+        radial-gradient(1200px 800px at 50% -20%, rgba(0,160,0,.18), transparent 60%),
+        radial-gradient(900px 600px at 0% 30%,   rgba(0,200,0,.18), transparent 60%),
+        radial-gradient(900px 600px at 100% 70%, rgba(0,180,0,.14), transparent 60%),
         linear-gradient(180deg, #0b0f18 0%, #0a1420 50%, #08121c 100%) !important;
     }
 
