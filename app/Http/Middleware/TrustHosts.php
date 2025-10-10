@@ -3,6 +3,15 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Middleware\TrustHosts as Middleware;
 class TrustHosts extends Middleware {
     protected function hosts(): array {
+    {
+        return [
+            "15-168-43-164\.sslip\.io",
+            "15\.168\.43\.164",
+            "127\.0\.0\.1",
+            "localhost",
+            \$this->allSubdomainsOfApplicationUrl(),
+        ];
+    }
         return [
             '15-168-43-164\.sslip\.io',
             '15\.168\.43\.164',
