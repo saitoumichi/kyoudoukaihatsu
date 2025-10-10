@@ -26,7 +26,7 @@ class PlaceController extends Controller
 
         $places = $query->latest()->get();
 
-        return response()->json(compact('places', 'type'));
+        return view('places.index', compact('places', 'type'));
     }
 
     /**

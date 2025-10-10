@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – {{ ucfirst($type) }}</title>
-  <style>
+@extends('layouts.app')
+
+@push('styles')
+<style>
     :root {
       --bg: #f7f9fc;
       --card: #ffffff;
@@ -280,8 +277,9 @@
     }
     #app[data-skin="sakura"] .meta{ color: var(--muted); }
   </style>
-</head>
-<body>
+@endpush
+
+@section('content')
   <!-- 実行プレビュー：背景切替トグル（チェックで有効） -->
   <div id="bg" aria-hidden="true"></div>
 
@@ -303,8 +301,8 @@
     </header>
 
     <main>
-      <h1 class="h1">{{ ucfirst($type) }}スポット</h1>
-      <p class="sub">BKC生がおすすめする{{ $type === 'drive' ? 'ドライブ' : ($type === 'karaoke' ? 'カラオケ' : '居酒屋') }}スポットをチェックしよう。</p>
+      <h1 class="h1">{{ $type === 'all' ? 'すべての' : ucfirst($type) }}スポット</h1>
+      <p class="sub">BKC生がおすすめする{{ $type === 'all' ? 'すべての' : ($type === 'drive' ? 'ドライブ' : ($type === 'karaoke' ? 'カラオケ' : '居酒屋')) }}スポットをチェックしよう。</p>
 
       <!-- 検索・フィルタツールバー -->
       <div class="toolbar">
@@ -346,18 +344,17 @@
           <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">{{ Str::limit($place->description, 100) }}</p>
           @endif
           <div class="btn-row" style="margin-top: 12px;">
-            <a href="/places/{{ $type }}/{{ $place->id }}" class="btn primary">詳細を見る</a>
+            <a href="/places/{{ $type === 'all' ? $place->type : $type }}/{{ $place->id }}" class="btn primary">詳細を見る</a>
           </div>
         </div>
         @empty
         <div class="empty" style="grid-column: 1 / -1;">
           <h3>まだ投稿がありません</h3>
-          <p>最初の{{ $type === 'drive' ? 'ドライブ' : ($type === 'karaoke' ? 'カラオケ' : '居酒屋') }}スポットを投稿してみませんか？</p>
+          <p>最初の{{ $type === 'all' ? '' : ($type === 'drive' ? 'ドライブ' : ($type === 'karaoke' ? 'カラオケ' : '居酒屋')) }}スポットを投稿してみませんか？</p>
           <a href="/my/places/create" class="btn primary">新しい場所を追加</a>
         </div>
         @endforelse
       </div>
     </main>
   </div>
-</body>
-</html>
+@endsection
