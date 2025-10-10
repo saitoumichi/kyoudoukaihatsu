@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BKC生のためのアプリ – マイページ（場所管理）</title>
+  <title>BKC生のためのアプリ – 全DM一覧</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -11,8 +11,8 @@
       --ink: #0f172a;
       --muted: #64748b;
       --line: #e5e7eb;
-      --primary: #00a000; /* green */
-      --accent: #a78bfa;  /* violet */
+      --primary: #00a000;
+      --accent: #a78bfa;
       --pink: #00a000;
       --green: #10b981;
       --amber: #f59e0b;
@@ -31,8 +31,6 @@
       overflow-x: hidden;
     }
 
-    /* ===== 実行プレビュー切替のための土台 ===== */
-    #bgprev { display: none; }
     #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 1; transition: opacity .25s ease;
       background:
         radial-gradient(1200px 800px at 50% -10%, rgba(147, 197, 253, 0.45), transparent 60%),
@@ -42,14 +40,11 @@
         linear-gradient(180deg, #e0f2fe 0%, #dbeafe 50%, #f5f3ff 100%);
     }
     #app { position: relative; z-index: 1; min-height: 100dvh;
-      /* Readability-first variables */
       --ink:#0f172a; --card: rgba(255,255,255,.92); --line: rgba(15,23,42,.12); --muted: #64748b;
     }
 
-    /* ★ 青系の層 + 星の瞬き + グロウ（画像なしCSSのみ） */
     #bg::before {
       content: ""; position: absolute; inset: 0; background-repeat: no-repeat;
-      /* 強めの瞬き：スピードUP & 明るさUP */
       animation: twinkle 6s ease-in-out infinite alternate;
       background-image:
         radial-gradient(1.4px 1.4px at 7% 12%, rgba(255,255,255,.95) 52%, transparent 53%),
@@ -62,11 +57,9 @@
         radial-gradient(1.2px 1.2px at 82% 84%, rgba(255,255,255,.9) 52%, transparent 53%),
         radial-gradient(1.2px 1.2px at 91% 28%, rgba(255,255,255,.95) 52%, transparent 53%),
         radial-gradient(1.2px 1.2px at 12% 88%, rgba(255,255,255,.85) 52%, transparent 53%);
-      /* きらめき感を上げる軽いグロー */
       filter: drop-shadow(0 0 2px rgba(255,255,255,.28));
       opacity: .6; transition: opacity .25s ease;
     }
-    #bgprev:checked ~ #bg::before { opacity: .9; }
 
     #bg::after { content: ""; position: absolute; inset: 0; mix-blend-mode: screen; filter: saturate(1.03);
       background:
@@ -74,7 +67,6 @@
         radial-gradient(320px 220px at 78% 18%, rgba(196, 181, 253, .22), transparent 60%),
         radial-gradient(220px 220px at 80% 86%, rgba(110, 231, 183, .18), transparent 60%),
         radial-gradient(100% 100% at 50% 100%, rgba(255,255,255,.18), transparent 40%);
-      /* 背景の発光を少し抑えて、テキストの視認性UP */
       opacity: .82; transition: opacity .25s ease;
     }
 
@@ -83,9 +75,8 @@
       50%  { opacity:1;   transform: translateY(-.25px) scale(1.02); }
       100% { opacity:.65; transform: translateY(-.5px) scale(1); }
     }
-@media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
 
-    /* ---------- App Shell ---------- */
     header {
       position: sticky; top: 0; z-index: 10;
       backdrop-filter: blur(8px) saturate(1.1);
@@ -99,7 +90,6 @@
     .brand { font-weight: 800; letter-spacing: .5px; }
     .brand span { color: var(--primary); }
 
-    /* Tabs */
     .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
     .tabs label,
     .tabs .tabs-link {
@@ -123,45 +113,27 @@
     .tabs label[data-color="green"],
     .tabs .tabs-link[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
 
-    /* ---------- UI atoms ---------- */
     .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
     .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
     .grid { display: grid; gap: 14px; }
-    .grid.cards { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 8px 28px rgba(15,23,42,0.08);
-    /* 常時ガラスUI（可読性を保つため白ベースは維持） */
-    backdrop-filter: blur(10px) saturate(1.05);
-    -webkit-backdrop-filter: blur(10px) saturate(1.05);
-  }
+      backdrop-filter: blur(10px) saturate(1.05);
+      -webkit-backdrop-filter: blur(10px) saturate(1.05);
+    }
     .card .title { font-weight: 700; margin: 2px 0 6px; }
     .meta { color: var(--muted); font-size: 13px; }
-    .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#f1f5f9; border:1px solid var(--line); font-size:12px; }
-
     .btn { display:inline-block; padding:10px 14px; border-radius: 12px; border: 1px solid var(--line); background: #fff; text-decoration:none; color:var(--ink); font-weight:700; }
     .btn.primary { background: var(--primary); color: #fff; border-color: transparent; }
-    .btn.ghost { background: #fff; }
-    .btn.full { width: 100%; text-align: center; }
-    .btn-row { display:flex; gap:10px; flex-wrap: wrap; }
-
-    .toolbar { display:flex; gap:8px; flex-wrap: wrap; align-items:center; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px; }
-    .toolbar .field { display:flex; align-items:center; gap:6px; padding:6px 10px; background:#f8fafc; border-radius:10px; border:1px solid var(--line); }
-    .toolbar input, .toolbar select { border: none; background: transparent; outline: none; font-size:14px; min-width: 120px; }
-
-    .empty { padding: 24px; border: 2px dashed var(--line); border-radius: 16px; background: #fff; display: grid; gap: 8px; justify-items: start; }
 
     main { max-width: 1120px; margin: 18px auto 96px; padding: 0 20px; }
 
-    /* Sakuraテーマ（ダークガラス + 桜色グロー） */
     #app[data-skin="sakura"]{
-      /* ベース色も暗色系に上書き（重要） */
       --ink:#eaf1ff;
       --muted:#9fb0c6;
       --line:rgba(255,255,255,.10);
       --card:rgba(8,12,20,.52);
       --card-strong:rgba(8,12,20,.66);
       --blur:12px;
-
-      /* テーマ色 */
       --theme-0:#00a000;
       --theme-1:#00cc00;
       --theme-2:#ccffcc;
@@ -169,7 +141,6 @@
       color:var(--ink);
     }
 
-    /* #bg が #app の前にあっても効くように :has で背景を更新 */
     body:has(#app[data-skin="sakura"]) #bg{
       background:
         radial-gradient(1200px 800px at 50% -20%, rgba(0,160,0,.18), transparent 60%),
@@ -186,7 +157,6 @@
       opacity:.9;
     }
 
-    /* コンポーネントのダークガラス上書き */
     #app[data-skin="sakura"] header{
       background:var(--card-strong);
       border-bottom:1px solid rgba(255,255,255,.08);
@@ -262,100 +232,67 @@
       color: #0b0f18;
       box-shadow: 0 8px 26px color-mix(in oklab, var(--primary) 35%, black);
     }
+    #app[data-skin="sakura"] .meta{ color: var(--muted); }
 
-    #app[data-skin="sakura"] .toolbar{
-      background: rgba(10,16,26,.66);
-      border: 1px solid rgba(255,255,255,.10);
+    .conversation-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: rgba(59,130,246,.08);
+      border: 1px solid rgba(59,130,246,.2);
+      transition: all 0.2s ease;
     }
-    #app[data-skin="sakura"] .toolbar .field{
-      background: rgba(8,12,20,.8);
-      border: 1px solid rgba(255,255,255,.08);
+    .conversation-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15,23,42,0.12);
     }
-    #app[data-skin="sakura"] .toolbar input,
-    #app[data-skin="sakura"] .toolbar select{
-      color: var(--ink);
+    #app[data-skin="sakura"] .conversation-card{
+      background: rgba(59,130,246,.12);
+      border: 1px solid rgba(59,130,246,.25);
     }
-
+    #app[data-skin="sakura"] .conversation-card:hover{
+      box-shadow:
+        0 8px 30px rgba(0,0,0,.45),
+        0 0 22px 2px rgba(59,130,246,.15);
+    }
+    .empty { padding: 24px; border: 2px dashed var(--line); border-radius: 16px; background: var(--card); text-align: center; }
     #app[data-skin="sakura"] .empty{
       background: rgba(8,12,20,.4);
       border-color: rgba(255,255,255,.1);
     }
-    #app[data-skin="sakura"] .meta{ color: var(--muted); }
-
-    #app[data-skin="sakura"] .tabs .tabs-link{
-      border-color: rgba(255,255,255,.08);
-      background: rgba(12,18,30,.56);
-      color: #e4ffe9;
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.04),
-        0 0 0 2px rgba(0,160,0,.08);
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link:hover{
-      box-shadow:
-        inset 0 0 0 2px rgba(0,160,0,.16),
-        0 6px 18px rgba(0,0,0,.35);
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
-      background: rgba(59,130,246,.2);
-      border-color: rgba(59,130,246,.3);
-      color: #dbeafe;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
-      background: rgba(139,92,246,.2);
-      border-color: rgba(139,92,246,.3);
-      color: #e9d5ff;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
-      background: rgba(244,63,94,.2);
-      border-color: rgba(244,63,94,.3);
-      color: #fecaca;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
-      background: rgba(245,158,11,.2);
-      border-color: rgba(245,158,11,.3);
-      color: #fde68a;
-    }
-    #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
-      background: rgba(34,197,94,.2);
-      border-color: rgba(34,197,94,.3);
-      color: #bbf7d0;
-    }
   </style>
 </head>
 <body>
-  <!-- 実行プレビュー：背景切替トグル（チェックで有効） -->
   <div id="bg" aria-hidden="true"></div>
 
-  <!-- ======= APP WRAPPER ======= -->
   <div id="app" data-skin="sakura">
     @include('components.header')
 
     <main>
-      <h1 class="h1">場所管理</h1>
-      <p class="sub">あなたが投稿した場所を管理できます。</p>
+      <h1 class="h1">💬 全てのDM</h1>
+      <p class="sub">フリマ商品に関する全てのメッセージを確認できます。</p>
 
-      <!-- やり取り中のDM -->
-      @if(isset($activeConversations) && $activeConversations->count() > 0)
-      <div class="card" style="margin-bottom: 24px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-          <div class="title" style="margin: 0;">💬 やり取り中のDM ({{ $activeConversations->count() }}件)</div>
-          <a href="{{ route('my.messages') }}" class="btn" style="padding: 6px 12px; font-size: 13px;">全て見る</a>
-        </div>
-        <div style="margin-top: 16px;">
-          @foreach($activeConversations as $key => $conversation)
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 8px; background: rgba(59,130,246,.08); border-radius: 8px; border: 1px solid rgba(59,130,246,.2);">
+      <!-- 会話一覧 -->
+      @if($conversations->count() > 0)
+        <div>
+          @foreach($conversations as $key => $conversation)
+            <div class="conversation-card">
               <div style="flex: 1;">
-                <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px; color: var(--ink);">
+                <div style="font-weight: 700; font-size: 16px; margin-bottom: 6px; color: var(--ink);">
                   👤 {{ $conversation['user']->login_id }}
                 </div>
-                <div class="meta" style="margin-bottom: 4px;">
-                  商品: {{ $conversation['free_market']->title }}
+                <div class="meta" style="margin-bottom: 6px; font-size: 14px;">
+                  📦 商品: {{ $conversation['free_market']->title }}
+                </div>
+                <div class="meta" style="font-size: 13px; margin-bottom: 4px;">
+                  💬 {{ Str::limit($conversation['last_message']->message, 60) }}
                 </div>
                 <div class="meta" style="font-size: 12px;">
-                  {{ Str::limit($conversation['last_message']->message, 40) }}
-                </div>
-                <div class="meta" style="font-size: 11px; margin-top: 2px;">
-                  {{ $conversation['last_message']->created_at->diffForHumans() }}
+                  🕒 {{ $conversation['last_message']->created_at->diffForHumans() }}
+                  （{{ $conversation['total_count'] }}件のメッセージ）
                   @if($conversation['unread_count'] > 0)
                     <span style="color: var(--rose); font-weight: 700;">
                       • {{ $conversation['unread_count'] }}件未読
@@ -363,85 +300,23 @@
                   @endif
                 </div>
               </div>
-              <a href="{{ route('free.dm', $conversation['free_market']->id) }}" class="btn primary" style="padding: 8px 16px; font-size: 13px;">
+              <a href="{{ route('free.dm', $conversation['free_market']->id) }}" class="btn primary" style="padding: 10px 20px;">
                 返信する
               </a>
             </div>
           @endforeach
         </div>
-      </div>
+      @else
+        <div class="empty">
+          <h3>まだメッセージがありません</h3>
+          <p>購入希望者からのメッセージを待ちましょう。</p>
+          <a href="{{ route('my.free.index') }}" class="btn primary" style="margin-top: 12px; display: inline-block;">
+            フリマ管理に戻る
+          </a>
+        </div>
       @endif
-
-      <!-- アクションツールバー -->
-      <div class="toolbar">
-        <div class="field">
-          <label>🔍</label>
-          <input type="text" placeholder="場所名で検索..." />
-        </div>
-        <div class="field">
-          <label>🏷️</label>
-          <select>
-            <option>すべて</option>
-            <option>ドライブ</option>
-            <option>カラオケ</option>
-            <option>居酒屋</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>📅</label>
-          <select>
-            <option>新着順</option>
-            <option>更新順</option>
-            <option>名前順</option>
-          </select>
-        </div>
-        <a href="/my/places/create" class="btn primary">新しい場所を追加</a>
-      </div>
-
-      <!-- 場所一覧 -->
-      <div class="grid cards" style="margin-top: 18px;">
-        @forelse($places ?? [] as $place)
-        <div class="card">
-          <!-- 場所の画像 -->
-          @if($place->images && $place->images->count() > 0)
-            <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
-              <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
-                   style="width: 100%; height: 160px; object-fit: cover;">
-            </div>
-          @else
-            <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(0,160,0,.1), rgba(0,200,0,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
-              <span style="color: var(--muted); font-size: 13px;">📷 画像なし</span>
-            </div>
-          @endif
-
-          <div class="title">{{ $place->name }}</div>
-          <div class="meta">{{ $place->address ?? '住所情報なし' }}</div>
-          @if($place->campus_time_min)
-          <div class="meta">大学から {{ $place->campus_time_min }}分</div>
-          @endif
-          <div class="meta">投稿日: {{ $place->created_at->format('Y/m/d') }}</div>
-          @if($place->description)
-          <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">{{ Str::limit($place->description, 100) }}</p>
-          @endif
-          <div class="btn-row" style="margin-top: 12px;">
-            <a href="/places/{{ $place->type ?? 'drive' }}/{{ $place->id }}" class="btn">詳細を見る</a>
-            <a href="/my/places/{{ $place->id }}/edit" class="btn">編集</a>
-            <form method="POST" action="/my/places/{{ $place->id }}" style="display: inline;" onsubmit="return confirm('この場所を削除しますか？')">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="btn" style="color: #f43f5e;">削除</button>
-            </form>
-          </div>
-        </div>
-        @empty
-        <div class="empty" style="grid-column: 1 / -1;">
-          <h3>まだ投稿がありません</h3>
-          <p>最初の場所を投稿してみませんか？</p>
-          <a href="/my/places/create" class="btn primary">新しい場所を追加</a>
-        </div>
-        @endforelse
-      </div>
     </main>
   </div>
 </body>
 </html>
+

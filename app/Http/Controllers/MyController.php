@@ -24,7 +24,7 @@ class MyController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        $places = Place::where('user_id', $user->id)->with(['images', 'drive'])->latest()->get();
+        $places = Place::where('user_id', $user->id)->latest()->get();
         $freeItems = FreeMarket::where('user_id', $user->id)
             ->withCount('messages')
             ->latest()
@@ -47,8 +47,8 @@ class MyController extends Controller
             ->map(function($messages) {
                 $firstMessage = $messages->first();
                 return [
-                    'user' => $firstMessage->sender_id == Auth::id() 
-                        ? $firstMessage->receiver 
+                    'user' => $firstMessage->sender_id == Auth::id()
+                        ? $firstMessage->receiver
                         : $firstMessage->sender,
                     'free_market' => $firstMessage->freeMarket,
                     'last_message' => $firstMessage,
@@ -117,23 +117,22 @@ class MyController extends Controller
 
         // ドライブの場合、Driveテーブルにもレコード作成
         if ($request->type === 'drive' && $request->category_id) {
-            Drive::create([
+            \App\Models\Drive::create([
                 'place_id' => $place->id,
                 'category_id' => $request->category_id,
             ]);
         }
 
-        // 画像アップロード処理
+        // 画像アップロード処理（相対パスで保存）
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $filename = time() . '_' . uniqid() . '.' . $extension;
-            $path = $image->storeAs('place-images', $filename, 's3');
-            $imageUrl = Storage::disk('s3')->url($path);
+            $path = $image->storeAs('place-images', $filename, 'public');
 
             PlaceImage::create([
                 'place_id' => $place->id,
-                'path' => $imageUrl,
+                'path' => '/storage/' . ltrim($path, '/'),
                 'alt_text' => $request->name,
                 'sort_order' => 1,
             ]);
@@ -180,38 +179,32 @@ class MyController extends Controller
             if ($place->drive) {
                 $place->drive->update(['category_id' => $request->category_id]);
             } else {
-                Drive::create([
+                \App\Models\Drive::create([
                     'place_id' => $place->id,
                     'category_id' => $request->category_id,
                 ]);
             }
         }
 
-        // 画像アップロード処理
+        // 画像アップロード処理（既存を削除して差し替え）
         if ($request->hasFile('image')) {
-            // 既存の画像を削除
             $existingImages = $place->images;
-            if ($existingImages->count() > 0) {
-                foreach ($existingImages as $existingImage) {
-                    // S3から画像を削除
-                    $oldPath = parse_url($existingImage->path, PHP_URL_PATH);
-                    if ($oldPath) {
-                        Storage::disk('s3')->delete(ltrim($oldPath, '/'));
-                    }
-                    $existingImage->delete();
+            foreach ($existingImages as $existingImage) {
+                $oldPath = parse_url($existingImage->path, PHP_URL_PATH);
+                if ($oldPath) {
+                    Storage::disk('public')->delete(ltrim($oldPath, '/'));
                 }
+                $existingImage->delete();
             }
 
-            // 新しい画像をアップロード
             $image = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $filename = time() . '_' . uniqid() . '.' . $extension;
-            $path = $image->storeAs('place-images', $filename, 's3');
-            $imageUrl = Storage::disk('s3')->url($path);
+            $path = $image->storeAs('place-images', $filename, 'public');
 
             PlaceImage::create([
                 'place_id' => $place->id,
-                'path' => $imageUrl,
+                'path' => '/storage/' . ltrim($path, '/'),
                 'alt_text' => $request->name,
                 'sort_order' => 1,
             ]);
@@ -268,8 +261,12 @@ class MyController extends Controller
             $image = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $filename = time() . '_' . uniqid() . '.' . $extension;
-            $path = $image->storeAs('free-market-images', $filename, 's3');
-            $data['image_url'] = Storage::disk('s3')->url($path);
+            // publicディスクに保存し、URLはホスト非依存の相対パスで保持
+            $path = $image->storeAs('free-market-images', $filename, 'public');
+            $data['image_url'] = '/storage/' . ltrim($path, '/');
+            \Log::info('Image uploaded', ['path' => $path, 'url' => $data['image_url']]);
+        } else {
+            \Log::info('No image file in request');
         }
 
         FreeMarket::create($data);
@@ -314,7 +311,7 @@ class MyController extends Controller
             if ($free->image_url) {
                 $oldPath = parse_url($free->image_url, PHP_URL_PATH);
                 if ($oldPath) {
-                    Storage::disk('s3')->delete(ltrim($oldPath, '/'));
+                    Storage::disk('public')->delete(ltrim($oldPath, '/'));
                 }
             }
 
@@ -322,8 +319,8 @@ class MyController extends Controller
             $image = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $filename = time() . '_' . uniqid() . '.' . $extension;
-            $path = $image->storeAs('free-market-images', $filename, 's3');
-            $data['image_url'] = Storage::disk('s3')->url($path);
+            $path = $image->storeAs('free-market-images', $filename, 'public');
+            $data['image_url'] = '/storage/' . ltrim($path, '/');
         }
 
         $free->update($data);
@@ -353,8 +350,8 @@ class MyController extends Controller
      */
     public function places(): View
     {
-        $places = Place::where('user_id', Auth::id())->with(['images', 'drive'])->latest()->get();
-        
+        $places = Place::where('user_id', Auth::id())->with('images')->latest()->get();
+
         // やり取り中のDMを取得（フリマ関連のみ）
         $activeConversations = FreeMarketMessage::whereIn('free_market_id', function($query) {
                 $query->select('id')
@@ -370,8 +367,8 @@ class MyController extends Controller
             ->map(function($messages) {
                 $firstMessage = $messages->first();
                 return [
-                    'user' => $firstMessage->sender_id == Auth::id() 
-                        ? $firstMessage->receiver 
+                    'user' => $firstMessage->sender_id == Auth::id()
+                        ? $firstMessage->receiver
                         : $firstMessage->sender,
                     'free_market' => $firstMessage->freeMarket,
                     'last_message' => $firstMessage,
@@ -380,7 +377,7 @@ class MyController extends Controller
                 ];
             })
             ->take(5);
-        
+
         return view('my.places.index', compact('places', 'activeConversations'));
     }
 
@@ -420,8 +417,8 @@ class MyController extends Controller
             ->map(function($messages) {
                 $firstMessage = $messages->first();
                 return [
-                    'user' => $firstMessage->sender_id == Auth::id() 
-                        ? $firstMessage->receiver 
+                    'user' => $firstMessage->sender_id == Auth::id()
+                        ? $firstMessage->receiver
                         : $firstMessage->sender,
                     'free_market' => $firstMessage->freeMarket,
                     'last_message' => $firstMessage,
@@ -466,8 +463,8 @@ class MyController extends Controller
             })
             ->map(function($messages) {
                 return [
-                    'user' => $messages->first()->sender_id == Auth::id() 
-                        ? $messages->first()->receiver 
+                    'user' => $messages->first()->sender_id == Auth::id()
+                        ? $messages->first()->receiver
                         : $messages->first()->sender,
                     'last_message' => $messages->first(),
                     'unread_count' => $messages->where('receiver_id', Auth::id())->where('is_read', false)->count(),
@@ -498,8 +495,8 @@ class MyController extends Controller
             ->map(function($messages) {
                 $firstMessage = $messages->first();
                 return [
-                    'user' => $firstMessage->sender_id == Auth::id() 
-                        ? $firstMessage->receiver 
+                    'user' => $firstMessage->sender_id == Auth::id()
+                        ? $firstMessage->receiver
                         : $firstMessage->sender,
                     'free_market' => $firstMessage->freeMarket,
                     'last_message' => $firstMessage,

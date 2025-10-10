@@ -376,29 +376,34 @@
         0 6px 18px rgba(0,0,0,.35);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
-      background: rgba(59,130,246,.2);
-      border-color: rgba(59,130,246,.3);
+      background: rgba(59,130,246,.3);
+      border-color: rgba(59,130,246,.5);
       color: #dbeafe;
+      box-shadow: 0 0 8px rgba(59,130,246,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
-      background: rgba(139,92,246,.2);
-      border-color: rgba(139,92,246,.3);
+      background: rgba(139,92,246,.3);
+      border-color: rgba(139,92,246,.5);
       color: #e9d5ff;
+      box-shadow: 0 0 8px rgba(139,92,246,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
-      background: rgba(244,63,94,.2);
-      border-color: rgba(244,63,94,.3);
+      background: rgba(244,63,94,.3);
+      border-color: rgba(244,63,94,.5);
       color: #fecaca;
+      box-shadow: 0 0 8px rgba(244,63,94,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
-      background: rgba(245,158,11,.2);
-      border-color: rgba(245,158,11,.3);
+      background: rgba(245,158,11,.3);
+      border-color: rgba(245,158,11,.5);
       color: #fde68a;
+      box-shadow: 0 0 8px rgba(245,158,11,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
-      background: rgba(34,197,94,.2);
-      border-color: rgba(34,197,94,.3);
+      background: rgba(34,197,94,.3);
+      border-color: rgba(34,197,94,.5);
       color: #bbf7d0;
+      box-shadow: 0 0 8px rgba(34,197,94,.2);
     }
 
     #app[data-skin="sakura"] .btn{
@@ -468,6 +473,10 @@
                 <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
                   <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
                        style="width: 100%; height: 160px; object-fit: cover;">
+                </div>
+              @else
+                <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(0,160,0,.1), rgba(0,200,0,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+                  <span style="color: var(--muted); font-size: 13px;">📷 画像なし</span>
                 </div>
               @endif
 

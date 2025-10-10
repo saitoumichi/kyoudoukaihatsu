@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DriveCategory extends Model
 {
-    protected $table = 'drives_categories';
-
     protected $fillable = [
         'name',
         'icon',

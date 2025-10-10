@@ -86,18 +86,36 @@
 @media (prefers-reduced-motion: reduce) { #bg::before { animation: none; } }
 
     /* ---------- App Shell ---------- */
-    header {
-      position: sticky; top: 0; z-index: 10;
-      backdrop-filter: blur(8px) saturate(1.1);
-      background: rgba(255,255,255,.86);
-      border-bottom: 1px solid rgba(15,23,42,.08);
-      transition: background .2s ease, border-color .2s ease;
-    }
+    /* ヘッダースタイルはsakuraテーマで統一 */
 
     .container { max-width: 1120px; margin: 0 auto; padding: 14px 20px; }
     .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .brand { font-weight: 800; letter-spacing: .5px; }
     .brand span { color: var(--primary); }
+
+    /* ---------- タブリンクの基本スタイル ---------- */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tabs label,
+    .tabs .tabs-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+      background: var(--card);
+      transition: box-shadow .2s ease, transform .05s ease;
+      user-select: none;
+    }
+    .tabs label:hover,
+    .tabs .tabs-link:hover { box-shadow: 0 1px 0 #e5e7eb, 0 0 0 4px rgba(37,99,235,.08) inset; }
+    .tabs label[data-color="blue"],
+    .tabs .tabs-link[data-color="blue"]{ border-color:#dbeafe; background:#eff6ff; }
+    .tabs label[data-color="violet"],
+    .tabs .tabs-link[data-color="violet"]{ border-color:#ede9fe; background:#f5f3ff; }
+    .tabs label[data-color="rose"],
+    .tabs .tabs-link[data-color="rose"]{ border-color:#ffe4e6; background:#fff1f2; }
+    .tabs label[data-color="amber"],
+    .tabs .tabs-link[data-color="amber"]{ border-color:#ffedd5; background:#fff7ed; }
+    .tabs label[data-color="green"],
+    .tabs .tabs-link[data-color="green"]{ border-color:#dcfce7; background:#f0fdf4; }
 
     /* ---------- UI atoms ---------- */
     .h1 { font-size: clamp(20px, 2.8vw, 28px); font-weight: 800; letter-spacing: .3px; margin: 6px 0 8px; }
@@ -180,6 +198,7 @@
 
     /* コンポーネントのダークガラス上書き */
     #app[data-skin="sakura"] header{
+      position: sticky; top: 0; z-index: 10;
       background:var(--card-strong);
       border-bottom:1px solid rgba(255,255,255,.08);
       backdrop-filter:blur(var(--blur)) saturate(1.1);
@@ -222,6 +241,50 @@
       border: 1px solid rgba(255,255,255,.10);
     }
     #app[data-skin="sakura"] .meta{ color: var(--muted); }
+
+    #app[data-skin="sakura"] .tabs .tabs-link{
+      border-color: rgba(255,255,255,.08);
+      background: rgba(12,18,30,.56);
+      color: #e4ffe9;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 2px rgba(0,160,0,.08);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link:hover{
+      box-shadow:
+        inset 0 0 0 2px rgba(0,160,0,.16),
+        0 6px 18px rgba(0,0,0,.35);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
+      background: rgba(59,130,246,.3);
+      border-color: rgba(59,130,246,.5);
+      color: #dbeafe;
+      box-shadow: 0 0 8px rgba(59,130,246,.2);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
+      background: rgba(139,92,246,.3);
+      border-color: rgba(139,92,246,.5);
+      color: #e9d5ff;
+      box-shadow: 0 0 8px rgba(139,92,246,.2);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
+      background: rgba(244,63,94,.3);
+      border-color: rgba(244,63,94,.5);
+      color: #fecaca;
+      box-shadow: 0 0 8px rgba(244,63,94,.2);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
+      background: rgba(245,158,11,.3);
+      border-color: rgba(245,158,11,.5);
+      color: #fde68a;
+      box-shadow: 0 0 8px rgba(245,158,11,.2);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
+      background: rgba(34,197,94,.3);
+      border-color: rgba(34,197,94,.5);
+      color: #bbf7d0;
+      box-shadow: 0 0 8px rgba(34,197,94,.2);
+    }
   </style>
 </head>
 <body>
@@ -230,16 +293,7 @@
 
   <!-- ======= APP WRAPPER ======= -->
   <div id="app" data-skin="sakura">
-    <header>
-      <div class="container">
-        <div class="row" style="justify-content: space-between;">
-          <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
-          <nav style="display:flex; gap:8px;">
-            <a href="/my" class="btn">マイページに戻る</a>
-          </nav>
-        </div>
-      </div>
-    </header>
+    @include('components.header')
 
     <main>
       <h1 class="h1">商品を出品する</h1>

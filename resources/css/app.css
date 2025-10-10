@@ -45,9 +45,9 @@ input[type="number"] {
   --ink: #0f172a;
   --muted: #64748b;
   --line: #e5e7eb;
-  --primary: #2563eb; /* blue */
+  --primary: #00a000; /* green */
   --accent: #a78bfa;  /* violet */
-  --pink: #f472b6;
+  --pink: #00a000;
   --green: #10b981;
   --amber: #f59e0b;
   --rose: #f43f5e;

@@ -203,47 +203,52 @@
         inset 0 0 0 1px rgba(255,255,255,.04),
         0 1px 0 rgba(255,255,255,.05),
         0 8px 30px rgba(0,0,0,.45),
-        0 0 0 1.5px rgba(255,122,150,.08),
-        0 0 22px 2px rgba(255,122,150,.10);
+        0 0 0 1.5px rgba(0,160,0,.08),
+        0 0 22px 2px rgba(0,160,0,.10);
     }
 
     #app[data-skin="sakura"] .tabs .tabs-link{
       border-color: rgba(255,255,255,.08);
       background: rgba(12,18,30,.56);
-      color: #ffe4ef;
+      color: #e4ffe9;
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,.04),
-        0 0 0 2px rgba(255,152,177,.08);
+        0 0 0 2px rgba(0,160,0,.08);
     }
     #app[data-skin="sakura"] .tabs .tabs-link:hover{
       box-shadow:
-        inset 0 0 0 2px rgba(255,152,177,.16),
+        inset 0 0 0 2px rgba(0,160,0,.16),
         0 6px 18px rgba(0,0,0,.35);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
-      background: rgba(59,130,246,.2);
-      border-color: rgba(59,130,246,.3);
+      background: rgba(59,130,246,.3);
+      border-color: rgba(59,130,246,.5);
       color: #dbeafe;
+      box-shadow: 0 0 8px rgba(59,130,246,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
-      background: rgba(139,92,246,.2);
-      border-color: rgba(139,92,246,.3);
+      background: rgba(139,92,246,.3);
+      border-color: rgba(139,92,246,.5);
       color: #e9d5ff;
+      box-shadow: 0 0 8px rgba(139,92,246,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
-      background: rgba(244,63,94,.2);
-      border-color: rgba(244,63,94,.3);
+      background: rgba(244,63,94,.3);
+      border-color: rgba(244,63,94,.5);
       color: #fecaca;
+      box-shadow: 0 0 8px rgba(244,63,94,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
-      background: rgba(245,158,11,.2);
-      border-color: rgba(245,158,11,.3);
+      background: rgba(245,158,11,.3);
+      border-color: rgba(245,158,11,.5);
       color: #fde68a;
+      box-shadow: 0 0 8px rgba(245,158,11,.2);
     }
     #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
-      background: rgba(34,197,94,.2);
-      border-color: rgba(34,197,94,.3);
+      background: rgba(34,197,94,.3);
+      border-color: rgba(34,197,94,.5);
       color: #bbf7d0;
+      box-shadow: 0 0 8px rgba(34,197,94,.2);
     }
 
     #app[data-skin="sakura"] .btn{
@@ -335,6 +340,18 @@
       <div class="grid cards" style="margin-top: 18px;">
         @forelse($places ?? [] as $place)
         <div class="card">
+          <!-- 場所の画像 -->
+          @if($place->images && $place->images->count() > 0)
+            <div style="margin: -14px -14px 14px -14px; border-radius: 16px 16px 0 0; overflow: hidden;">
+              <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
+                   style="width: 100%; height: 160px; object-fit: cover;">
+            </div>
+          @else
+            <div style="margin: -14px -14px 14px -14px; height: 160px; background: linear-gradient(135deg, rgba(0,160,0,.1), rgba(0,200,0,.1)); display: flex; align-items: center; justify-content: center; border-radius: 16px 16px 0 0;">
+              <span style="color: var(--muted); font-size: 13px;">📷 画像なし</span>
+            </div>
+          @endif
+
           <div class="title">{{ $place->name }}</div>
           <div class="meta">{{ $place->address ?? '住所情報なし' }}</div>
           @if($place->campus_time_min)

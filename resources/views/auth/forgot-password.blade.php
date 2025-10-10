@@ -50,7 +50,7 @@
       --muted:#9fb0c6;
       --line:rgba(255,255,255,.10);
       --card:rgba(8,12,20,.52);
-      --primary:#ff6aa9;
+      --primary:#00a000;
       color:var(--ink);
     }
 

@@ -220,6 +220,45 @@
     }
     #app[data-skin="sakura"] .meta{ color: var(--muted); }
 
+    #app[data-skin="sakura"] .tabs .tabs-link{
+      border-color: rgba(255,255,255,.08);
+      background: rgba(12,18,30,.56);
+      color: #e4ffe9;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        0 0 0 2px rgba(0,160,0,.08);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link:hover{
+      box-shadow:
+        inset 0 0 0 2px rgba(0,160,0,.16),
+        0 6px 18px rgba(0,0,0,.35);
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="blue"]{
+      background: rgba(59,130,246,.2);
+      border-color: rgba(59,130,246,.3);
+      color: #dbeafe;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="violet"]{
+      background: rgba(139,92,246,.2);
+      border-color: rgba(139,92,246,.3);
+      color: #e9d5ff;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="rose"]{
+      background: rgba(244,63,94,.2);
+      border-color: rgba(244,63,94,.3);
+      color: #fecaca;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="amber"]{
+      background: rgba(245,158,11,.2);
+      border-color: rgba(245,158,11,.3);
+      color: #fde68a;
+    }
+    #app[data-skin="sakura"] .tabs .tabs-link[data-color="green"]{
+      background: rgba(34,197,94,.2);
+      border-color: rgba(34,197,94,.3);
+      color: #bbf7d0;
+    }
+
     /* フォームスタイル */
     .field { margin-bottom: 16px; }
     .field label { display: block; margin-bottom: 4px; font-weight: 600; color: var(--ink); }
@@ -255,16 +294,7 @@
 
   <!-- ======= APP WRAPPER ======= -->
   <div id="app" data-skin="sakura">
-    <header>
-      <div class="container">
-        <div class="row" style="justify-content: space-between;">
-          <div class="row"><div class="brand">BKC<span>アプリ</span></div></div>
-          <nav style="display:flex; gap:8px;">
-            <a href="{{ route('my.free.index') }}" class="btn">出品一覧に戻る</a>
-          </nav>
-        </div>
-      </div>
-    </header>
+    @include('components.header')
 
     <main>
       <h1 class="h1">商品情報編集</h1>

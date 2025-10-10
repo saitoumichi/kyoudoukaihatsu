@@ -81,7 +81,7 @@
                 @forelse($places as $place)
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <!-- 画像 -->
-                    @if($place->images && $place->images->count() > 0)
+                    @if($place->images->count() > 0)
                         <img src="{{ $place->images->first()->path }}" alt="{{ $place->name }}"
                              class="w-full h-48 object-cover">
                     @else
