@@ -13,15 +13,14 @@ class FreeMarketSeeder extends Seeder
      */
     public function run(): void
     {
-        // テスト用ユーザーを取得（存在しない場合は作成）
+        // テスト用ユーザーを取得
         $user = User::first();
         if (!$user) {
-            $user = User::create([
-                'name' => 'テストユーザー',
-                'email' => 'test@example.com',
-                'password' => bcrypt('password'),
-            ]);
+            throw new \Exception('No users found. Please run DatabaseSeeder first.');
         }
+
+        // 既存のフリマデータを削除（このユーザーの分）
+        FreeMarket::where('user_id', $user->id)->delete();
 
         // サンプル商品データ
         $items = [

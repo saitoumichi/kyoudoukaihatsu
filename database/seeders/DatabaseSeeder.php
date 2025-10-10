@@ -14,18 +14,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $userId = DB::table('users')->insertGetId([
-            'login_id'          => 'testuser',
-            'email'             => 'test@example.com',
-            'password_hash'     => Hash::make('password123'),
-            'password_algo'     => 'bcrypt',
-            'role'              => 'admin',
-            'is_active'         => 1,
-            'email_verified_at' => now(),
-            'remember_token'    => Str::random(10),
-            'created_at'        => now(),
-            'updated_at'        => now(),
-        ]);
+        // 既存のユーザーを確認
+        $user = DB::table('users')->where('login_id', 'testuser')->first();
+
+        if (!$user) {
+            $userId = DB::table('users')->insertGetId([
+                'login_id'          => 'testuser',
+                'email'             => 'test@example.com',
+                'password_hash'     => Hash::make('password123'),
+                'password_algo'     => 'bcrypt',
+                'role'              => 'admin',
+                'is_active'         => 1,
+                'email_verified_at' => now(),
+                'remember_token'    => Str::random(10),
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+        } else {
+            $userId = $user->id;
+        }
+
+        // 既存のPlacesデータを削除（このユーザーの分）
+        DB::table('places')->where('user_id', $userId)->delete();
 
         // Placesのサンプルデータを追加
         DB::table('places')->insert([
