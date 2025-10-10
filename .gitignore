@@ -71,3 +71,6 @@ Thumbs.db
 .env.example
 .env.production.example
 bootstrap/cache/*.php
+
+aws/env.production
+AWSCLIV2.pkg
