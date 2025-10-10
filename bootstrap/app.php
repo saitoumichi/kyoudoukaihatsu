@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustHosts([
             '15-168-43-164\.sslip\.io',
             '15\.168\.43\.164',
+            'localhost',
+            '127\.0\.0\.1',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
