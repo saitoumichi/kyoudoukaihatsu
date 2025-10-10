@@ -13,7 +13,20 @@ class PlaceController extends Controller
      */
     public function index(string $type = 'all')
     {
-        return response("OK /places ($type)");
+        // タイプが有効かチェック
+        if (!in_array($type, ['drive', 'karaoke', 'izakaya', 'all'])) {
+            abort(404);
+        }
+
+        // タイプに応じてデータ取得
+        $query = Place::query();
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        $places = $query->latest()->get();
+
+        return response()->json(compact('places', 'type'));
     }
 
     /**
